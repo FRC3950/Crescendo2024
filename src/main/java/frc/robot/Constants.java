@@ -13,7 +13,13 @@ import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
+
     public static final double stickDeadband = 0.1;
+
+    public static final class Intake {
+        public static final int frontId = 11;
+        public static final int backId = 12;
+    }
 
     public static final class Swerve {
         public static final int pigeonID = 22;

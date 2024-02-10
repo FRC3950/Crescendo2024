@@ -5,33 +5,31 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.VortexTest;
+import frc.robot.subsystems.Intake;
 
-public class Intake extends Command {
+public class IntakeCommand extends Command {
   /** Creates a new Intake. */
-  private final VortexTest s_Intake;
-  public Intake(VortexTest subsystem) {
-    this.s_Intake = subsystem;
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
+  
+  private final Intake s_Intake = Intake.getInstance();
+
+  public IntakeCommand() {
+    addRequirements(s_Intake);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    s_Intake.intake();
+    s_Intake.intake(0.8);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    s_Intake.stopMotors();
+    s_Intake.stop();
   }
 
   // Returns true when the command should end.
