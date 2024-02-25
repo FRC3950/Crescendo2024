@@ -17,20 +17,20 @@ public class Intake extends SubsystemBase {
   private final TalonFX frontMotor = new TalonFX(Constants.Intake.frontId);
   private final TalonFX backMotor = new TalonFX(Constants.Intake.backId);
 
-  public enum IntakeState {
-    
-    FORWARD(0.7),
-    REVERSE(-0.8),
-    OFF(0);
-    
-    private final double motorPercent;
+  State state = State.OFF;
 
-    private IntakeState(double motorPercent){
-      this.motorPercent = motorPercent;
-    }
+  public enum State {
+
+    INTAKE(0.7),
+    OUTTAKE(-0.7),
+    OFF(0);
+
+    final double percentValue;
+
+    State(double percentValue){this.percentValue = percentValue;}
   }
 
-  private static Intake instance; 
+  private static Intake instance;
 
   public static Intake getInstance(){
     if (instance == null) {
@@ -41,15 +41,19 @@ public class Intake extends SubsystemBase {
   }
 
   public Intake() {
-    backMotor.setControl(new Follower(frontMotor.getDeviceID(), false));
+      backMotor.setControl(new Follower(frontMotor.getDeviceID(), false));
   }
 
-  public void intake(double percent) {
-    frontMotor.set(percent);
+  public void stop() {
+      state = State.OFF;
+
+      frontMotor.set(0);
   }
 
-  public void stop(){
-    frontMotor.set(0);
+  public void setState(State newState){
+      state = newState;
+
+      frontMotor.set(newState.percentValue);
   }
 
   @Override
