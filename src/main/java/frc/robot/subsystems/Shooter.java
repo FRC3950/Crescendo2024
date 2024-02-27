@@ -64,6 +64,12 @@ public class Shooter extends SubsystemBase {
   public void idle(){
       state = State.IDLE;
 
+      top.setControl(velocityVoltage.withVelocity(state.shooterVelocity));
+  }
+
+  public void stop() {
+      state = State.OFF;
+
       top.setControl(velocityVoltage.withVelocity(0));
   }
 
