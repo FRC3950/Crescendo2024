@@ -4,94 +4,143 @@
 
 package frc.robot;
 
+import java.util.Random;
+
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-/**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
- * project.
- */
 public class Robot extends TimedRobot {
-  public static final CTREConfigs ctreConfigs = new CTREConfigs();
-
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
 
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
+  private final boolean UseLimelight = true;
+
+
   @Override
   public void robotInit() {
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-  }
 
-  /**
-   * This function is called every robot packet, no matter the mode. Use this for items like
-   * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
-   * SmartDashboard integrated updating.
-   */
+    m_robotContainer.drivetrain.getDaqThread().setThreadPriority(99);
+
+
+
+//     for (int port = 5800; port <= 5805; port++) {
+// PortForwarder.add(port, "limelight.local", port);
+// }
+
+  }
   @Override
   public void robotPeriodic() {
-    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
-    // commands, running already-scheduled commands, removing finished or interrupted commands,
-    // and running subsystem periodic() methods.  This must be called from the robot's periodic
-    // block in order for anything in the Command-based framework to work.
-    CommandScheduler.getInstance().run();
+    CommandScheduler.getInstance().run(); 
+    //SmartDashboard.putNumber("AA_Angle off X axis", m_robotContainer.drivetrain.getState().Pose.getTranslation().getAngle().getDegrees()); 
+
+
+    // if (false) {    
+      
+    //   var lastResult = LimelightHelpers.getLatestResults("limelight").targetingResults;
+    //   LimelightHelpers.setLEDMode_ForceOn("limelight");
+    //   LimelightHelpers.setLEDMode_ForceBlink("limelight");
+
+    //   Pose2d llPose = lastResult.getBotPose2d_wpiBlue();
+    //  // System.out.println("///////////////////");
+
+    //   if (lastResult.valid) {
+    //     m_robotContainer.drivetrain.addVisionMeasurement(llPose, Timer.getFPGATimestamp());
+    //          // System.out.println("..............");
+
+    //   }
+
+    
+    // }
+
+    // if (false) {    
+      
+    //   var x = Timer.getFPGATimestamp() / 10;
+    //   x += 0.1 * Math.random();
+    //   var y = Timer.getFPGATimestamp() / 10;
+    //   y += 0.1 * Math.random();
+
+    //   Pose2d llPose = new Pose2d(x, y, Rotation2d.fromDegrees(90));
+
+    //   if (true) {
+    //     m_robotContainer.drivetrain.addVisionMeasurement(llPose, Timer.getFPGATimestamp(), new Matrix<>(Nat.N3(), Nat.N1()) );
+    //     //System.out.println("..............");
+
+    //     // may have to do time - 0.1 for latency
+
+    //     //private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
+    //     //https://github.com/STMARobotics/frc-7028-2023/blob/5916bb426b97f10e17d9dfd5ec6c3b6fda49a7ce/src/main/java/frc/robot/subsystems/PoseEstimatorSubsystem.java
+
+    //   }
+
+    // }
+
+
+
+
   }
 
-  /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {}
 
   @Override
   public void disabledPeriodic() {}
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
+  @Override
+  public void disabledExit() {}
+
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
   }
 
-  /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {}
 
   @Override
+  public void autonomousExit() {}
+
+  @Override
   public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
   }
 
-  /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {}
 
   @Override
+  public void teleopExit() {
+  }
+
+  @Override
   public void testInit() {
-    // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
   }
 
-  /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+
+  @Override
+  public void testExit() {}
+
+  @Override
+  public void simulationPeriodic() {}
 }

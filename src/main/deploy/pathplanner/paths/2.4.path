@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.921455487750044,
+        "y": 7.41825821054528
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 8.921455487750045,
+        "y": 6.91825821054528
+      },
+      "isLocked": false,
+      "linkedName": "pickup 2.3"
+    },
+    {
+      "anchor": {
+        "x": 2.8821981728314183,
+        "y": 4.7747133896043605
+      },
+      "prevControl": {
+        "x": 2.6321981728314183,
+        "y": 6.274713389604357
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "pickup 2.4"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "best auto ever",
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}
