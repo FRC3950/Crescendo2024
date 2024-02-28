@@ -20,6 +20,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -58,6 +59,7 @@ public class RobotContainer {
 
     Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
      Pose2d blueSpeaker = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
+     Pose2d inFrontOfSpeaker = new Pose2d(2,5.55, Rotation2d.fromDegrees(0) );
 
 //Field Centric Request - field-centric in open loop
 
@@ -100,7 +102,14 @@ public class RobotContainer {
     joystick.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
     //test reset Pose
-   joystick.b().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative(redSpeaker)));
+   joystick.b().onTrue(AutoBuilder.pathfindToPose(inFrontOfSpeaker, 
+   
+  new PathConstraints(
+    4.0, 4.0,
+    Units.degreesToRadians(540), Units.degreesToRadians(720)),
+    0,
+    0)
+   );
 
     // update Pose with Vision
     joystick.a().onTrue(drivetrain.runOnce(drivetrain::applyVisiontoPose));
