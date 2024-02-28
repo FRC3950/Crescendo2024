@@ -1,15 +1,21 @@
 package frc.robot;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.math.geometry.*;
 
 import frc.robot.autos.*;
 import frc.robot.commands.*;
+import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.swerve.Swerve;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -19,20 +25,25 @@ import frc.robot.subsystems.*;
  */
 public class RobotContainer {
     /* Controllers */
-    private final Joystick driver = new Joystick(0);
+    private final CommandXboxController driver = new CommandXboxController(0);
 
     /* Drive Controls */
     private final int translationAxis = XboxController.Axis.kLeftY.value;
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
-    /* Driver Buttons */
-    private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
-    private final JoystickButton intake = new JoystickButton(driver, XboxController.Button.kX.value);
+    /* Swerve */
+    private final Swerve swerve = TunerConstants.DriveTrain;
 
-    private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
-    
+    private final Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
+    private final Pose2d blueSpeaker = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
 
+    private final double maxSpeed = TunerConstants.kSpeedAt12VoltsMps;
+    private final double maxOmega = 1.5 * Math.PI;
+
+    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+            .withDeadband(maxSpeed * 0.1).withRotationalDeadband(maxOmega * 0.1)
+            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -49,9 +60,19 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         /* Driver Buttons */
-        zeroGyro.onTrue(new InstantCommand(s_Swerve::zeroHeading));
+        driver.y().onTrue(new InstantCommand(swerve::seedFieldRelative)); // Zeroes gyro
+        driver.a().onTrue(new InstantCommand(swerve::applyVisionToPose));
 
-        intake.whileTrue(new IntakeCommand());
+        driver.x().whileTrue(new IntakeCommand(true)); // Intakes
+
+
+        swerve.setDefaultCommand(
+            swerve.applyRequest(
+                    () -> drive.withVelocityX(-driver.getLeftY() * maxSpeed)
+                            .withVelocityY(-driver.getLeftX() * maxSpeed)
+                            .withRotationalRate(-driver.getRightX() * maxOmega)
+            )
+        );
     }
 
     /**

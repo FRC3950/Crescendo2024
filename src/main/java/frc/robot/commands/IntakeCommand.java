@@ -9,11 +9,13 @@ import frc.robot.subsystems.Intake;
 
 public class IntakeCommand extends Command {
   /** Creates a new Intake. */
-  
-  private final Intake s_Intake = Intake.getInstance();
 
-  public IntakeCommand() {
-    addRequirements(s_Intake);
+  private final Intake s_Intake = Intake.getInstance();
+  private boolean isIntaking = true;
+
+  public IntakeCommand(boolean isIntaking) {
+      this.isIntaking = isIntaking;
+      addRequirements(s_Intake);
   }
 
   // Called when the command is initially scheduled.
@@ -23,7 +25,7 @@ public class IntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    s_Intake.intake(0.8);
+      s_Intake.setState(isIntaking ? (Intake.State.INTAKE) : (Intake.State.OUTTAKE));
   }
 
   // Called once the command ends or is interrupted.
