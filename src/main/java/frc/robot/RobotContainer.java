@@ -102,7 +102,10 @@ public class RobotContainer {
     joystick.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
     //test reset Pose
-   joystick.b().onTrue(AutoBuilder.pathfindToPose(inFrontOfSpeaker, 
+    //TODO make it conditional
+   joystick.b().onTrue(
+    
+   AutoBuilder.pathfindToPose(inFrontOfSpeaker, 
    
   new PathConstraints(
     4.0, 4.0,

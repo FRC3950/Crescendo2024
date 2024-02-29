@@ -8,6 +8,8 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import au.grapplerobotics.LaserCan;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -16,7 +18,9 @@ public class Shooter extends SubsystemBase {
 
   private final TalonFX top = new TalonFX(Constants.Shooter.topId);
   private final TalonFX bottom = new TalonFX(Constants.Shooter.bottomId);
+  private final LaserCan laserCan;
 
+  
   State state = State.IDLE;
 
   private static Shooter instance;
@@ -35,7 +39,7 @@ public class Shooter extends SubsystemBase {
   }
   public enum State {
     OFF(0),
-    IDLE(400),
+    IDLE(40),
     ACTIVE(4500);
 
     final double shooterVelocity;
