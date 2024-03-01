@@ -25,7 +25,6 @@ import edu.wpi.first.units.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,49 +34,50 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.generated.TunerConstants;
-import frc.robot.pathCommands.alignWithStage_Odometry;
-import frc.robot.pathCommands.turnToShootGoal;
-import frc.robot.subsystems.Pivot_Subsystem;
-import frc.robot.subsystems.Swerve;
+import frc.robot.commands.paths.OdometryStageAlign;
+import frc.robot.commands.paths.TurnToGoal;
+import frc.robot.commands.teleop.ShootCommand;
+import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.swerve.Telemetry;
 
 public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
-  Alliance my_alliance;
-
-
+  Alliance my_alliance; 
 
 
   private double MaxSpeed = 5; // 6 meters per second desired top speed *t3x*
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
-//Joystick and drivetrain
-
+  //Joystick and drivetrain
   private final CommandXboxController joystick = new CommandXboxController(0); 
   public final Swerve drivetrain = TunerConstants.DriveTrain; // My drivetrain
-  public final Pivot_Subsystem pivot = new Pivot_Subsystem(); // My pivot subsystem
+  public final Pivot pivot = new Pivot(); // My pivot subsystem
 
-    Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
-     Pose2d blueSpeaker = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
-     Pose2d inFrontOfSpeaker = new Pose2d(2,5.55, Rotation2d.fromDegrees(0) );
+  Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
+  Pose2d blueSpeaker = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
+  Pose2d inFrontOfSpeaker = new Pose2d(2,5.55, Rotation2d.fromDegrees(0));
 
-//Field Centric Request - field-centric in open loop
+  private final ShootCommand shoot = new ShootCommand();
+
+  //Field Centric Request - field-centric in open loop
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.10).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // field-centric
-                                                               // driving in open loop
+      // driving in open loop
 
-//Robot Centric Request   
+  //Robot Centric Request   
 
   private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
 
-                                                                                  ////// Break and point are not used in the code, but left for reference /////////////
-                                                                                      // private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-                                                                                      // private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-                                                                                  //////////////////////////////////////////////////////////////////////////////////////
+    ////// Break and point are not used in the code, but left for reference /////////////
+        // private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+        // private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+    //////////////////////////////////////////////////////////////////////////////////////
 
 //Creates our Telemetry object
   private final Telemetry logger = new Telemetry(MaxSpeed);
@@ -85,16 +85,10 @@ public class RobotContainer {
   private void configureBindings() {
 
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
-                                                                                           // negative Y (forward)
-            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(drivetrain.getRotationalSpeed(() -> -joystick.getRightX()) * MaxAngularRate) // Drive
-                                                                                                             // counterclockwise
-                                                                                                             // with
-                                                                                                             // negative
-                                                                                                             // X (left)
-        ).ignoringDisable(true));
-
+    drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
+        .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+        .withRotationalRate(drivetrain.getRotationalSpeed(() -> -joystick.getRightX()) * MaxAngularRate)                                                                                // X (left)
+    ).ignoringDisable(true));
     // Toggle April-Tag Lock on (Robot with drive angled at tag)
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> { drivetrain.isLockedRotational = !drivetrain.isLockedRotational;    }));
 
@@ -103,23 +97,23 @@ public class RobotContainer {
 
     //test reset Pose
     //TODO make it conditional
-   joystick.b().onTrue(
+    joystick.b().onTrue(
+      AutoBuilder.pathfindToPose(inFrontOfSpeaker, 
     
-   AutoBuilder.pathfindToPose(inFrontOfSpeaker, 
-   
-  new PathConstraints(
-    4.0, 4.0,
-    Units.degreesToRadians(540), Units.degreesToRadians(720)),
-    0,
-    0)
-   );
+      new PathConstraints(
+        4.0, 4.0,
+        Units.degreesToRadians(540), Units.degreesToRadians(720)),
+        0,
+        0)
+    );
 
     // update Pose with Vision
     joystick.a().onTrue(drivetrain.runOnce(drivetrain::applyVisiontoPose));
 
 
     // joystick.leftTrigger(0.2).whileTrue(intake.runIntake(()->joystick.getLeftTriggerAxis()));
-
+    
+    joystick.x().whileTrue(shoot);
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -142,11 +136,6 @@ public class RobotContainer {
   
 
   public RobotContainer() {
-
-          if (Utils.isSimulation()) {
-    drivetrain.seedFieldRelative(new Pose2d(new Translation2d(),
-    Rotation2d.fromDegrees(90)));
-          }
 
     List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
         new Pose2d(1.0, 1.0, Rotation2d.fromDegrees(0)),
@@ -174,7 +163,7 @@ public class RobotContainer {
 
     SmartDashboard.putData("amp", AutoBuilder.followPath(amp).onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5));
 
-    SmartDashboard.putData("turnToShoot", new turnToShootGoal(drivetrain).onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5));
+    SmartDashboard.putData("turnToShoot", new TurnToGoal(drivetrain).onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5));
 
   
  
@@ -184,18 +173,7 @@ public class RobotContainer {
         
     //SmartDashboard.putString("alliance", DriverStation.getAlliance().get().toString());
 
-    if(Utils.isSimulation()){
-      var simStation = DriverStationSim.getAllianceStationId().toString();
-      if(simStation.equals("Red1") || simStation.equals("Red2") || simStation.equals("Red3")){
-      my_alliance = DriverStation.Alliance.Red;
-      }
-      else{
-         my_alliance = DriverStation.Alliance.Blue;}
-        
-    }
-    else{
-      my_alliance = DriverStation.getAlliance().get();
-    }
+    my_alliance = DriverStation.getAlliance().get();
     
 
     SmartDashboard.putData("toggleAutoAngle",

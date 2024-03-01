@@ -8,13 +8,13 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.constants.Constants;
 
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
 
-  private final TalonFX frontMotor = new TalonFX(Constants.Intake.frontId);
-  private final TalonFX backMotor = new TalonFX(Constants.Intake.backId);
+  private final TalonFX leftMotor = new TalonFX(Constants.Intake.leftId);
+  private final TalonFX rightMotor = new TalonFX(Constants.Intake.rightId);
 
   State state = State.OFF;
 
@@ -40,19 +40,19 @@ public class Intake extends SubsystemBase {
   }
 
   public Intake() {
-      backMotor.setControl(new Follower(frontMotor.getDeviceID(), false));
+    rightMotor.setControl(new Follower(leftMotor.getDeviceID(), false));
   }
 
   public void stop() {
-      state = State.OFF;
+    state = State.OFF;
 
-      frontMotor.set(0);
+    leftMotor.set(0);
   }
 
   public void setState(State newState){
-      state = newState;
+    state = newState;
 
-      frontMotor.set(newState.percentValue);
+    leftMotor.set(newState.percentValue);
   }
 
   @Override

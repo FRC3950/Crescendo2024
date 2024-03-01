@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.swerve;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -34,9 +34,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Limelight;
-import frc.robot.LimelightHelpers;
-import frc.robot.generated.TunerConstants;
+import frc.robot.constants.LimelightHelpers;
+import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.Limelight;
 
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements subsystem

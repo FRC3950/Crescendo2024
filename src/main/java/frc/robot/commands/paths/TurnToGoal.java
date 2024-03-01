@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.pathCommands;
+package frc.robot.commands.paths;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
@@ -14,19 +14,17 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.swerve.Swerve;
 
-public class turnToShootGoal extends Command {
+public class TurnToGoal extends Command {
   /** Creates a new turnToShootGoal. */
 
   private final Swerve m_swerve;
-       Pose2d redSpeakerPose = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
-     Pose2d blueSpeakerPose = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
+    Pose2d redSpeakerPose = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
+    Pose2d blueSpeakerPose = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
 
-  public turnToShootGoal(Swerve swerve) {
+  public TurnToGoal(Swerve swerve) {
     m_swerve = swerve;
-   
-
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_swerve);
   }
@@ -36,19 +34,20 @@ public class turnToShootGoal extends Command {
   public void initialize() {
 
 
-var angleFromShot =      
-Math.atan(
-    (m_swerve.getState().Pose.relativeTo(blueSpeakerPose).getY()
-    /m_swerve.getState().Pose.relativeTo(blueSpeakerPose).getX()) 
-    
-)* 180 / Math.PI;
+    var angleFromShot =      
+    Math.atan(
+        (m_swerve.getState().Pose.relativeTo(blueSpeakerPose).getY()
+        /m_swerve.getState().Pose.relativeTo(blueSpeakerPose).getX()) 
+        
+    )* 180 / Math.PI;
 
-System.out.println("Angle from shot: " + angleFromShot);
+    System.out.println("Angle from shot: " + angleFromShot);
 
-     var pathPoints =PathPlannerPath.bezierFromPoses(
+    var pathPoints =PathPlannerPath.bezierFromPoses(
       m_swerve.getState().Pose,
       m_swerve.getState().Pose.transformBy(new Transform2d(1, 1, Rotation2d.fromDegrees(0)))
     );
+
     System.out.println("Following Path");
     System.out.println(pathPoints);
 
@@ -61,9 +60,7 @@ System.out.println("Angle from shot: " + angleFromShot);
     System.out.println("Following Path");
     System.out.println(pathfindThenFollowPath.getGoalEndState());
 
-    AutoBuilder.followPath(pathfindThenFollowPath       );
-
-
+    AutoBuilder.followPath(pathfindThenFollowPath);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

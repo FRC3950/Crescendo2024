@@ -11,22 +11,21 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import au.grapplerobotics.LaserCan;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.constants.Constants;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
 
-  private final TalonFX top = new TalonFX(Constants.Shooter.topId);
-  private final TalonFX bottom = new TalonFX(Constants.Shooter.bottomId);
-  private final LaserCan laserCan;
+  private final TalonFX top = new TalonFX(Constants.Shooter.topId, "CANivore");
+  private final TalonFX bottom = new TalonFX(Constants.Shooter.bottomId, "CANivore");
+  private final LaserCan laserCan = new LaserCan(50);
 
-  
   State state = State.IDLE;
 
   private static Shooter instance;
 
   private final double kV = 0.12;
-  private final double kP = 0.25; //TODO
+  private final double kP = 0.025; //TODO
 
   private final VelocityVoltage velocityVoltage = new VelocityVoltage(0);
   private final Slot0Configs slot0Configs = new Slot0Configs();
@@ -39,12 +38,12 @@ public class Shooter extends SubsystemBase {
   }
   public enum State {
     OFF(0),
-    IDLE(40),
-    ACTIVE(4500);
+    IDLE(0.1),
+    ACTIVE(0.6);
 
-    final double shooterVelocity;
+    final double shooterRps;
 
-    State(double shooterVelocity){this.shooterVelocity = shooterVelocity;}
+    State(double shooterRps){this.shooterRps = shooterRps;}
   }
 
   private Shooter() {
@@ -62,13 +61,15 @@ public class Shooter extends SubsystemBase {
   public void setState( State newState){
     state = newState;
 
-    top.setControl(velocityVoltage.withVelocity(newState.shooterVelocity));
+    //top.setControl(velocityVoltage.withVelocity(newState.shooterRps));
+
+    top.set(state.shooterRps);
   }
 
   public void idle(){
       state = State.IDLE;
 
-      top.setControl(velocityVoltage.withVelocity(state.shooterVelocity));
+      top.setControl(velocityVoltage.withVelocity(state.shooterRps));
   }
 
   public void stop() {
