@@ -18,7 +18,6 @@ public class Shooter extends SubsystemBase {
 
   private final TalonFX top = new TalonFX(Constants.Shooter.topId, "CANivore");
   private final TalonFX bottom = new TalonFX(Constants.Shooter.bottomId, "CANivore");
-  private final LaserCan laserCan = new LaserCan(50);
 
   State state = State.IDLE;
 
@@ -38,8 +37,8 @@ public class Shooter extends SubsystemBase {
   }
   public enum State {
     OFF(0),
-    IDLE(0.1),
-    ACTIVE(0.6);
+    IDLE(5),
+    ACTIVE(60);
 
     final double shooterRps;
 
@@ -58,28 +57,31 @@ public class Shooter extends SubsystemBase {
       bottom.setControl(new Follower(top.getDeviceID(), true));
   }
 
-  public void setState( State newState){
+  public double getDistancedIdleSpeed() {
+    
+  }
+
+  public void setState(State newState){
     state = newState;
 
-    //top.setControl(velocityVoltage.withVelocity(newState.shooterRps));
-
-    top.set(state.shooterRps);
+    top.setControl(velocityVoltage.withVelocity(newState.shooterRps));
   }
 
   public void idle(){
-      state = State.IDLE;
+    state = State.IDLE;
 
-      top.setControl(velocityVoltage.withVelocity(state.shooterRps));
+    top.setControl(velocityVoltage.withVelocity(state.shooterRps));
   }
 
   public void stop() {
-      state = State.OFF;
+    state = State.OFF;
 
-      top.setControl(velocityVoltage.withVelocity(0));
+    top.setControl(velocityVoltage.withVelocity(0));
   }
 
   @Override
   public void periodic() {
+    
     // This method will be called once per scheduler run
 
   }

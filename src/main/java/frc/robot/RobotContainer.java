@@ -36,8 +36,10 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.paths.OdometryStageAlign;
 import frc.robot.commands.paths.TurnToGoal;
+import frc.robot.commands.teleop.IntakeCommand;
 import frc.robot.commands.teleop.ShootCommand;
 import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.Telemetry;
@@ -52,6 +54,7 @@ public class RobotContainer {
 
   //Joystick and drivetrain
   private final CommandXboxController joystick = new CommandXboxController(0); 
+  private final CommandXboxController SecondJoystick = new CommandXboxController(1);
   public final Swerve drivetrain = TunerConstants.DriveTrain; // My drivetrain
   public final Pivot pivot = new Pivot(); // My pivot subsystem
 
@@ -60,6 +63,7 @@ public class RobotContainer {
   Pose2d inFrontOfSpeaker = new Pose2d(2,5.55, Rotation2d.fromDegrees(0));
 
   private final ShootCommand shoot = new ShootCommand();
+  private final IntakeCommand intakeIn = new IntakeCommand(true);
 
   //Field Centric Request - field-centric in open loop
 
@@ -114,6 +118,7 @@ public class RobotContainer {
     // joystick.leftTrigger(0.2).whileTrue(intake.runIntake(()->joystick.getLeftTriggerAxis()));
     
     joystick.x().whileTrue(shoot);
+    SecondJoystick.a().whileTrue(intakeIn);
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -137,10 +142,10 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
-        new Pose2d(1.0, 1.0, Rotation2d.fromDegrees(0)),
-        new Pose2d(3.0, 1.0, Rotation2d.fromDegrees(0)),
-        new Pose2d(5.0, 3.0, Rotation2d.fromDegrees(90)));
+    NamedCommands.registerCommand("intakeOn", new IntakeCommand(true));
+    NamedCommands.registerCommand("intakeOff", Commands.runOnce(Intake.getInstance()::stop, Intake.getInstance()));
+    NamedCommands.registerCommand("adjustAngleFlush", Commands.runOnce(()-> pivot.adjustAngle(20), pivot));
+
 
 
     // Constructs AutoBuilder (SendableChooser<Command>):

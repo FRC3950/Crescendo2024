@@ -18,7 +18,7 @@ import frc.robot.constants.Constants;
 public class Pivot extends SubsystemBase {
   /** Creates a new Pivot_Subsystem. */
 
-  //private final TalonFX pivotMotor = new TalonFX(Constants.PivotMotor);
+  private final TalonFX pivotMotor = new TalonFX(Constants.pivotId);
 
   private final double gearRatio = 128.0;
   private final double RotationPerAngle = gearRatio / 360.0;
@@ -47,7 +47,7 @@ public class Pivot extends SubsystemBase {
     motionMagicConfigs.MotionMagicAcceleration = 120; // 160 rps/s acceleration (0.5 seconds)
     motionMagicConfigs.MotionMagicJerk = 1600; // 1600 rps/s^2 jerk (0.1 seconds)
 
-    //pivotMotor.getConfigurator().apply(talonFXConfigs, 0.050);
+    pivotMotor.getConfigurator().apply(talonFXConfigs, 0.050);
 
     // periodic, run Motion Magic with slot 0 configs,
     // target position of 200 rotations
@@ -64,7 +64,7 @@ public class Pivot extends SubsystemBase {
   public void adjustAngle(double angle){
     SmartDashboard.putNumber("angle diff from intial", angle);
     SmartDashboard.putNumber("AngleOffVertical", 20 + angle);
-    //pivotMotor.setControl(m_motmag.withPosition(angle * RotationPerAngle));
+    pivotMotor.setControl(m_motmag.withPosition(angle * RotationPerAngle));
 
   }
 

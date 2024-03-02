@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import au.grapplerobotics.LaserCan;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 
@@ -16,7 +17,11 @@ public class Intake extends SubsystemBase {
   private final TalonFX leftMotor = new TalonFX(Constants.Intake.leftId);
   private final TalonFX rightMotor = new TalonFX(Constants.Intake.rightId);
 
-  State state = State.OFF;
+  private final TalonFX indexer = new TalonFX(Constants.Intake.indexerId);
+
+  private final LaserCan laserCan = new LaserCan(50);
+
+  public State state = State.OFF;
 
   public enum State {
 
@@ -47,16 +52,27 @@ public class Intake extends SubsystemBase {
     state = State.OFF;
 
     leftMotor.set(0);
+    indexer.set(0);
   }
 
   public void setState(State newState){
-    state = newState;
+    if(!noteIsIndexed()){
+      state = newState;
+      leftMotor.set(newState.percentValue);
+    }
 
-    leftMotor.set(newState.percentValue);
+    else {
+      state = State.OFF;
+    }
+  }
+  
+  public boolean noteIsIndexed() {
+    return laserCan.getMeasurement().distance_mm < 10;
   }
 
   @Override
   public void periodic() {
+    //System.out.println(laserCan.getMeasurement().distance_mm);
     // This method will be called once per scheduler run
   }
 }
