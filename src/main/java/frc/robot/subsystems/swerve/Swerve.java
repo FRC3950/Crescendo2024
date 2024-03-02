@@ -43,12 +43,10 @@ import frc.robot.subsystems.Limelight;
  * so it can be used in command-based projects easily.
  */
 public class Swerve extends SwerveDrivetrain implements Subsystem {
-
 //blargh
 //may need to add 
 // swerveDriveFXConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = Constants.Swerve.openLoopRamp;
 // swerveDriveFXConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = Constants.Swerve.openLoopRamp;
-
 
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
@@ -60,7 +58,6 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     //red and blue speaker pose
     Pose2d redSpeakerPose = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
     Pose2d blueSpeakerPose = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
-
 
     private final Limelight lime = Limelight.getInstance();
 
@@ -183,9 +180,14 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
                 return;
             }
 
-            this.addVisionMeasurement(visionResults.getBotPose2d_wpiBlue(),
-                    Timer.getFPGATimestamp() - (visionResults.botpose[6] / 1000.0),
-                    VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
+            if (visionResults.botpose_wpiblue.length>1){
+
+
+                this.addVisionMeasurement(visionResults.getBotPose2d_wpiBlue(),
+                        Timer.getFPGATimestamp() - (visionResults.botpose_wpiblue[6] / 1000.0),
+                        VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
+            }
+
 
         }
 

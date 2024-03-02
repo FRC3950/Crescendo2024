@@ -17,7 +17,7 @@ public class Intake extends SubsystemBase {
   private final TalonFX leftMotor = new TalonFX(Constants.Intake.leftId);
   private final TalonFX rightMotor = new TalonFX(Constants.Intake.rightId);
 
-  private final TalonFX indexer = new TalonFX(Constants.Intake.indexerId);
+  private final TalonFX indexer = new TalonFX(Constants.Intake.indexerId, "CANivore");
 
   private final LaserCan laserCan = new LaserCan(50);
 
@@ -45,6 +45,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Intake() {
+    leftMotor.setInverted(true);
     rightMotor.setControl(new Follower(leftMotor.getDeviceID(), false));
   }
 
@@ -58,7 +59,9 @@ public class Intake extends SubsystemBase {
   public void setState(State newState){
     if(!noteIsIndexed()){
       state = newState;
+
       leftMotor.set(newState.percentValue);
+      indexer.set(newState.percentValue);
     }
 
     else {

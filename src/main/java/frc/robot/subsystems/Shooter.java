@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -12,6 +14,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import au.grapplerobotics.LaserCan;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
+import frc.robot.subsystems.swerve.Swerve;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
@@ -40,7 +43,7 @@ public class Shooter extends SubsystemBase {
     IDLE(5),
     ACTIVE(60);
 
-    final double shooterRps;
+    double shooterRps;
 
     State(double shooterRps){this.shooterRps = shooterRps;}
   }
@@ -57,8 +60,16 @@ public class Shooter extends SubsystemBase {
       bottom.setControl(new Follower(top.getDeviceID(), true));
   }
 
-  public double getDistancedIdleSpeed() {
-    
+  public void setDistancedIdleSpeed(DoubleSupplier distance) {
+    var d = distance.getAsDouble();
+
+    if(d < 8){
+      State.IDLE.shooterRps = d / 11;
+    }
+  }
+
+  public void resetIdleSpeed() {
+    State.IDLE.shooterRps = 10;
   }
 
   public void setState(State newState){

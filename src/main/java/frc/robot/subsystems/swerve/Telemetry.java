@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import frc.robot.LimelightHelpers;
 
 public class Telemetry {
     private final double MaxSpeed;
@@ -58,7 +59,6 @@ public class Telemetry {
 
     private final NetworkTable vision = inst.getTable("Vision");
     private final StructPublisher<Pose3d> visionPose = vision.getStructTopic("Vision Pose", Pose3d.struct).publish();
-
     //private final DoublePublisher visionDistance = vision.getDoubleTopic("Vision Distance").publish();
 
 
@@ -107,10 +107,10 @@ public class Telemetry {
       //  fieldAngle.set(pose.getRotation().getDegrees());
 
         /* Telmeterize Vision Pose */
-        // var lastResult = LimelightHelpers.getLatestResults("limelight").targetingResults;
-        // if(lastResult.valid && lastResult.getBotPose2d().getX() != 0.0){
-        //          visionPose.set(lastResult.getBotPose3d_wpiBlue());
-        // }
+        var lastResult = LimelightHelpers.getLatestResults("limelight").targetingResults;
+        if(lastResult.valid && lastResult.getBotPose2d().getX() != 0.0){
+                 visionPose.set(lastResult.getBotPose3d_wpiBlue());
+        }
 
 
         /* Telemeterize the robot's general speeds */

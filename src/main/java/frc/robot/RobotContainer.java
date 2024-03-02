@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.paths.OdometryStageAlign;
 import frc.robot.commands.paths.TurnToGoal;
 import frc.robot.commands.teleop.IntakeCommand;
@@ -41,6 +42,7 @@ import frc.robot.commands.teleop.ShootCommand;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.Telemetry;
 
@@ -114,6 +116,13 @@ public class RobotContainer {
     // update Pose with Vision
     joystick.a().onTrue(drivetrain.runOnce(drivetrain::applyVisiontoPose));
 
+    Trigger alwaysTrue = new Trigger(()-> true);
+    alwaysTrue.whileTrue(
+      Shooter.getInstance().runOnce(
+      ()-> Shooter.getInstance().setDistancedIdleSpeed(
+        () -> drivetrain.getState().Pose.getTranslation().getDistance(redSpeaker.getTranslation())
+      ))
+    );
 
     // joystick.leftTrigger(0.2).whileTrue(intake.runIntake(()->joystick.getLeftTriggerAxis()));
     
@@ -130,23 +139,16 @@ public class RobotContainer {
 
     // joystick.x().whileTrue(new PathPlannerAuto(("test")));
     // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-      // joystick.b().whileTrue(drivetrain
-      //   .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
-
-   
+    // joystick.b().whileTrue(drivetrain
+    //   .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
   
   }
-
-
-  
 
   public RobotContainer() {
 
     NamedCommands.registerCommand("intakeOn", new IntakeCommand(true));
     NamedCommands.registerCommand("intakeOff", Commands.runOnce(Intake.getInstance()::stop, Intake.getInstance()));
     NamedCommands.registerCommand("adjustAngleFlush", Commands.runOnce(()-> pivot.adjustAngle(20), pivot));
-
-
 
     // Constructs AutoBuilder (SendableChooser<Command>):
     autoChooser = AutoBuilder.buildAutoChooser("andy");
@@ -169,11 +171,6 @@ public class RobotContainer {
     SmartDashboard.putData("amp", AutoBuilder.followPath(amp).onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5));
 
     SmartDashboard.putData("turnToShoot", new TurnToGoal(drivetrain).onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5));
-
-  
- 
-
-          
         
         
     //SmartDashboard.putString("alliance", DriverStation.getAlliance().get().toString());
@@ -194,11 +191,7 @@ public class RobotContainer {
       SmartDashboard.putNumber("Angle Offset From X Axis on Blue Speaker", 
       
       Math.atan(
-
         drivetrain.getState().Pose.relativeTo(blueSpeaker).getY()/drivetrain.getState().Pose.relativeTo(blueSpeaker).getX()) * 180 / Math.PI);
-
-      
-
     }));
 
     // why does addVisionMeasurement not work?
