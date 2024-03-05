@@ -66,6 +66,9 @@ public class RobotContainer {
 
   private final ShootCommand shoot = new ShootCommand();
   private final IntakeCommand intakeIn = new IntakeCommand(true);
+  private final IntakeCommand outtake = new IntakeCommand(false);
+
+  
 
   //Field Centric Request - field-centric in open loop
 
@@ -126,8 +129,20 @@ public class RobotContainer {
 
     // joystick.leftTrigger(0.2).whileTrue(intake.runIntake(()->joystick.getLeftTriggerAxis()));
     
-    joystick.x().whileTrue(shoot);
-    SecondJoystick.a().whileTrue(intakeIn);
+    joystick.x().whileTrue(shoot)
+    .onFalse(Commands.runOnce(Intake.getInstance()::stop,Intake.getInstance()));
+    
+    SecondJoystick.a().whileTrue(   
+      
+      Commands.runEnd(Intake.getInstance()::run, Intake.getInstance()::stop, 
+      Intake.getInstance()).until(()-> Intake.getInstance().noteIsIndexed()).andThen(Intake.getInstance()::runIndexerBack).andThen(new WaitCommand(0.25)).andThen(Intake.getInstance()::indexerOff)).and( ()-> !Intake.getInstance().noteIsIndexed());
+
+
+      
+
+    
+    
+    SecondJoystick.x().whileTrue(outtake);
 
     drivetrain.registerTelemetry(logger::telemeterize);
 

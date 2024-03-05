@@ -41,7 +41,7 @@ public class Shooter extends SubsystemBase {
   public enum State {
     OFF(0),
     IDLE(5),
-    ACTIVE(60);
+    ACTIVE(70);
 
     double shooterRps;
 
@@ -60,12 +60,21 @@ public class Shooter extends SubsystemBase {
       bottom.setControl(new Follower(top.getDeviceID(), true));
   }
 
+  public double getRPMS (){
+
+    return top.getVelocity().getValue();
+  }
+
   public void setDistancedIdleSpeed(DoubleSupplier distance) {
     var d = distance.getAsDouble();
 
     if(d < 8){
       State.IDLE.shooterRps = d / 11;
     }
+  }
+
+  public boolean isActive(){
+    return state == State.ACTIVE;
   }
 
   public void resetIdleSpeed() {

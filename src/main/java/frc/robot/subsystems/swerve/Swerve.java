@@ -182,9 +182,9 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
             if (visionResults.botpose_wpiblue.length>1){
 
-
+//(visionResults.latency_pipeline / 1000.0)
                 this.addVisionMeasurement(visionResults.getBotPose2d_wpiBlue(),
-                        Timer.getFPGATimestamp() - (visionResults.botpose_wpiblue[6] / 1000.0),
+                        Timer.getFPGATimestamp() - 0 ,
                         VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
             }
 

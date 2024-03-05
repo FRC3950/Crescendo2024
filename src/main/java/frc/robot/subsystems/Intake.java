@@ -8,6 +8,8 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import au.grapplerobotics.LaserCan;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 
@@ -56,21 +58,50 @@ public class Intake extends SubsystemBase {
     indexer.set(0);
   }
 
-  public void setState(State newState){
-    if(!noteIsIndexed()){
+  public void run(){
+    state = State.INTAKE;
+      leftMotor.set(0.70);
+            indexer.set(0.55);
+
+  }
+
+  public void runIndexer(){
+    indexer.set(0.5);
+  }
+  public void indexerOff(){
+    indexer.set(0);
+  }
+
+  public void runIndexerBack(){
+    indexer.set(-0.3 );
+  }
+
+
+
+  public void setState(State newState, boolean isForward){
+    if(!noteIsIndexed() || !isForward){
       state = newState;
 
       leftMotor.set(newState.percentValue);
       indexer.set(newState.percentValue);
     }
+ 
 
     else {
-      state = State.OFF;
+      if (Shooter.getInstance().isActive()){
+
+        state = State.INTAKE;
+
+      }
+      else{
+        state = State.OFF;
+
+      }
     }
   }
   
   public boolean noteIsIndexed() {
-    return laserCan.getMeasurement().distance_mm < 10;
+    return laserCan.getMeasurement().distance_mm < 25;
   }
 
   @Override

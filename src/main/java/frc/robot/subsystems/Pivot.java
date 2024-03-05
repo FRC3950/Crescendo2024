@@ -52,7 +52,6 @@ public class Pivot extends SubsystemBase {
     // periodic, run Motion Magic with slot 0 configs,
     // target position of 200 rotations
     m_motmag.Slot = 0;
-
   }
 
   @Override

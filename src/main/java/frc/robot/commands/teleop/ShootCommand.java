@@ -5,6 +5,7 @@
 package frc.robot.commands.teleop;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Shooter.State;
 
@@ -26,12 +27,17 @@ public class ShootCommand extends Command {
   @Override
   public void execute() {
     shooter.setState(State.ACTIVE);
+    if (shooter.getRPMS()>65){
+
+      Intake.getInstance().runIndexer();
+
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.setState(State.IDLE);
+    shooter.setState(State.OFF);
   }
 
   // Returns true when the command should end.

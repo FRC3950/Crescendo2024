@@ -6,9 +6,12 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DifferentialMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.mechanisms.SimpleDifferentialMechanism;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 
@@ -17,6 +20,7 @@ public class Elevator extends SubsystemBase {
 
     private final TalonFX left = new TalonFX(Constants.Elevator.leftId);
     private final TalonFX right = new TalonFX(Constants.Elevator.rightId);
+
 
     State state = State.STOWED;
 
@@ -30,8 +34,12 @@ public class Elevator extends SubsystemBase {
     private final double mJerk = 100;
 
     private final MotionMagicVoltage mVoltage = new MotionMagicVoltage(0);
+    private final DifferentialMotionMagicVoltage mVoltageDiff = new DifferentialMotionMagicVoltage(0, 0); 
     private final TalonFXConfiguration talonFxConfig = new TalonFXConfiguration();
     private final Slot0Configs pidConfigs = talonFxConfig.Slot0;
+
+    private final SimpleDifferentialMechanism elevator;
+
     private enum State {
       TRAP (500),
       STOWED (0);
@@ -57,13 +65,21 @@ public class Elevator extends SubsystemBase {
         left.getConfigurator().apply(pidConfigs);
         right.getConfigurator().apply(pidConfigs);
 
-        right.setControl(new Follower(left.getDeviceID(), false));
+         elevator = new SimpleDifferentialMechanism(right, left, false);
+         
+
+
+
+        //right.setControl(new Follower(left.getDeviceID(), false));
     }
 
     public void setState(State newState) {
         state = newState;
 
-        left.setControl(mVoltage.withPosition(newState.encoder));
+        elevator.setControl(mVoltageDiff.withTargetPosition(newState.encoder));
+       
+       
+       // left.setControl(mVoltage.withPosition(newState.encoder));
     }
 
     public void stow() { // Most likely going to incorporate limit switch
