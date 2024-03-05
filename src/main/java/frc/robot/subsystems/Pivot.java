@@ -43,7 +43,7 @@ public class Pivot extends SubsystemBase {
 
     // set Motion Magic settings
     var motionMagicConfigs = talonFXConfigs.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 80; // 80 rps cruise velocity
+    motionMagicConfigs.MotionMagicCruiseVelocity = 60; // 80 rps cruise velocity
     motionMagicConfigs.MotionMagicAcceleration = 120; // 160 rps/s acceleration (0.5 seconds)
     motionMagicConfigs.MotionMagicJerk = 1600; // 1600 rps/s^2 jerk (0.1 seconds)
 
@@ -61,11 +61,22 @@ public class Pivot extends SubsystemBase {
   }
 
   public void adjustAngle(double angle){
-    SmartDashboard.putNumber("angle diff from intial", angle);
-    SmartDashboard.putNumber("AngleOffVertical", 20 + angle);
+    //SmartDashboard.putNumber("angle diff from intial", angle);
+   // SmartDashboard.putNumber("AngleOffVertical", 20 + angle);
+
     pivotMotor.setControl(m_motmag.withPosition(angle * RotationPerAngle));
 
   }
+
+  public double currentAngle(){
+    return pivotMotor.getPosition().getValue() / RotationPerAngle;
+  }
+
+  public boolean isAtTargetAngle(double targetAngle){
+    return Math.abs(currentAngle() - targetAngle) < 1;
+  }
+
+  
 
   public Command autoAngleCommand(DoubleSupplier distanceFromTarget){
    
@@ -80,7 +91,7 @@ public class Pivot extends SubsystemBase {
       @Override
       public void execute() {
             var angleToPivotDownToFromInitial = distanceFromTarget.getAsDouble() * kDegreesPerDistanceAwayFromTarget;
-            SmartDashboard.putNumber("distance", distanceFromTarget.getAsDouble());
+            //SmartDashboard.putNumber("distance", distanceFromTarget.getAsDouble());
 
         adjustAngle(angleToPivotDownToFromInitial);
       }
@@ -88,6 +99,7 @@ public class Pivot extends SubsystemBase {
       @Override
       public void end(boolean interrupted) {
         // TODO Auto-generated method stub
+        adjustAngle(0);
       }
 
       @Override

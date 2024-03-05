@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.fasterxml.jackson.databind.util.Named;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -35,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.bAngleAndShotCommand;
 import frc.robot.commands.paths.OdometryStageAlign;
 import frc.robot.commands.paths.TurnToGoal;
 import frc.robot.commands.teleop.IntakeCommand;
@@ -133,9 +135,11 @@ public class RobotContainer {
     .onFalse(Commands.runOnce(Intake.getInstance()::stop,Intake.getInstance()));
     
     SecondJoystick.a().whileTrue(   
-      
-      Commands.runEnd(Intake.getInstance()::run, Intake.getInstance()::stop, 
-      Intake.getInstance()).until(()-> Intake.getInstance().noteIsIndexed()).andThen(Intake.getInstance()::runIndexerBack).andThen(new WaitCommand(0.25)).andThen(Intake.getInstance()::indexerOff)).and( ()-> !Intake.getInstance().noteIsIndexed());
+      Commands.runEnd(
+        Intake.getInstance()::run,
+        Intake.getInstance()::stop, 
+        Intake.getInstance()).until(()-> Intake.getInstance().noteIsIndexed())
+      .andThen(Intake.getInstance()::runIndexerBack).andThen(new WaitCommand(0.25)).andThen(Intake.getInstance()::indexerOff));
 
 
       
@@ -161,9 +165,12 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    NamedCommands.registerCommand("intakeOn", new IntakeCommand(true));
-    NamedCommands.registerCommand("intakeOff", Commands.runOnce(Intake.getInstance()::stop, Intake.getInstance()));
-    NamedCommands.registerCommand("adjustAngleFlush", Commands.runOnce(()-> pivot.adjustAngle(20), pivot));
+    NamedCommands.registerCommand("shootHub", new InstantCommand(()-> pivot.adjustAngle(20)).andThen(shoot).andThen(()->pivot.adjustAngle(0)));
+    NamedCommands.registerCommand("shootTop", shoot);
+    NamedCommands.registerCommand("shootMid", intakeIn);
+    NamedCommands.registerCommand("intake", intakeIn);
+
+    
 
     // Constructs AutoBuilder (SendableChooser<Command>):
     autoChooser = AutoBuilder.buildAutoChooser("andy");
@@ -223,6 +230,13 @@ public class RobotContainer {
     // //System.out.println(drivetrain.getState().Pose);
     // }
     // ));
+
+
+
+        SmartDashboard.putData("angle20", new bAngleAndShotCommand(pivot, Intake.getInstance(), 20.0));
+        SmartDashboard.putData("angle30", new bAngleAndShotCommand(pivot, Intake.getInstance(), 30.0));
+        SmartDashboard.putData("angle40", new bAngleAndShotCommand(pivot, Intake.getInstance(), 40.0));
+        SmartDashboard.putData("angle50", new bAngleAndShotCommand(pivot, Intake.getInstance(), 50.0));
 
     configureBindings();
   }
