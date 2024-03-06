@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.fasterxml.jackson.databind.util.Named;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -169,9 +170,8 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("shootHub", new AimAndShootCommand(pivot, 17));
     NamedCommands.registerCommand("shootNote", new AimAndShootCommand(pivot, 26));
-    NamedCommands.registerCommand("intakeOn", new IntakeCommand(true));
-    NamedCommands.registerCommand("intakeOff", Commands.runOnce(Intake.getInstance()::stop, Intake.getInstance()));
-    //NamedCommands.registerCommand("adjustAngleFlush", Commands.runOnce(()-> pivot.adjustAngle(20), pivot));
+
+    
 
     // Constructs AutoBuilder (SendableChooser<Command>):
     autoChooser = AutoBuilder.buildAutoChooser("andy");
@@ -237,6 +237,8 @@ public class RobotContainer {
     // //System.out.println(drivetrain.getState().Pose);
     // }
     // ));
+
+
 
     configureBindings();
   }

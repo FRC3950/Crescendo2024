@@ -63,6 +63,7 @@ public class Shooter extends SubsystemBase {
   public double getRPMS (){
 
     return top.getVelocity().getValue();
+    
   }
 
   public void setDistancedIdleSpeed(DoubleSupplier distance) {

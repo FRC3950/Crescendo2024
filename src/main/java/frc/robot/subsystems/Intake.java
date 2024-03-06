@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import au.grapplerobotics.LaserCan;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -74,6 +75,13 @@ public class Intake extends SubsystemBase {
 
   public void runIndexerBack(){
     indexer.set(-0.3 );
+  }
+
+  public Command intakeUntilNote(){
+
+   return Commands.startEnd(this::run, this::stop, this)
+   .until(()->noteIsIndexed())
+   .andThen(this::runIndexerBack).until(()->!noteIsIndexed());
   }
 
 

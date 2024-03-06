@@ -62,8 +62,9 @@ public class Pivot extends SubsystemBase {
   }
 
   public void adjustAngle(double angle){
-   // SmartDashboard.putNumber("angle diff from intial", angle);
-  //  SmartDashboard.putNumber("AngleOffVertical", 20 + angle);
+   // //SmartDashboard.putNumber("angle diff from intial", angle);
+  // // SmartDashboard.putNumber("AngleOffVertical", 20 + angle);
+
     pivotMotor.setControl(m_motmag.withPosition(angle));
 
   }
@@ -73,6 +74,16 @@ public class Pivot extends SubsystemBase {
     return Math.abs(targetAngle - pivotMotor.getPosition().getValueAsDouble())<0.5;
 
 
+  }
+
+  
+
+  public double currentAngle(){
+    return pivotMotor.getPosition().getValue() / RotationPerAngle;
+  }
+
+  public boolean isAtTargetAngle(double targetAngle){
+    return Math.abs(currentAngle() - targetAngle) < 1;
   }
 
   
@@ -90,7 +101,7 @@ public class Pivot extends SubsystemBase {
       @Override
       public void execute() {
             var angleToPivotDownToFromInitial = distanceFromTarget.getAsDouble() * kDegreesPerDistanceAwayFromTarget;
-            SmartDashboard.putNumber("distance", distanceFromTarget.getAsDouble());
+            //SmartDashboard.putNumber("distance", distanceFromTarget.getAsDouble());
 
         adjustAngle(angleToPivotDownToFromInitial);
       }
@@ -98,6 +109,7 @@ public class Pivot extends SubsystemBase {
       @Override
       public void end(boolean interrupted) {
         // TODO Auto-generated method stub
+        adjustAngle(0);
       }
 
       @Override
