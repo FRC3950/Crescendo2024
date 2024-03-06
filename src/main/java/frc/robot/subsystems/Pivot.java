@@ -18,7 +18,7 @@ import frc.robot.constants.Constants;
 public class Pivot extends SubsystemBase {
   /** Creates a new Pivot_Subsystem. */
 
-  private final TalonFX pivotMotor = new TalonFX(Constants.pivotId);
+  private final TalonFX pivotMotor = new TalonFX(Constants.pivotId,"CANivore");
 
   private final double gearRatio = 128.0;
   private final double RotationPerAngle = gearRatio / 360.0;
@@ -34,20 +34,21 @@ public class Pivot extends SubsystemBase {
 
     // set slot 0 gains
     var slot0Configs = talonFXConfigs.Slot0;
-    slot0Configs.kS = 0.12; // add 0.24 V to overcome friction
-    slot0Configs.kV = 0.12; // apply 12 V for a target velocity of 100 rps
+    //slot0Configs.kS = 0.12; // add 0.24 V to overcome friction
+    //slot0Configs.kV = 0.1175; // apply 12 V for a target velocity of 100 rps
     // PID runs on position
-    slot0Configs.kP = 0.8; //og 4.8
-    slot0Configs.kI = 0;
-    slot0Configs.kD = 0.02;
+ //   slot0Configs.kP = 1.85; //og 4.8
+  //  slot0Configs.kI = 0;
+  //  slot0Configs.kG = 0.4;
+    //slot0Configs.kD = 0.02;
 
     // set Motion Magic settings
     var motionMagicConfigs = talonFXConfigs.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 80; // 80 rps cruise velocity
-    motionMagicConfigs.MotionMagicAcceleration = 120; // 160 rps/s acceleration (0.5 seconds)
-    motionMagicConfigs.MotionMagicJerk = 1600; // 1600 rps/s^2 jerk (0.1 seconds)
+    motionMagicConfigs.MotionMagicCruiseVelocity = 90; // 80 rps cruise velocity
+    motionMagicConfigs.MotionMagicAcceleration = 300; // 160 rps/s acceleration (0.5 seconds)
+   // motionMagicConfigs.MotionMagicJerk = 1600; // 1600 rps/s^2 jerk (0.1 seconds)
 
-    pivotMotor.getConfigurator().apply(talonFXConfigs, 0.050);
+    //pivotMotor.getConfigurator().apply(talonFXConfigs);
 
     // periodic, run Motion Magic with slot 0 configs,
     // target position of 200 rotations
@@ -61,11 +62,20 @@ public class Pivot extends SubsystemBase {
   }
 
   public void adjustAngle(double angle){
-    SmartDashboard.putNumber("angle diff from intial", angle);
-    SmartDashboard.putNumber("AngleOffVertical", 20 + angle);
-    pivotMotor.setControl(m_motmag.withPosition(angle * RotationPerAngle));
+   // SmartDashboard.putNumber("angle diff from intial", angle);
+  //  SmartDashboard.putNumber("AngleOffVertical", 20 + angle);
+    pivotMotor.setControl(m_motmag.withPosition(angle));
 
   }
+
+  public boolean isAtAngle(double targetAngle){
+
+    return Math.abs(targetAngle - pivotMotor.getPosition().getValueAsDouble())<0.5;
+
+
+  }
+
+  
 
   public Command autoAngleCommand(DoubleSupplier distanceFromTarget){
    

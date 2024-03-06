@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.paths.OdometryStageAlign;
 import frc.robot.commands.paths.TurnToGoal;
 import frc.robot.commands.teleop.IntakeCommand;
@@ -135,7 +136,9 @@ public class RobotContainer {
     SecondJoystick.a().whileTrue(   
       
       Commands.runEnd(Intake.getInstance()::run, Intake.getInstance()::stop, 
-      Intake.getInstance()).until(()-> Intake.getInstance().noteIsIndexed()).andThen(Intake.getInstance()::runIndexerBack).andThen(new WaitCommand(0.25)).andThen(Intake.getInstance()::indexerOff)).and( ()-> !Intake.getInstance().noteIsIndexed());
+      Intake.getInstance()).until(()-> Intake.getInstance().noteIsIndexed()));
+      
+      // .and( ()-> !Intake.getInstance().noteIsIndexed());
 
 
       
@@ -161,9 +164,14 @@ public class RobotContainer {
 
   public RobotContainer() {
 
+      // SmartDashboard.putData("shootHub",new AimAndShootCommand(pivot, 17));
+      //   SmartDashboard.putData("Note",new AimAndShootCommand(pivot, 26));
+
+    NamedCommands.registerCommand("shootHub", new AimAndShootCommand(pivot, 17));
+    NamedCommands.registerCommand("shootNote", new AimAndShootCommand(pivot, 26));
     NamedCommands.registerCommand("intakeOn", new IntakeCommand(true));
     NamedCommands.registerCommand("intakeOff", Commands.runOnce(Intake.getInstance()::stop, Intake.getInstance()));
-    NamedCommands.registerCommand("adjustAngleFlush", Commands.runOnce(()-> pivot.adjustAngle(20), pivot));
+    //NamedCommands.registerCommand("adjustAngleFlush", Commands.runOnce(()-> pivot.adjustAngle(20), pivot));
 
     // Constructs AutoBuilder (SendableChooser<Command>):
     autoChooser = AutoBuilder.buildAutoChooser("andy");
@@ -208,6 +216,12 @@ public class RobotContainer {
       Math.atan(
         drivetrain.getState().Pose.relativeTo(blueSpeaker).getY()/drivetrain.getState().Pose.relativeTo(blueSpeaker).getX()) * 180 / Math.PI);
     }));
+
+    SmartDashboard.putData("shootHub",new AimAndShootCommand(pivot, 17));
+        SmartDashboard.putData("Note",new AimAndShootCommand(pivot, 26));
+
+        SmartDashboard.putData("aaaa", new RunCommand(()->pivot.adjustAngle(17), pivot));
+
 
     // why does addVisionMeasurement not work?
     // also do speak center path

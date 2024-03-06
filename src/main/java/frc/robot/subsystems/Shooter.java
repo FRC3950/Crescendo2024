@@ -26,8 +26,8 @@ public class Shooter extends SubsystemBase {
 
   private static Shooter instance;
 
-  private final double kV = 0.12;
-  private final double kP = 0.025; //TODO
+  private final double kV = 0.112;
+  private final double kP = 0.005; //TODO
 
   private final VelocityVoltage velocityVoltage = new VelocityVoltage(0);
   private final Slot0Configs slot0Configs = new Slot0Configs();

@@ -1,0 +1,251 @@
+{
+  "Configs": [
+    {
+      "Description": "These settings are typically always applied.  Note \"Duty Cycle Neutral Deadband\" and \"Neutral Mode\" are not used during Torque-Current control as this is a unique control method.",
+      "Name": "Motor Output",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "Duty Cycle Neutral Deadband": 0.0,
+        "Inverted": true,
+        "Neutral Mode": 1,
+        "Peak Forward Duty Cycle": 1.0,
+        "Peak Reverse Duty Cycle": -1.0
+      }
+    },
+    {
+      "Description": "These current limits are applied in Duty-Cycle and Voltage based control modes.",
+      "Name": "Current Limits",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "Stator Current Limit": 0.0,
+        "Stator Current Limit Enable": false,
+        "Supply Current Limit": 0.0,
+        "Supply Current Limit Enable": false,
+        "Supply Current Threshold": 0.0,
+        "Supply Time Threshold": 0.0
+      }
+    },
+    {
+      "Description": "Slot 0 Closed Loop Constants.  The units depend on the requested closed-loop mode.",
+      "Name": "Slot 0",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "Slot 0 Gravity Type": 1,
+        "Slot 0 kA": 0.0,
+        "Slot 0 kD": 0.0,
+        "Slot 0 kG": 0.400390625,
+        "Slot 0 kI": 0.0,
+        "Slot 0 kP": 1.850000023841858,
+        "Slot 0 kS": 0.0,
+        "Slot 0 kV": 0.11749999970197678
+      }
+    },
+    {
+      "Description": "Slot 1 Closed Loop Constants.  The units depend on the requested closed-loop mode.",
+      "Name": "Slot 1",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "Slot 1 Gravity Type": 0,
+        "Slot 1 kA": 0.0,
+        "Slot 1 kD": 0.0,
+        "Slot 1 kG": 0.0,
+        "Slot 1 kI": 0.0,
+        "Slot 1 kP": 0.0,
+        "Slot 1 kS": 0.0,
+        "Slot 1 kV": 0.0
+      }
+    },
+    {
+      "Description": "Slot 2 Closed Loop Constants.  The units depend on the requested closed-loop mode.",
+      "Name": "Slot 2",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "Slot 2 Gravity Type": 0,
+        "Slot 2 kA": 0.0,
+        "Slot 2 kD": 0.0,
+        "Slot 2 kG": 0.0,
+        "Slot 2 kI": 0.0,
+        "Slot 2 kP": 0.0,
+        "Slot 2 kS": 0.0,
+        "Slot 2 kV": 0.0
+      }
+    },
+    {
+      "Description": "These settings are applied during Voltage-based control modes.",
+      "Name": "Voltage",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "Peak Forward Voltage": 16.0,
+        "Peak Reverse Voltage": -16.0,
+        "Supply Voltage Lowpass Time Constant": 0.0
+      }
+    },
+    {
+      "Description": "These setttings are applied during Torque-based control modes.",
+      "Name": "Torque Current",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "Peak Forward Torque Current": 800.0,
+        "Peak Reverse Torque Current": -800.0,
+        "Torque Current Neutral Deadband": 0.0
+      }
+    },
+    {
+      "Description": "Configures the sensor used for closed-loop and limit features.  If using a remote sensor, be sure to configure sensor source and sensor ID.",
+      "Name": "Feedback",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "Remote Sensor ID": 0,
+        "Rotor Offset": 0.0,
+        "Rotor To Sensor Ratio": 1.0,
+        "Sensor Source": 0,
+        "Sensor To Mechanism Ratio": 1.0
+      }
+    },
+    {
+      "Description": "Configures the sensors used for differential control.  All differential control requires a remote Talon FX sensor ID.  If using a Pigeon 2 or CANcoder, be sure to also configure its remote sensor ID.",
+      "Name": "Differential Sensors",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "Differential Sensor Source": 0,
+        "Remote Sensor ID": 0,
+        "Remote Talon FX ID": 0
+      }
+    },
+    {
+      "Description": "Configures the constants used for differential control, such as the differential peak outputs.",
+      "Name": "Differential Constants",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "Peak Differential Duty Cycle": 2.0,
+        "Peak Differential Torque Current": 1600.0,
+        "Peak Differential Voltage": 32.0
+      }
+    },
+    {
+      "Description": "These ramps are applied during open-loop operation. Torque settings are applied during torque-based control modes.  Duty Cycle settings are applied during non-torque-based modes.",
+      "Name": "Open Loop Ramps",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "Duty Cycle Open Loop Ramp Period": 0.0,
+        "Torque Open Loop Ramp Period": 0.0,
+        "Voltage Open Loop Ramp Period": 0.0
+      }
+    },
+    {
+      "Description": "These ramps are applied during closed-loop operation. Torque settings are applied during torque-based control modes.  Duty Cycle settings are applied during non-torque-based modes.",
+      "Name": "Closed Loop Ramps",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "Duty Cycle Closed Loop Ramp Period": 0.0,
+        "Torque Closed Loop Ramp Period": 0.0,
+        "Voltage Closed Loop Ramp Period": 0.0
+      }
+    },
+    {
+      "Description": "Configs that affect general behavior during closed-looping.",
+      "Name": "Closed Loop General",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "ContinuousWrap": false
+      }
+    },
+    {
+      "Description": "These allow for automatic disabling of motor output when limit switch is asserted.",
+      "Name": "Hardware Limit Switch",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "Forward Limit Auto Set Pos": 0.0,
+        "Forward Limit Auto Set Pos En": false,
+        "Forward Limit Enable": false,
+        "Forward Limit Remote Sensor ID": 0,
+        "Forward Limit Source": 0,
+        "Forward Limit Type": 0,
+        "Reverse Limit Auto Set Pos": 0.0,
+        "Reverse Limit Auto Set Pos En": true,
+        "Reverse Limit Enable": true,
+        "Reverse Limit Remote Sensor ID": 0,
+        "Reverse Limit Source": 0,
+        "Reverse Limit Type": 0
+      }
+    },
+    {
+      "Description": "These allow for automatic disabling of motor ouput when position is out of range.",
+      "Name": "Software Limit Switch",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "Forward Soft Limit Enable": false,
+        "Forward Soft Limit Threshold": 0.0,
+        "Reverse Soft Limit Enable": false,
+        "Reverse Soft Limit Threshold": 0.0
+      }
+    },
+    {
+      "Description": "These are used during Motion Magic closed loop operation.",
+      "Name": "Motion Magic",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "Motion Magic Acceleration": 300.0,
+        "Motion Magic Cruise Velocity": 90.0,
+        "Motion Magic Expo kA": 0.0,
+        "Motion Magic Expo kV": 0.0,
+        "Motion Magic Jerk": 0.0
+      }
+    },
+    {
+      "Description": "These are general values for custom applications.  Example use may be calibrating your mechanism.",
+      "Name": "Custom Params",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "Custom Param 0": 0,
+        "Custom Param 1": 0
+      }
+    },
+    {
+      "Description": "Configuration of beep features.",
+      "Name": "Audio",
+      "Ordinal": 0,
+      "Sort": 0,
+      "Type": "",
+      "Values": {
+        "Allow Music Dur Disable": false,
+        "Beep On Boot": true,
+        "Beep On Config": true
+      }
+    }
+  ]
+}

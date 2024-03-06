@@ -61,7 +61,7 @@ public class Intake extends SubsystemBase {
   public void run(){
     state = State.INTAKE;
       leftMotor.set(0.70);
-            indexer.set(0.55);
+            indexer.set(0.30);
 
   }
 
