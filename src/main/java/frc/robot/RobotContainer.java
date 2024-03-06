@@ -101,7 +101,17 @@ public class RobotContainer {
         .withRotationalRate(drivetrain.getRotationalSpeed(() -> -joystick.getRightX()) * MaxAngularRate)                                                                                // X (left)
     ).ignoringDisable(true));
     // Toggle April-Tag Lock on (Robot with drive angled at tag)
+        PathPlannerPath midNoteShootPos = PathPlannerPath.fromPathFile("driveToNoteShot");
+
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> { drivetrain.isLockedRotational = !drivetrain.isLockedRotational;    }));
+    joystick.rightBumper().onTrue(AutoBuilder.followPath(midNoteShootPos)
+                .onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5));
+                
+
+    joystick.leftTrigger(0.5).onTrue(new AimAndShootCommand(pivot, 17));
+    joystick.rightTrigger(0.5).onTrue(new AimAndShootCommand(pivot, 26));
+
+    
 
     // reset the field-centric heading 
     joystick.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
@@ -109,27 +119,22 @@ public class RobotContainer {
     //test reset Pose
     //TODO make it conditional
     joystick.b().onTrue(
-      AutoBuilder.pathfindToPose(inFrontOfSpeaker, 
-    
-      new PathConstraints(
-        4.0, 4.0,
-        Units.degreesToRadians(540), Units.degreesToRadians(720)),
-        0,
-        0)
+      new InstantCommand()
     );
+
+    // AutoBuilder.pathfindToPose(inFrontOfSpeaker, 
+    
+    //   new PathConstraints(
+    //     4.0, 4.0,
+    //     Units.degreesToRadians(540), Units.degreesToRadians(720)),
+    //     0,
+    //     0);
 
     // update Pose with Vision
     joystick.a().onTrue(drivetrain.runOnce(drivetrain::applyVisiontoPose));
 
-    Trigger alwaysTrue = new Trigger(()-> true);
-    alwaysTrue.whileTrue(
-      Shooter.getInstance().runOnce(
-      ()-> Shooter.getInstance().setDistancedIdleSpeed(
-        () -> drivetrain.getState().Pose.getTranslation().getDistance(redSpeaker.getTranslation())
-      ))
-    );
 
-    // joystick.leftTrigger(0.2).whileTrue(intake.runIntake(()->joystick.getLeftTriggerAxis()));
+
     
     joystick.x().whileTrue(shoot)
     .onFalse(Commands.runOnce(Intake.getInstance()::stop,Intake.getInstance()));
