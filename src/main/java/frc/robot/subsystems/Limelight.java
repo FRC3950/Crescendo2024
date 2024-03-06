@@ -34,7 +34,10 @@ public class Limelight extends SubsystemBase {
     return limelightTable.getValue("tid").getDouble();
   }
 
-  
+  public void blink() {
+    limelightTable.getEntry("ledMode").setNumber(2);
+    System.out.println("ll blink");
+  }
 
   
 

@@ -6,12 +6,14 @@ package frc.robot.commands.teleop;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Intake.State;
 
 public class IntakeCommand extends Command {
   /** Creates a new IntakeCommand. */
 
   private final Intake intake = Intake.getInstance();
+  private final Limelight limelight = Limelight.getInstance();
   private boolean isForward = false;
 
   public IntakeCommand(boolean isForward) {
@@ -38,6 +40,7 @@ public class IntakeCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    //limelight.blink();
     intake.stop();
   }
 

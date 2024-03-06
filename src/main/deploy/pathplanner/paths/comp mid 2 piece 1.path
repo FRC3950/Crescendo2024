@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2024457345252095,
-        "y": 5.545747295712128
+        "x": 1.3491521419562087,
+        "y": 5.550936522700434
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.404383186124863,
-        "y": 5.536568320639416
+        "x": 2.349152141956208,
+        "y": 5.550936522700434
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.5701130203592264,
-        "y": 5.545747295712128
+        "x": 2.9066934025451485,
+        "y": 5.539225686154654
       },
       "prevControl": {
-        "x": 1.0005082829255558,
-        "y": 5.545747295712128
+        "x": 1.9066934025451485,
+        "y": 5.539225686154654
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "pickup 2.1"
+      "linkedName": "comp pickup note 2"
     }
   ],
   "rotationTargets": [],
@@ -43,7 +43,10 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "best auto ever",
-  "previewStartingState": null,
-  "useDefaultConstraints": false
+  "folder": "comp mid 2 piece",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
 }

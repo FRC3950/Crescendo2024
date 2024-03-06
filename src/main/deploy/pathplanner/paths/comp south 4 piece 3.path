@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5333971200683805,
-        "y": 5.55492627078484
+        "x": 2.9066934025451485,
+        "y": 5.539225686154654
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.5333971200683805,
-        "y": 5.05492627078484
+        "x": 2.0472539839856267,
+        "y": 5.492382339971528
       },
       "isLocked": false,
-      "linkedName": "pickup 3.21"
+      "linkedName": "comp pickup note 2"
     },
     {
       "anchor": {
-        "x": 7.921455487750044,
-        "y": 5.80275859774805
+        "x": 2.9066934025451485,
+        "y": 6.991369417831561
       },
       "prevControl": {
-        "x": 6.985200030333468,
-        "y": 6.830803805891741
+        "x": 1.5131038535971493,
+        "y": 6.593200975274989
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "pickup 3.22"
+      "linkedName": "comp pickup note 1"
     }
   ],
   "rotationTargets": [],
@@ -39,11 +39,14 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 27.09555249375172,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "best auto ever",
-  "previewStartingState": null,
-  "useDefaultConstraints": false
+  "folder": "comp south 4 piece",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
 }

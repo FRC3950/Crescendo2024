@@ -131,7 +131,7 @@ public class RobotContainer {
 
     // joystick.leftTrigger(0.2).whileTrue(intake.runIntake(()->joystick.getLeftTriggerAxis()));
     
-    joystick.x().whileTrue(shoot)
+    SecondJoystick.x().whileTrue(shoot)
     .onFalse(Commands.runOnce(Intake.getInstance()::stop,Intake.getInstance()));
     
     SecondJoystick.a().whileTrue(   
@@ -142,11 +142,9 @@ public class RobotContainer {
       // .and( ()-> !Intake.getInstance().noteIsIndexed());
 
 
-      
-
     
     
-    SecondJoystick.x().whileTrue(outtake);
+    SecondJoystick.b().whileTrue(outtake);
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -170,8 +168,7 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("shootHub", new AimAndShootCommand(pivot, 17));
     NamedCommands.registerCommand("shootNote", new AimAndShootCommand(pivot, 26));
-
-    
+    NamedCommands.registerCommand("intakeOn", new IntakeCommand(true));
 
     // Constructs AutoBuilder (SendableChooser<Command>):
     autoChooser = AutoBuilder.buildAutoChooser("andy");

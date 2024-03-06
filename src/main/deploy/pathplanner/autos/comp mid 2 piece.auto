@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.2437546130441748,
-      "y": 5.562647359246215
+      "x": 1.3491521419562087,
+      "y": 5.539225686154654
     },
     "rotation": 0
   },
@@ -24,7 +24,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "CenterToNote"
+                  "pathName": "comp mid 2 piece 1"
                 }
               },
               {
@@ -34,12 +34,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "intakeOff"
           }
         },
         {
