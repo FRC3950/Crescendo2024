@@ -48,6 +48,10 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 // swerveDriveFXConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = Constants.Swerve.openLoopRamp;
 // swerveDriveFXConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = Constants.Swerve.openLoopRamp;
 
+    Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
+
+  
+
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
@@ -64,11 +68,11 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();   //.withDriveRequestType(DriveRequestType.Velocity);
 
     public double getRotationalSpeed(DoubleSupplier xboxInput) {
-        if (isLockedRotational && lime.getTag() == 7.0) {
+        if (isLockedRotational) {
             return -(lime.getTx() * rotationalKp); 
         }
 
-              if (isLockedRotational && lime.getTag() == 4.0) {
+        else if (isLockedRotational) {
             return (lime.getTx() * rotationalKp); 
         }
 
@@ -145,8 +149,10 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
         //ToDo: Test STD Values
 
         var visionResults = LimelightHelpers.getLatestResults("limelight").targetingResults;
+       // System.out.println("past the var");
 
         if (visionResults.getBotPose2d_wpiBlue().getX() == 0.0) {
+            System.out.println("was at 0");
             return;
         }
 
@@ -156,10 +162,12 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
         if (visionResults.targets_Fiducials.length > 0) {
             double xyStds;
             double degStds;
+            //System.out.println("caught an april");
+            //System.out.println(poseDifference);
 
             // multiple targets detected
             if (visionResults.targets_Fiducials.length >= 2) {
-                xyStds = 0.5;
+                xyStds = 0.4;
                 degStds = 6;
             }
 
@@ -167,6 +175,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
             else if (visionResults.targets_Fiducials[0].ta > 0.8 && poseDifference < 0.5) {
                 xyStds = 1.0;
                 degStds = 12;
+                System.out.println("caught a single one");
             }
 
             // 1 target farther away and estimated pose is close
@@ -177,14 +186,15 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
             // conditions don't match to add a vision measurement
             else {
+                System.out.println("no conditions matched - no vision applied");
                 return;
             }
 
-            if (visionResults.botpose_wpiblue.length>1){
-
+            if (visionResults.valid){
 //(visionResults.latency_pipeline / 1000.0)
-                this.addVisionMeasurement(visionResults.getBotPose2d_wpiBlue(),
-                        Timer.getFPGATimestamp() - 0 ,
+
+                addVisionMeasurement(visionResults.getBotPose2d_wpiBlue(),
+                        Timer.getFPGATimestamp() ,
                         VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
             }
 

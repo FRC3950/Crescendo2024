@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AimAndShootCommand;
+import frc.robot.commands.AutoAim;
 import frc.robot.commands.paths.OdometryStageAlign;
 import frc.robot.commands.paths.TurnToGoal;
 import frc.robot.commands.teleop.IntakeCommand;
@@ -53,7 +54,7 @@ public class RobotContainer {
   Alliance my_alliance; 
 
 
-  private double MaxSpeed = 5; // 6 meters per second desired top speed *t3x*
+  private double MaxSpeed = 4.75; // 6 meters per second desired top speed *t3x*  //was 5 before
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
   //Joystick and drivetrain
@@ -62,7 +63,7 @@ public class RobotContainer {
   public final Swerve drivetrain = TunerConstants.DriveTrain; // My drivetrain
   public final Pivot pivot = new Pivot(); // My pivot subsystem
 
-  Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
+  Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(0));
   Pose2d blueSpeaker = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
   Pose2d inFrontOfSpeaker = new Pose2d(2,5.55, Rotation2d.fromDegrees(0));
 
@@ -103,15 +104,11 @@ public class RobotContainer {
     // Toggle April-Tag Lock on (Robot with drive angled at tag)
         PathPlannerPath midNoteShootPos = PathPlannerPath.fromPathFile("driveToNoteShot");
 
-    joystick.leftBumper().onTrue(drivetrain.runOnce(() -> { drivetrain.isLockedRotational = !drivetrain.isLockedRotational;    }));
+    joystick.leftBumper().onTrue(drivetrain.runOnce(() -> { drivetrain.isLockedRotational = !drivetrain.isLockedRotational; }));
     joystick.rightBumper().onTrue(AutoBuilder.followPath(midNoteShootPos)
                 .onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5));
                 
-
-    joystick.leftTrigger(0.5).onTrue(new AimAndShootCommand(pivot, 17));
     joystick.rightTrigger(0.5).onTrue(new AimAndShootCommand(pivot, 26));
-
-    
 
     // reset the field-centric heading 
     joystick.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
@@ -131,23 +128,38 @@ public class RobotContainer {
     //     0);
 
     // update Pose with Vision
-    joystick.a().onTrue(drivetrain.runOnce(drivetrain::applyVisiontoPose));
+   
+   
+//joystick.a().onTrue(drivetrain.runOnce(drivetrain::applyVisiontoPose));
+   // SmartDashboard.putData("Vision odometery", Commands.runOnce(drivetrain::applyVisiontoPose));
 
-
-
+    SecondJoystick.leftBumper().whileTrue(new AimAndShootCommand(pivot, 16));
     
-    SecondJoystick.x().whileTrue(shoot)
-    .onFalse(Commands.runOnce(Intake.getInstance()::stop,Intake.getInstance()));
+    SecondJoystick.rightTrigger(0.5)
+      .whileTrue(shoot)
+      .onFalse(Commands.runOnce(Intake.getInstance()::stop, Intake.getInstance())
+    );
     
     SecondJoystick.a().whileTrue(   
-      
-      Commands.runEnd(Intake.getInstance()::run, Intake.getInstance()::stop, 
-      Intake.getInstance()).until(()-> Intake.getInstance().noteIsIndexed()));
-      
-      // .and( ()-> !Intake.getInstance().noteIsIndexed());
+      Commands.startEnd(Intake.getInstance()::run, Intake.getInstance()::stop, 
+      Intake.getInstance())
+      .alongWith(Commands.runOnce(()->pivot.adjustAngle(-4), pivot))
+      .until(Intake.getInstance()::noteIsIndexed)
+    ).onFalse(Commands.runOnce(Intake.getInstance()::stop, Intake.getInstance()));
 
-
-    
+    SecondJoystick.leftTrigger(0.5).whileTrue(
+      Commands.either(
+        Commands.parallel(
+          pivot.autoAngleNewCommand(() -> drivetrain.getState().Pose.getTranslation().getDistance(blueSpeaker.getTranslation())),
+          Commands.runOnce(() -> drivetrain.isLockedRotational = true)
+        ).andThen(Commands.runOnce(()->pivot.adjustAngle(-4), pivot)),
+        Commands.parallel(
+          pivot.autoAngleNewCommand(() -> drivetrain.getState().Pose.getTranslation().getDistance(redSpeaker.getTranslation())),
+          Commands.runOnce(() -> drivetrain.isLockedRotational = true)
+        ).andThen(Commands.runOnce(()->pivot.adjustAngle(-4), pivot)),
+        ()-> DriverStation.getAlliance().get() == DriverStation.Alliance.Blue
+      )
+    ).onFalse(Commands.runOnce(() -> drivetrain.isLockedRotational = false));
     
     SecondJoystick.b().whileTrue(outtake);
 
@@ -167,14 +179,16 @@ public class RobotContainer {
   }
 
   public RobotContainer() {
-
       // SmartDashboard.putData("shootHub",new AimAndShootCommand(pivot, 17));
       //   SmartDashboard.putData("Note",new AimAndShootCommand(pivot, 26));
 
+    SmartDashboard.putData(Commands.runOnce(Intake.getInstance()::intakeUntilNoteCommand));
+    
     NamedCommands.registerCommand("shootHub", new AimAndShootCommand(pivot, 17));
     NamedCommands.registerCommand("shootNote", new AimAndShootCommand(pivot, 26));
-    NamedCommands.registerCommand("intakeOn", new IntakeCommand(true));
-
+    NamedCommands.registerCommand("intakeOn", Commands.runOnce(Intake.getInstance()::run));
+    NamedCommands.registerCommand("waitUntilIndexed", Commands.waitUntil(Intake.getInstance()::noteIsIndexed).withTimeout(1.5));
+    NamedCommands.registerCommand("intakeOff", Commands.runOnce(Intake.getInstance()::stop, Intake.getInstance()));
     // Constructs AutoBuilder (SendableChooser<Command>):
     autoChooser = AutoBuilder.buildAutoChooser("andy");
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -185,17 +199,17 @@ public class RobotContainer {
     // SmartDashboard.putData("goStage", new alignWithStage_Odometry(new
     // Pose2d()).onlyWhile(()-> Math.abs(joystick.getLeftY()) > 0.5));
     // y greater than 4
-    SmartDashboard.putData("goStage",
-        Commands.either(
-            AutoBuilder.followPath(upperStage)
-                .onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5),
-            AutoBuilder.followPath(lowerStage)
-                .onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5),
-            () -> drivetrain.getState().Pose.getY() > 4));
+    // SmartDashboard.putData("goStage",
+    //     Commands.either(
+    //         AutoBuilder.followPath(upperStage)
+    //             .onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5),
+    //         AutoBuilder.followPath(lowerStage)
+    //             .onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5),
+    //         () -> drivetrain.getState().Pose.getY() > 4));
 
-    SmartDashboard.putData("amp", AutoBuilder.followPath(amp).onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5));
+    // SmartDashboard.putData("amp", AutoBuilder.followPath(amp).onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5));
 
-    SmartDashboard.putData("turnToShoot", new TurnToGoal(drivetrain).onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5));
+    // SmartDashboard.putData("turnToShoot", new TurnToGoal(drivetrain).onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5));
         
         
     //SmartDashboard.putString("alliance", DriverStation.getAlliance().get().toString());
@@ -212,17 +226,16 @@ public class RobotContainer {
         ).onlyIf(()->DriverStation.getAlliance().isPresent()));
 
 
-    SmartDashboard.putData("PrintAngle", new RunCommand(() -> {
-      SmartDashboard.putNumber("Angle Offset From X Axis on Blue Speaker", 
+    // SmartDashboard.putData("PrintAngle", new RunCommand(() -> {
+    // SmartDashboard.putNumber("Angle Offset From X Axis on Blue Speaker", 
       
-      Math.atan(
-        drivetrain.getState().Pose.relativeTo(blueSpeaker).getY()/drivetrain.getState().Pose.relativeTo(blueSpeaker).getX()) * 180 / Math.PI);
-    }));
+    //   Math.atan(
+    //     drivetrain.getState().Pose.relativeTo(blueSpeaker).getY()/drivetrain.getState().Pose.relativeTo(blueSpeaker).getX()) * 180 / Math.PI);
+    // }));
 
-    SmartDashboard.putData("shootHub",new AimAndShootCommand(pivot, 17));
-        SmartDashboard.putData("Note",new AimAndShootCommand(pivot, 26));
-
-        SmartDashboard.putData("aaaa", new RunCommand(()->pivot.adjustAngle(17), pivot));
+    //SmartDashboard.putData("shootHub",new AimAndShootCommand(pivot, 17));
+    //SmartDashboard.putData("Note",new AimAndShootCommand(pivot, 26));
+    //SmartDashboard.putData("aaaa", new RunCommand(()->pivot.adjustAngle(17), pivot));
 
 
     // why does addVisionMeasurement not work?
@@ -253,8 +266,6 @@ public class RobotContainer {
 
 
   public Command getAutonomousCommand() {
-
     return autoChooser.getSelected();
-
   }
 }

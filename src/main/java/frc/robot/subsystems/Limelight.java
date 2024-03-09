@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.LimelightHelpers;
 
 public class Limelight extends SubsystemBase {
   /** Creates a new Limelight. */
@@ -23,11 +24,20 @@ public class Limelight extends SubsystemBase {
   }
   // if two apriltags in view, access tx of only apriltag ID #7
 
-  private Limelight() {}
+  private Limelight() {
+  }
 
   public double getTx() {
     // Only pull tx value for tag id #7
-    return limelightTable.getValue("tx").getDouble();
+    //limelightTable.getValue(getName())
+      var results = LimelightHelpers.getLatestResults("limelight").targetingResults;
+      for (LimelightHelpers.LimelightTarget_Fiducial result : results.targets_Fiducials) {
+        if(result.fiducialID == 7 || result.fiducialID == 4){
+          return result.tx;
+        }
+      }
+
+    return 0;
   }
 
   public double getTag() {
@@ -43,6 +53,7 @@ public class Limelight extends SubsystemBase {
 
   @Override
   public void periodic() {
+
     // This method will be called once per scheduler run
   }
 }

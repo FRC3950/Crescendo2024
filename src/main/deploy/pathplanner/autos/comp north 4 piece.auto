@@ -1,0 +1,115 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7167669684840067,
+      "y": 6.710309340732804
+    },
+    "rotation": 60.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "shootHub"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeOn"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "comp north 4 piece 1"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeOff"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootNote"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeOn"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "comp north 4 piece 2"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeOff"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootNote"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeOn"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "comp north 4 piece 3"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeOff"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootNote"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

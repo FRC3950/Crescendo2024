@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5670791427174855,
-        "y": 4.286166175756032
+        "x": 8.297793465731218,
+        "y": 7.436616160690702
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6185013825091832,
-        "y": 4.836575493407762
+        "x": 5.085152190282184,
+        "y": 7.078636132854952
       },
       "isLocked": false,
-      "linkedName": "comp pickup note 3"
+      "linkedName": "british"
     },
     {
       "anchor": {
-        "x": 2.9066934025451485,
-        "y": 5.539225686154654
+        "x": 2.6343658458682073,
+        "y": 5.536568320639416
       },
       "prevControl": {
-        "x": 1.290597959227301,
-        "y": 6.101345840352166
+        "x": 5.18612091608201,
+        "y": 6.032232974565838
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "comp pickup note 2"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -43,9 +43,9 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "comp south 4 piece",
+  "folder": "WithBritish",
   "previewStartingState": {
-    "rotation": -28.84266013541211,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": true

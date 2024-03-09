@@ -4,12 +4,19 @@
   "holonomicMode": true,
   "pathFolders": [
     "BasicMoves",
+    "comp mid 3 piece",
+    "WithBritish",
     "comp mid 2 piece",
-    "comp south 4 piece"
+    "comp north 2 piece",
+    "comp north 4 piece",
+    "comp south 2 piece",
+    "comp south 4 piece",
+    "comp south dub rush 3 piece",
+    "comp south rush 3 piece"
   ],
   "autoFolders": [],
-  "defaultMaxVel": 4.0,
-  "defaultMaxAccel": 4.0,
+  "defaultMaxVel": 4.5,
+  "defaultMaxAccel": 4.5,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "maxModuleSpeed": 5.0

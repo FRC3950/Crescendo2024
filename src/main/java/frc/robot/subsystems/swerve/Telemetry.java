@@ -107,6 +107,8 @@ public class Telemetry {
       //  fieldAngle.set(pose.getRotation().getDegrees());
 
         /* Telmeterize Vision Pose */
+
+
         var lastResult = LimelightHelpers.getLatestResults("limelight").targetingResults;
         if(lastResult.valid && lastResult.getBotPose2d().getX() != 0.0){
                  visionPose.set(lastResult.getBotPose3d_wpiBlue());

@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3491521419562087,
-      "y": 5.550936522700434
+      "x": 1.3451116798923501,
+      "y": 5.545754981811629
     },
     "rotation": 0
   },
@@ -18,6 +18,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 6.5
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "intakeOn"
@@ -26,13 +32,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "comp mid 2 piece 1"
+            "pathName": "WithBritish 1"
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "waitUntilIndexed"
+            "waitTime": 1.0
           }
         },
         {
@@ -44,13 +50,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "comp mid 2 piece 2"
+            "pathName": "WithBritish 2"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shootHub"
+            "name": "shootNote"
           }
         }
       ]

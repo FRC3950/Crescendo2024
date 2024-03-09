@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5670791427174855,
-        "y": 4.286166175756032
+        "x": 2.9066934025451485,
+        "y": 6.991369417831561
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6185013825091832,
-        "y": 4.836575493407762
+        "x": 1.407706324685116,
+        "y": 6.558068465637644
       },
       "isLocked": false,
-      "linkedName": "comp pickup note 3"
+      "linkedName": "comp pickup note 1"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 5.539225686154654
       },
       "prevControl": {
-        "x": 1.290597959227301,
-        "y": 6.101345840352166
+        "x": 1.6067905459634015,
+        "y": 5.211322262872771
       },
       "nextControl": null,
       "isLocked": false,
@@ -43,9 +43,9 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "comp south 4 piece",
+  "folder": "comp north 4 piece",
   "previewStartingState": {
-    "rotation": -28.84266013541211,
+    "rotation": 27.758540601059902,
     "velocity": 0
   },
   "useDefaultConstraints": true

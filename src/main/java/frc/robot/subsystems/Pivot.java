@@ -5,13 +5,16 @@
 package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 
@@ -28,8 +31,13 @@ public class Pivot extends SubsystemBase {
   private double distanceFromTarget;
   private double kDegreesPerDistanceAwayFromTarget = 7; // 2 degrees per meter
 
-  public Pivot() {
+  private double distance =1.35;
 
+  private double angle =0;
+
+  
+
+  public Pivot() {
     var talonFXConfigs = new TalonFXConfiguration();
 
     // set slot 0 gains
@@ -57,26 +65,21 @@ public class Pivot extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //SmartDashboard.putNumber("angle", pivotMotor.getPosition().getValue());
+    SmartDashboard.putNumber("Pivot angle", pivotMotor.getPosition().getValue());
     // This method will be called once per scheduler run
   }
 
   public void adjustAngle(double angle){
    // //SmartDashboard.putNumber("angle diff from intial", angle);
   // // SmartDashboard.putNumber("AngleOffVertical", 20 + angle);
-
-    pivotMotor.setControl(m_motmag.withPosition(angle));
-
+    if (angle < 55) {
+      pivotMotor.setControl(m_motmag.withPosition(angle));
+    }
   }
 
   public boolean isAtAngle(double targetAngle){
-
     return Math.abs(targetAngle - pivotMotor.getPosition().getValueAsDouble())<0.5;
-
-
   }
-
-  
 
   public double currentAngle(){
     return pivotMotor.getPosition().getValue() / RotationPerAngle;
@@ -86,12 +89,33 @@ public class Pivot extends SubsystemBase {
     return Math.abs(currentAngle() - targetAngle) < 1;
   }
 
+  public void setOurDistance(DoubleSupplier ourDistanceFromShot){
+    distance = ourDistanceFromShot.getAsDouble();
+    angle = -1.094 * Math.pow(distance, 2) + 9.854 * distance + 6.827;
+    //angle = -1.808 * Math.pow(distance, 2) + 14.7 * distance + 1.332;
+    //System.out.println(angle);
+  }
+
+  public void setDutyCycle(){
+
+    pivotMotor.set(-0.15);
+  }
+
+
+  public Command autoAngleNewCommand(DoubleSupplier ourDistanceFromShot){
+    return Commands.runEnd(      
+      () -> {
+        if(angle < -4 || angle > 45) { 
+          return;
+        }
+        adjustAngle(angle);
+        setOurDistance(ourDistanceFromShot);
+      }, 
+      () -> adjustAngle(-4), this);
+  }
   
 
-  public Command autoAngleCommand(DoubleSupplier distanceFromTarget){
-   
-
-
+  public Command autoAngleCommand(DoubleSupplier distanceFromTarget) {
     return new Command(){
       @Override
       public void initialize() {
@@ -100,7 +124,7 @@ public class Pivot extends SubsystemBase {
 
       @Override
       public void execute() {
-            var angleToPivotDownToFromInitial = distanceFromTarget.getAsDouble() * kDegreesPerDistanceAwayFromTarget;
+        var angleToPivotDownToFromInitial = distanceFromTarget.getAsDouble() * kDegreesPerDistanceAwayFromTarget;
             //SmartDashboard.putNumber("distance", distanceFromTarget.getAsDouble());
 
         adjustAngle(angleToPivotDownToFromInitial);

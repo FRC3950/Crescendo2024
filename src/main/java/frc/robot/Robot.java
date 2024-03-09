@@ -44,12 +44,16 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run(); 
+
+
+
+
     //SmartDashboard.putNumber("AA_Angle off X axis", m_robotContainer.drivetrain.getState().Pose.getTranslation().getAngle().getDegrees()); 
 
 
     // if (false) {    
       
-    //   var lastResult = LimelightHelpers.getLatestResults("limelight").targetingResults;
+      // var lastResult = LimelightHelpers.getLatestResults("limelight").targetingResults;
     //   LimelightHelpers.setLEDMode_ForceOn("limelight");
     //   LimelightHelpers.setLEDMode_ForceBlink("limelight");
 
@@ -124,7 +128,26 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+
+
+    
+    
+
+    var lastResult = LimelightHelpers.getLatestResults("limelight").targetingResults;
+     Pose2d llPose = lastResult.getBotPose3d_wpiBlue().toPose2d();
+
+
+     if (lastResult.valid) {
+      if (lastResult.targets_Fiducials.length > 0) {
+    
+        m_robotContainer.drivetrain.addVisionMeasurement(llPose, Timer.getFPGATimestamp() );
+      }
+
+    }
+
+
+  }
 
   @Override
   public void teleopExit() {

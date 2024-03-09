@@ -10,6 +10,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import au.grapplerobotics.LaserCan;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -60,10 +61,8 @@ public class Shooter extends SubsystemBase {
       bottom.setControl(new Follower(top.getDeviceID(), true));
   }
 
-  public double getRPMS (){
-
+  public double getRPMS () {
     return top.getVelocity().getValue();
-    
   }
 
   public void setDistancedIdleSpeed(DoubleSupplier distance) {

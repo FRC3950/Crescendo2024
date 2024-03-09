@@ -4,6 +4,11 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -14,24 +19,26 @@ import frc.robot.subsystems.Pivot;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AimAndShootCommand extends SequentialCommandGroup {
+public class AutoAim extends SequentialCommandGroup {
   /** Creates a new AimAndShootCommand. */
-  public AimAndShootCommand(Pivot pivot, double angle) {
+  public AutoAim(Pivot pivot, DoubleSupplier ourDistanceFromShot) {
+
+    // -1.808x^2 +14.70x +1.332
+
+    var distance = ourDistanceFromShot.getAsDouble();
+    var angle = -1.808 * Math.pow(distance, 2) + 14.7 * distance + 1.332;
 
 
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
 
-      pivot.run(()->pivot.adjustAngle(angle)).until(()-> pivot.isAtAngle(angle)),
+    Commands.runEnd(      
+      ()->pivot.adjustAngle(angle),
+       ()->pivot.adjustAngle(0),
+pivot)
 
-      new ParallelCommandGroup(
-        pivot.run(()->pivot.adjustAngle(angle)),
-        new ShootCommand()
-
-    ).withTimeout(1.25),
-      new InstantCommand(()->Intake.getInstance().stop()),
-      pivot.runOnce(()->pivot.adjustAngle(0)).until(()-> pivot.isAtAngle(0))
+     
     );
   }
 }

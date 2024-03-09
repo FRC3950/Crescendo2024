@@ -25,15 +25,12 @@ public class IntakeCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
-            intake.setState((isForward) ? State.INTAKE : State.OUTTAKE, isForward);
-
+    intake.setState((isForward) ? State.INTAKE : State.OUTTAKE, isForward);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
     
   }
 
@@ -47,9 +44,8 @@ public class IntakeCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (intake.noteIsIndexed())
-    {return true;
-    
+    if (intake.noteIsIndexed() && isForward){
+      return true;
     }
     return false;
   }

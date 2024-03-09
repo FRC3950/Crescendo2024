@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3491521419562087,
-      "y": 5.550936522700434
+      "x": 0.7016407177345699,
+      "y": 4.407748477948993
     },
-    "rotation": 0
+    "rotation": -60.0
   },
   "command": {
     "type": "sequential",
@@ -26,13 +26,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "comp mid 2 piece 1"
+            "pathName": "comp south rush 3 piece 1"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "waitUntilIndexed"
+            "name": "intakeOff"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootNote"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeOn"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "comp south rush 3 piece 2"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {
@@ -44,13 +74,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "comp mid 2 piece 2"
+            "pathName": "comp south rush 3 piece 3"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shootHub"
+            "name": "shootNote"
           }
         }
       ]
