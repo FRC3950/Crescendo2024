@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.time.Instant;
-
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.Follower;
@@ -13,13 +11,11 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
 
-import au.grapplerobotics.LaserCan;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.LimelightHelpers;
+import frc.robot.misc.LimelightHelpers;
 import frc.robot.constants.Constants;
 
 public class Intake extends SubsystemBase {
@@ -40,28 +36,24 @@ public class Intake extends SubsystemBase {
   private final double kP = 0.01;
   private final double kV = 0.12;
 
+  public final IntakeCommands commands = new IntakeCommands();
+
   public enum State {
 
-    INTAKE(0.7),
-    OUTTAKE(-0.7),
-    OFF(0);
+    INTAKE(0.7, 38),
+    OUTTAKE(-0.7, -38),
+    INDEX(0, 38),
+    OFF(0, 0);
 
-    final double percentValue;
+    final double intakePercent, indexerVelocity;
 
-    State(double percentValue){this.percentValue = percentValue;}
-  }
-
-  private static Intake instance;
-
-  public static Intake getInstance(){
-    if (instance == null) {
-      instance = new Intake();
+    State(double intakePercent, double indexerVelocity){
+        this.intakePercent = intakePercent;
+        this.indexerVelocity = indexerVelocity;
     }
-
-    return instance;
   }
 
-  private Intake() {
+  public Intake() {
 
     indexerConfigs.kP = kP;
     indexerConfigs.kV = kV;
@@ -74,90 +66,66 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putBoolean("INTAKE", false);
   }
 
-  public void stop() {
-    state = State.OFF;
+  public final class IntakeCommands {
+    public Command intakeCommand() {
+        return new Command() {
+            @Override
+            public void initialize() {
+                setState(State.INTAKE);
+            }
 
-    leftMotor.set(0);
-    indexer.set(0);
+            @Override
+            public void end(boolean interrupted) {
+                setState(State.OFF);
+            }
+
+            @Override
+            public boolean isFinished() {
+                return noteIsIndexed();
+            }
+        };
+    }
+
+    public Command outtakeCommand() {
+        return new Command() {
+            @Override
+            public void initialize() {
+                setState(State.OUTTAKE);
+            }
+
+            @Override
+            public void end(boolean interrupted){
+                setState(State.OFF);
+            }
+        };
+    }
+
+    public Command stopCommand() {
+        return Commands.runOnce(() -> setState(State.OFF));
+    }
   }
 
-  public void run(){
-    state = State.INTAKE;
+  public void setState(State newState){
+    if(!noteIsIndexed() || newState == State.OUTTAKE || newState == State.INDEX) {
+        state = newState;
 
-    leftMotor.set(0.7);
-    indexer.set(0.30);
-  }
-
-
-  public void autoIntake() {
-    //state = State.INTAKE;
-    if(!noteIsIndexed()){
-      leftMotor.set(0.80);
-      indexer.set(0.35);
+        leftMotor.set(newState.intakePercent);
+        indexer.setControl(indexerVelocity.withVelocity(newState.indexerVelocity));
     }
 
     else {
-      leftMotor.set(0);
-      indexer.set(0);
+      state = State.OFF;
     }
   }
 
-  public void runIndexer(){
-    indexer.setControl(indexerVelocity.withVelocity(38));
-  }
-
-  public void runIndexerIntake() {
-    indexer.setControl(indexerVelocity.withVelocity(34));
-  }
-
-  public void indexerOff(){
-    indexer.set(0);
-  }
-
-  public void runIndexerBack(){
-    indexer.set(-0.3);
-  }
-
-  public Command intakeUntilNoteCommand(){
-   return Commands.startEnd(this::run, this::stop, this)
-   .until(() -> noteIsIndexed())
-   .andThen(this::runIndexerBack).until(() -> !noteIsIndexed());
-  }
-
-  public Command autoIntakeCommand() {
-    return Commands.startEnd(
-      this::run, this::stop, this).until(()->noteIsIndexed());
-  }
-
-  public void setState(State newState, boolean isForward){
-    if(!noteIsIndexed() || !isForward){
-      state = newState;
-
-      leftMotor.set(newState.percentValue);
-      indexer.set(newState.percentValue);
-    }
- 
-
-    else {
-      if (Shooter.getInstance().isActive()) {
-        state = State.INTAKE;
-      }
-      else {
-        state = State.OFF;
-      }
-    }
-  }
-  
   public boolean noteIsIndexed() {
-    //System.out.println(laserCan.getMeasurement().distance_mm < 150);
-  
     return !beamBreak.getValue().equals(ReverseLimitValue.Open);
   }
 
   @Override
   public void periodic() {
     beamBreak.refresh();
-    
+
     SmartDashboard.putBoolean("INTAKE", noteIsIndexed());
 
     if(noteIsIndexed()){
@@ -166,7 +134,5 @@ public class Intake extends SubsystemBase {
     else {
       LimelightHelpers.setLEDMode_ForceOff("limelight");
     }
-    //System.out.println(laserCan.getMeasurement().distance_mm);
-    // This method will be called once per scheduler run
   }
 }

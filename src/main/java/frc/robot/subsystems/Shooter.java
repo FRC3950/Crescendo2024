@@ -4,18 +4,13 @@
 
 package frc.robot.subsystems;
 
-import java.util.function.DoubleSupplier;
-
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain.SwerveDriveState;
 
-import au.grapplerobotics.LaserCan;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.constants.Constants;
-import frc.robot.subsystems.swerve.Swerve;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
@@ -25,23 +20,16 @@ public class Shooter extends SubsystemBase {
 
   State state = State.IDLE;
 
-  private static Shooter instance;
-
   private final double kV = 0.112;
   private final double kP = 0.005; //TODO
 
   private final VelocityVoltage velocityVoltage = new VelocityVoltage(0);
   private final Slot0Configs slot0Configs = new Slot0Configs();
 
-  public static Shooter getInstance(){
-      if(instance == null){
-          instance = new Shooter();
-      }
-      return instance;
-  }
+  public ShooterCommands commands = new ShooterCommands();
   public enum State {
     OFF(0),
-    IDLE(5),
+    IDLE(10),
     ACTIVE(70);
 
     double shooterRps;
@@ -49,7 +37,7 @@ public class Shooter extends SubsystemBase {
     State(double shooterRps){this.shooterRps = shooterRps;}
   }
 
-  private Shooter() {
+  public Shooter() {
       slot0Configs.kV = kV;
       slot0Configs.kP = kP;
 
@@ -61,24 +49,27 @@ public class Shooter extends SubsystemBase {
       bottom.setControl(new Follower(top.getDeviceID(), true));
   }
 
-  public double getRPMS () {
+  public class ShooterCommands {
+      public Command shoot(Intake intake) {
+          return new Command() {
+              @Override
+              public void execute() {
+                  setState(State.ACTIVE);
+                  if (getRpm() > 66)
+                      intake.setState(Intake.State.INDEX);
+              }
+
+              @Override
+              public void end(boolean interrupted) {
+                  setState(State.IDLE);
+                  intake.setState(Intake.State.OFF);
+              }
+          };
+      }
+  }
+
+  public double getRpm() {
     return top.getVelocity().getValue();
-  }
-
-  public void setDistancedIdleSpeed(DoubleSupplier distance) {
-    var d = distance.getAsDouble();
-
-    if(d < 8){
-      State.IDLE.shooterRps = d / 11;
-    }
-  }
-
-  public boolean isActive(){
-    return state == State.ACTIVE;
-  }
-
-  public void resetIdleSpeed() {
-    State.IDLE.shooterRps = 10;
   }
 
   public void setState(State newState){
@@ -87,22 +78,4 @@ public class Shooter extends SubsystemBase {
     top.setControl(velocityVoltage.withVelocity(newState.shooterRps));
   }
 
-  public void idle(){
-    state = State.IDLE;
-
-    top.setControl(velocityVoltage.withVelocity(state.shooterRps));
-  }
-
-  public void stop() {
-    state = State.OFF;
-
-    top.setControl(velocityVoltage.withVelocity(0));
-  }
-
-  @Override
-  public void periodic() {
-    
-    // This method will be called once per scheduler run
-
-  }
 }

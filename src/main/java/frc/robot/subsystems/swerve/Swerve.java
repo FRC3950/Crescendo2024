@@ -10,12 +10,9 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.ApplyChassisSpeeds;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -30,11 +27,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.constants.LimelightHelpers;
+import frc.robot.misc.LimelightHelpers;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Limelight;
 
@@ -44,19 +40,19 @@ import frc.robot.subsystems.Limelight;
  */
 public class Swerve extends SwerveDrivetrain implements Subsystem {
 //blargh
-//may need to add 
+//may need to add
 // swerveDriveFXConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = Constants.Swerve.openLoopRamp;
 // swerveDriveFXConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = Constants.Swerve.openLoopRamp;
 
     Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
 
-  
 
-    private static final double kSimLoopPeriod = 0.005; // 5 ms
+
+    private static final double SIM_LOOP_PERIOD = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
-    private double m_lastSimTime;
+    private double lastSimTime;
 
-    public boolean isLockedRotational = false; 
+    public boolean isLockedRotational = false;
     private final double rotationalKp = 0.0265;
 
     //red and blue speaker pose
@@ -69,11 +65,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
     public double getRotationalSpeed(DoubleSupplier xboxInput) {
         if (isLockedRotational) {
-            return -(lime.getTx() * rotationalKp); 
-        }
-
-        else if (isLockedRotational) {
-            return (lime.getTx() * rotationalKp); 
+            return -(lime.getTx() * rotationalKp);
         }
 
         return xboxInput.getAsDouble();
@@ -118,7 +110,6 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
                                             driveBaseRadius,
                                             new ReplanningConfig()),
 
-
             () -> {
                     // Boolean supplier that controls when the path will be mirrored for the red alliance
                     // This will flip the path being followed to the red side of the field.
@@ -130,8 +121,6 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
                     }
                     return false;
                 },
-
-
             this); // Subsystem for requirements
     }
 
@@ -140,7 +129,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     }
 
     public Command getAutoPath(String pathName) {
-        
+
         return new PathPlannerAuto(pathName);
     }
 
@@ -204,32 +193,32 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     }
 
 // public PathPlannerPath centerOnSpeakerPathCommand() {
-    
+
 //     );
-    
+
 
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {
         return m_kinematics.toChassisSpeeds(getState().ModuleStates);
     }
 
     private void startSimThread() {
-        m_lastSimTime = Utils.getCurrentTimeSeconds();
+        lastSimTime = Utils.getCurrentTimeSeconds();
 
         /* Run simulation at a faster rate so PID gains behave more reasonably */
         m_simNotifier = new Notifier(() -> {
             final double currentTime = Utils.getCurrentTimeSeconds();
-            double deltaTime = currentTime - m_lastSimTime;
-            m_lastSimTime = currentTime;
+            double deltaTime = currentTime - lastSimTime;
+            lastSimTime = currentTime;
 
             /* use the measured time delta, get battery voltage from WPILib */
             updateSimState(deltaTime, RobotController.getBatteryVoltage());
         });
-        m_simNotifier.startPeriodic(kSimLoopPeriod);
+        m_simNotifier.startPeriodic(SIM_LOOP_PERIOD);
     }
 
 
 //May need to erase
-//This is a closed loop implementation of chassis drive for pathplanner. 
+//This is a closed loop implementation of chassis drive for pathplanner.
 //The open/PID version might be good enough, but this could be better if we get our sysID data 'lit'
 // blargh
 
@@ -306,7 +295,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
             return this;
         }
 
-        
+
     }
 
 

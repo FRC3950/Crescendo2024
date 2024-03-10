@@ -18,14 +18,14 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import frc.robot.LimelightHelpers;
+import frc.robot.misc.LimelightHelpers;
 
 public class Telemetry {
     private final double MaxSpeed;
 
     /**
      * Construct a telemetry object, with the specified max speed of the robot
-     * 
+     *
      * @param maxSpeed Maximum speed in meters per second
      */
     public Telemetry(double maxSpeed) {
@@ -128,22 +128,6 @@ public class Telemetry {
         velocityX.set(velocities.getX());
         velocityY.set(velocities.getY());
         odomFreq.set(1.0 / state.OdometryPeriod);
-
-        /* Telemeterize the vision results */
-
-
-        // var lastResult = LimelightHelpers.getLatestResults("limelight").targetingResults;
-        // if (lastResult.valid) {
-        //     Pose2d llPose = lastResult.getBotPose2d_wpiBlue();
-        //     visionX.set(llPose.getX());
-        //     visionY.set(llPose.getY());
-        //     visionAngle.set(llPose.getRotation().getDegrees());
-
-
-
-          //  visionDistance.set(lastResult.getDistance());
-   //     }
-
 
 
         /* Telemeterize the module's states */

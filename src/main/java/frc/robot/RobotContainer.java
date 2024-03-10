@@ -4,45 +4,26 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
-import java.util.List;
-import java.util.function.DoubleSupplier;
-
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
-import com.fasterxml.jackson.databind.util.Named;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.AimAndShootCommand;
-import frc.robot.commands.AutoAim;
-import frc.robot.commands.paths.OdometryStageAlign;
-import frc.robot.commands.paths.TurnToGoal;
-import frc.robot.commands.teleop.IntakeCommand;
-import frc.robot.commands.teleop.ShootCommand;
+import frc.robot.groups.AimShootCommand;
+import frc.robot.groups.VisionAutoAimCommand;
 import frc.robot.constants.TunerConstants;
+import frc.robot.controller.ControlScheme;
+import frc.robot.controller.Controller;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
@@ -50,42 +31,43 @@ import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.Telemetry;
 
 public class RobotContainer {
+
   private final SendableChooser<Command> autoChooser;
-  Alliance my_alliance; 
+  Alliance my_alliance;
 
 
-  private double MaxSpeed = 4.75; // 6 meters per second desired top speed *t3x*  //was 5 before
-  private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
+  private final double MaxSpeed = 4.75; // 6 meters per second desired top speed *t3x*  //was 5 before
+  private final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
   //Joystick and drivetrain
-  private final CommandXboxController joystick = new CommandXboxController(0); 
-  private final CommandXboxController SecondJoystick = new CommandXboxController(1);
-  public final Swerve drivetrain = TunerConstants.DriveTrain; // My drivetrain
-  public final Pivot pivot = new Pivot(); // My pivot subsystem
+  public final Swerve drivetrain = TunerConstants.DriveTrain;
 
   Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(0));
   Pose2d blueSpeaker = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
   Pose2d inFrontOfSpeaker = new Pose2d(2,5.55, Rotation2d.fromDegrees(0));
 
-  private final ShootCommand shoot = new ShootCommand();
-  private final IntakeCommand intakeIn = new IntakeCommand(true);
-  private final IntakeCommand outtake = new IntakeCommand(false);
+  // Subsystems
+  private final Intake intake = new Intake();
+  private final Shooter shooter = new Shooter();
+  public final Pivot pivot = new Pivot();
 
-  
+  private final Command autoAimCommand = new VisionAutoAimCommand(
+          pivot, drivetrain,
+          this::getAlliance,
+          blueSpeaker::getTranslation,
+          redSpeaker::getTranslation
+  );
 
   //Field Centric Request - field-centric in open loop
-
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.10).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // field-centric
       // driving in open loop
 
-  //Robot Centric Request   
+  //Robot Centric Request
 
   private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-
-
     ////// Break and point are not used in the code, but left for reference /////////////
         // private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
         // private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -96,99 +78,56 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-    drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-    drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
-        .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-        .withRotationalRate(drivetrain.getRotationalSpeed(() -> -joystick.getRightX()) * MaxAngularRate)                                                                                // X (left)
+    drivetrain.setDefaultCommand(
+    drivetrain.applyRequest(() -> drive.withVelocityX(-Controller.DRIVER.controller.getLeftY() * MaxSpeed)
+        .withVelocityY(-Controller.DRIVER.controller.getLeftX() * MaxSpeed)
+        .withRotationalRate(drivetrain.getRotationalSpeed(() -> -Controller.DRIVER.controller.getRightX()) * MaxAngularRate)                                                                                // X (left)
     ).ignoringDisable(true));
-    // Toggle April-Tag Lock on (Robot with drive angled at tag)
-        PathPlannerPath midNoteShootPos = PathPlannerPath.fromPathFile("driveToNoteShot");
 
-    joystick.leftBumper().onTrue(drivetrain.runOnce(() -> { drivetrain.isLockedRotational = !drivetrain.isLockedRotational; }));
-    joystick.rightBumper().onTrue(AutoBuilder.followPath(midNoteShootPos)
-                .onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5));
-                
-    joystick.rightTrigger(0.5).onTrue(new AimAndShootCommand(pivot, 26));
+    PathPlannerPath midNoteShootPos = PathPlannerPath.fromPathFile("driveToNoteShot");
 
-    // reset the field-centric heading 
-    joystick.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
-
-    //test reset Pose
-    //TODO make it conditional
-    joystick.b().onTrue(
-      new InstantCommand()
+    Controller.DRIVER.controller.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.isLockedRotational = !drivetrain.isLockedRotational));
+    Controller.DRIVER.controller.rightBumper().onTrue(
+    AutoBuilder.followPath(midNoteShootPos)
+                .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5) // Cancels on driver input
     );
+    ControlScheme.RESET_HEADING.button.onTrue(Commands.runOnce(drivetrain::seedFieldRelative));
 
-    // AutoBuilder.pathfindToPose(inFrontOfSpeaker, 
-    
-    //   new PathConstraints(
-    //     4.0, 4.0,
-    //     Units.degreesToRadians(540), Units.degreesToRadians(720)),
-    //     0,
-    //     0);
+    // Manipulator controls
+    ControlScheme.SHOOT_SPEAKER.button.whileTrue(new AimShootCommand(pivot, intake, shooter, () -> 16));
+    ControlScheme.SHOOT_STAGE.button.whileTrue(new AimShootCommand(pivot, intake, shooter, () -> 27));
 
-    // update Pose with Vision
-   
-   
-//joystick.a().onTrue(drivetrain.runOnce(drivetrain::applyVisiontoPose));
-   // SmartDashboard.putData("Vision odometery", Commands.runOnce(drivetrain::applyVisiontoPose));
+    ControlScheme.AIM_AUTO.button.whileTrue(autoAimCommand)
+                    .onFalse(Commands.sequence(
+                            Commands.runOnce(() -> drivetrain.isLockedRotational = false),
+                            pivot.commands.stowCommand()
+                    ));
 
-    SecondJoystick.leftBumper().whileTrue(new AimAndShootCommand(pivot, 16));
-    
-    SecondJoystick.rightTrigger(0.5)
-      .whileTrue(shoot)
-      .onFalse(Commands.runOnce(Intake.getInstance()::stop, Intake.getInstance())
-    );
-    
-    SecondJoystick.a().whileTrue(   
-      Commands.startEnd(Intake.getInstance()::run, Intake.getInstance()::stop, 
-      Intake.getInstance())
-      .alongWith(Commands.runOnce(()->pivot.adjustAngle(-4), pivot))
-      .until(Intake.getInstance()::noteIsIndexed)
-    ).onFalse(Commands.runOnce(Intake.getInstance()::stop, Intake.getInstance()));
+    ControlScheme.INTAKE.button.whileTrue(intake.commands.intakeCommand());
+    ControlScheme.OUTTAKE.button.whileTrue(intake.commands.outtakeCommand());
+    ControlScheme.SHOOT.button.whileTrue(shooter.commands.shoot(intake));
 
-    SecondJoystick.leftTrigger(0.5).whileTrue(
-      Commands.either(
-        Commands.parallel(
-          pivot.autoAngleNewCommand(() -> drivetrain.getState().Pose.getTranslation().getDistance(blueSpeaker.getTranslation())),
-          Commands.runOnce(() -> drivetrain.isLockedRotational = true)
-        ).andThen(Commands.runOnce(()->pivot.adjustAngle(-4), pivot)),
-        Commands.parallel(
-          pivot.autoAngleNewCommand(() -> drivetrain.getState().Pose.getTranslation().getDistance(redSpeaker.getTranslation())),
-          Commands.runOnce(() -> drivetrain.isLockedRotational = true)
-        ).andThen(Commands.runOnce(()->pivot.adjustAngle(-4), pivot)),
-        ()-> DriverStation.getAlliance().get() == DriverStation.Alliance.Blue
-      )
-    ).onFalse(Commands.runOnce(() -> drivetrain.isLockedRotational = false));
-    
-    SecondJoystick.b().whileTrue(outtake);
+    Controller.DRIVER.controller.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
+    Controller.DRIVER.controller.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
 
+    Controller.DRIVER.controller.pov(90).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0).withVelocityY(-0.5)));
+    Controller.DRIVER.controller.pov(270).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0).withVelocityY(0.5)));
+
+    // Controller.DRIVER.controller.x().whileTrue(new PathPlannerAuto(("test")));
+    // Controller.DRIVER.controller.a().whileTrue(drivetrain.applyRequest(() -> brake));
+    // Controller.DRIVER.controller.b().whileTrue(drivetrain
+    //   .applyRequest(() -> point.withModuleDirection(new Rotation2d(-Controller.DRIVER.controller.getLeftY(), -Controller.DRIVER.controller.getLeftX()))));
     drivetrain.registerTelemetry(logger::telemeterize);
-
-    joystick.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
-    joystick.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
-
-    joystick.pov(90).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0).withVelocityY(-0.5)));
-    joystick.pov(270).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0).withVelocityY(0.5)));
-
-    // joystick.x().whileTrue(new PathPlannerAuto(("test")));
-    // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    // joystick.b().whileTrue(drivetrain
-    //   .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
-  
   }
 
   public RobotContainer() {
-      // SmartDashboard.putData("shootHub",new AimAndShootCommand(pivot, 17));
-      //   SmartDashboard.putData("Note",new AimAndShootCommand(pivot, 26));
 
-    SmartDashboard.putData(Commands.runOnce(Intake.getInstance()::intakeUntilNoteCommand));
-    
-    NamedCommands.registerCommand("shootHub", new AimAndShootCommand(pivot, 17));
-    NamedCommands.registerCommand("shootNote", new AimAndShootCommand(pivot, 26));
-    NamedCommands.registerCommand("intakeOn", Commands.runOnce(Intake.getInstance()::run));
-    NamedCommands.registerCommand("waitUntilIndexed", Commands.waitUntil(Intake.getInstance()::noteIsIndexed).withTimeout(1.5));
-    NamedCommands.registerCommand("intakeOff", Commands.runOnce(Intake.getInstance()::stop, Intake.getInstance()));
+    SmartDashboard.putData(Commands.runOnce(intake.commands::intakeCommand));
+
+    NamedCommands.registerCommand("shootHub", new AimShootCommand(pivot, intake, shooter, () -> 17));
+    NamedCommands.registerCommand("shootNote", new AimShootCommand(pivot, intake, shooter, () -> 26));
+    NamedCommands.registerCommand("intakeOn", intake.commands.intakeCommand().withTimeout(1.5));
+    NamedCommands.registerCommand("intakeOff", intake.commands.stopCommand());
     // Constructs AutoBuilder (SendableChooser<Command>):
     autoChooser = AutoBuilder.buildAutoChooser("andy");
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -196,74 +135,24 @@ public class RobotContainer {
     PathPlannerPath upperStage = PathPlannerPath.fromPathFile("UpperStage");
     PathPlannerPath lowerStage = PathPlannerPath.fromPathFile("LowerStage");
     PathPlannerPath amp = PathPlannerPath.fromPathFile("Amp");
-    // SmartDashboard.putData("goStage", new alignWithStage_Odometry(new
-    // Pose2d()).onlyWhile(()-> Math.abs(joystick.getLeftY()) > 0.5));
-    // y greater than 4
-    // SmartDashboard.putData("goStage",
-    //     Commands.either(
-    //         AutoBuilder.followPath(upperStage)
-    //             .onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5),
-    //         AutoBuilder.followPath(lowerStage)
-    //             .onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5),
-    //         () -> drivetrain.getState().Pose.getY() > 4));
-
-    // SmartDashboard.putData("amp", AutoBuilder.followPath(amp).onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5));
-
-    // SmartDashboard.putData("turnToShoot", new TurnToGoal(drivetrain).onlyWhile(() -> Math.abs(joystick.getLeftY()) < 0.5 && Math.abs(joystick.getLeftX()) < 0.5));
-        
-        
-    //SmartDashboard.putString("alliance", DriverStation.getAlliance().get().toString());
 
     my_alliance = DriverStation.getAlliance().get();
-    
+
 
     SmartDashboard.putData("toggleAutoAngle",
-    pivot.autoAngleCommand(
-      
-    my_alliance == Alliance.Blue ? 
-    () -> drivetrain.getState().Pose.getTranslation().getDistance(blueSpeaker.getTranslation()) :
-    () -> drivetrain.getState().Pose.getTranslation().getDistance(redSpeaker.getTranslation())
-        ).onlyIf(()->DriverStation.getAlliance().isPresent()));
-
-
-    // SmartDashboard.putData("PrintAngle", new RunCommand(() -> {
-    // SmartDashboard.putNumber("Angle Offset From X Axis on Blue Speaker", 
-      
-    //   Math.atan(
-    //     drivetrain.getState().Pose.relativeTo(blueSpeaker).getY()/drivetrain.getState().Pose.relativeTo(blueSpeaker).getX()) * 180 / Math.PI);
-    // }));
-
-    //SmartDashboard.putData("shootHub",new AimAndShootCommand(pivot, 17));
-    //SmartDashboard.putData("Note",new AimAndShootCommand(pivot, 26));
-    //SmartDashboard.putData("aaaa", new RunCommand(()->pivot.adjustAngle(17), pivot));
-
-
-    // why does addVisionMeasurement not work?
-    // also do speak center path
-
-    // then shooter and angle subsystem
-
-    // then intake and conveyor subsystem
-
-    // SmartDashboard.putData("addVisionMeasurment", new InstantCommand(
-    // () -> {
-    // drivetrain.addVisionMeasurement(new Pose2d(7, 7, Rotation2d.fromDegrees(90)),
-    // Timer.getFPGATimestamp());
-    // //System.out.println(drivetrain.getState().Pose);
-    // }
-    // ));
-
-
+    pivot.commands.autoAngleCommand(
+            my_alliance == Alliance.Blue ?
+        () -> drivetrain.getState().Pose.getTranslation().getDistance(blueSpeaker.getTranslation()) :
+        () -> drivetrain.getState().Pose.getTranslation().getDistance(redSpeaker.getTranslation()))
+            .onlyIf(()->DriverStation.getAlliance().isPresent())
+    );
 
     configureBindings();
   }
 
   private Alliance getAlliance() {
-    var alliance = DriverStation.getAlliance();
-    if (alliance.isPresent()){}
     return DriverStation.getAlliance().get();
   }
-
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();

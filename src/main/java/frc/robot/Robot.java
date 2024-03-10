@@ -4,21 +4,13 @@
 
 package frc.robot;
 
-import java.util.Random;
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.Nat;
 /////
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.net.PortForwarder;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.TimedRobot;
+        import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
+        import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.misc.LimelightHelpers;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -43,16 +35,16 @@ public class Robot extends TimedRobot {
   }
   @Override
   public void robotPeriodic() {
-    CommandScheduler.getInstance().run(); 
+    CommandScheduler.getInstance().run();
 
 
 
 
-    //SmartDashboard.putNumber("AA_Angle off X axis", m_robotContainer.drivetrain.getState().Pose.getTranslation().getAngle().getDegrees()); 
+    //SmartDashboard.putNumber("AA_Angle off X axis", m_robotContainer.drivetrain.getState().Pose.getTranslation().getAngle().getDegrees());
 
 
-    // if (false) {    
-      
+    // if (false) {
+
       // var lastResult = LimelightHelpers.getLatestResults("limelight").targetingResults;
     //   LimelightHelpers.setLEDMode_ForceOn("limelight");
     //   LimelightHelpers.setLEDMode_ForceBlink("limelight");
@@ -66,11 +58,11 @@ public class Robot extends TimedRobot {
 
     //   }
 
-    
+
     // }
 
-    // if (false) {    
-      
+    // if (false) {
+
     //   var x = Timer.getFPGATimestamp() / 10;
     //   x += 0.1 * Math.random();
     //   var y = Timer.getFPGATimestamp() / 10;
@@ -131,8 +123,8 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
 
-    
-    
+
+
 
     var lastResult = LimelightHelpers.getLatestResults("limelight").targetingResults;
      Pose2d llPose = lastResult.getBotPose3d_wpiBlue().toPose2d();
@@ -140,7 +132,7 @@ public class Robot extends TimedRobot {
 
      if (lastResult.valid) {
       if (lastResult.targets_Fiducials.length > 0) {
-    
+
         m_robotContainer.drivetrain.addVisionMeasurement(llPose, Timer.getFPGATimestamp() );
       }
 
