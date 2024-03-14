@@ -11,10 +11,10 @@ import java.util.function.DoubleSupplier;
 public class AimShootCommand extends SequentialCommandGroup {
     public AimShootCommand(Pivot pivot, Intake intake, Shooter shooter, DoubleSupplier angle) {
         addCommands(
-                pivot.commands.setAngleCommand(angle),
-                shooter.commands.shoot(intake).withTimeout(1.25),
-                intake.commands.stopCommand(),
-                pivot.commands.stowCommand()
+                pivot.setAngleCommand(angle),
+                shooter.shootCommand(intake).withTimeout(1.25),
+                intake.stopCommand(),
+                pivot.stowCommand()
         );
     }
 }

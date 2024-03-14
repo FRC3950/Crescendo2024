@@ -1,4 +1,4 @@
-package frc.robot.controller;
+package frc.robot.xbox;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 

@@ -20,15 +20,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.groups.AimShootCommand;
+import frc.robot.groups.AmpScoreCommand;
+import frc.robot.groups.IntakeStowCommand;
 import frc.robot.groups.VisionAutoAimCommand;
 import frc.robot.constants.TunerConstants;
-import frc.robot.controller.ControlScheme;
-import frc.robot.controller.Controller;
+import frc.robot.subsystems.Flipper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.Telemetry;
+import frc.robot.xbox.ControlScheme;
+import frc.robot.xbox.Controller;
 
 public class RobotContainer {
 
@@ -36,7 +39,7 @@ public class RobotContainer {
   Alliance my_alliance;
 
 
-  private final double MaxSpeed = 4.75; // 6 meters per second desired top speed *t3x*  //was 5 before
+  private final double MaxSpeed = 4.73; // 6 meters per second desired top speed *t3x*  //was 5 before
   private final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
   //Joystick and drivetrain
@@ -49,7 +52,9 @@ public class RobotContainer {
   // Subsystems
   private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
-  public final Pivot pivot = new Pivot();
+  private final Pivot pivot = new Pivot();
+  private final Flipper flipper = new Flipper();
+
 
   private final Command autoAimCommand = new VisionAutoAimCommand(
           pivot, drivetrain,
@@ -94,18 +99,25 @@ public class RobotContainer {
     ControlScheme.RESET_HEADING.button.onTrue(Commands.runOnce(drivetrain::seedFieldRelative));
 
     // Manipulator controls
-    ControlScheme.SHOOT_SPEAKER.button.whileTrue(new AimShootCommand(pivot, intake, shooter, () -> 16));
+    ControlScheme.SHOOT_SPEAKER.button.whileTrue(
+      new AimShootCommand(pivot, intake, shooter, () -> 16)
+    ).onFalse(pivot.stowCommand());
+
     ControlScheme.SHOOT_STAGE.button.whileTrue(new AimShootCommand(pivot, intake, shooter, () -> 27));
+    ControlScheme.SHOOT.button.whileTrue(shooter.shootCommand(intake));
+    ControlScheme.SCORE_AMP.button.whileTrue(new AmpScoreCommand(pivot, flipper))
+                    .onFalse(pivot.stowCommand());
 
     ControlScheme.AIM_AUTO.button.whileTrue(autoAimCommand)
                     .onFalse(Commands.sequence(
                             Commands.runOnce(() -> drivetrain.isLockedRotational = false),
-                            pivot.commands.stowCommand()
+                            pivot.stowCommand()
                     ));
 
-    ControlScheme.INTAKE.button.whileTrue(intake.commands.intakeCommand());
-    ControlScheme.OUTTAKE.button.whileTrue(intake.commands.outtakeCommand());
-    ControlScheme.SHOOT.button.whileTrue(shooter.commands.shoot(intake));
+    ControlScheme.INTAKE.button.whileTrue(new IntakeStowCommand(pivot, intake));
+    ControlScheme.OUTTAKE.button.whileTrue(intake.outtakeCommand());
+
+    ControlScheme.TEST_UTIL.button.whileTrue(pivot.setAngleCommand(() -> 55));
 
     Controller.DRIVER.controller.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
     Controller.DRIVER.controller.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
@@ -122,12 +134,12 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    SmartDashboard.putData(Commands.runOnce(intake.commands::intakeCommand));
+    SmartDashboard.putData(Commands.runOnce(() -> intake.intakeCommand()));
 
     NamedCommands.registerCommand("shootHub", new AimShootCommand(pivot, intake, shooter, () -> 17));
     NamedCommands.registerCommand("shootNote", new AimShootCommand(pivot, intake, shooter, () -> 26));
-    NamedCommands.registerCommand("intakeOn", intake.commands.intakeCommand().withTimeout(1.5));
-    NamedCommands.registerCommand("intakeOff", intake.commands.stopCommand());
+    NamedCommands.registerCommand("intakeOn", intake.intakeCommand().withTimeout(1.5));
+    NamedCommands.registerCommand("intakeOff", intake.stopCommand());
     // Constructs AutoBuilder (SendableChooser<Command>):
     autoChooser = AutoBuilder.buildAutoChooser("andy");
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -140,7 +152,7 @@ public class RobotContainer {
 
 
     SmartDashboard.putData("toggleAutoAngle",
-    pivot.commands.autoAngleCommand(
+    pivot.autoAngleCommand(
             my_alliance == Alliance.Blue ?
         () -> drivetrain.getState().Pose.getTranslation().getDistance(blueSpeaker.getTranslation()) :
         () -> drivetrain.getState().Pose.getTranslation().getDistance(redSpeaker.getTranslation()))

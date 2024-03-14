@@ -46,8 +46,6 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
     Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
 
-
-
     private static final double SIM_LOOP_PERIOD = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double lastSimTime;
