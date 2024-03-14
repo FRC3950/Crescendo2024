@@ -16,7 +16,7 @@ public class VisionAutoAimCommand extends ParallelCommandGroup {
         final boolean isBlue = alliance.get() == DriverStation.Alliance.Blue;
 
         addCommands(
-            pivot.commands.autoAngleCommand(() -> drivetrain.getState().Pose.getTranslation().getDistance(
+            pivot.autoAngleCommand(() -> drivetrain.getState().Pose.getTranslation().getDistance(
                     ((isBlue) ? blueSpeaker.get() : redSpeaker.get())
             )),
             Commands.runOnce(() -> drivetrain.isLockedRotational = true)

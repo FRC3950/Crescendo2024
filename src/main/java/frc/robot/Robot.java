@@ -121,24 +121,18 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
-
-
-
-
     var lastResult = LimelightHelpers.getLatestResults("limelight").targetingResults;
-     Pose2d llPose = lastResult.getBotPose3d_wpiBlue().toPose2d();
-
+    Pose2d llPose = lastResult.getBotPose3d_wpiBlue().toPose2d();
 
      if (lastResult.valid) {
-      if (lastResult.targets_Fiducials.length > 0) {
+      if (lastResult.targets_Fiducials.length > 1) {
 
-        m_robotContainer.drivetrain.addVisionMeasurement(llPose, Timer.getFPGATimestamp() );
+        m_robotContainer.drivetrain.addVisionMeasurement(llPose, Timer.getFPGATimestamp()- (lastResult.latency_capture + lastResult.latency_jsonParse + lastResult.latency_pipeline)/1000
+         );
+        //(lastResult.latency_capture + lastResult.latency_jsonParse + lastResult.latency_pipeline)/1000);
       }
 
     }
-
-
   }
 
   @Override

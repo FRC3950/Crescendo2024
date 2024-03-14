@@ -1,4 +1,4 @@
-package frc.robot.controller;
+package frc.robot.xbox;
 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -7,10 +7,14 @@ public enum ControlScheme {
     SHOOT_SPEAKER(Controller.MANIPULATOR.controller.rightBumper()),
     SHOOT_STAGE(Controller.MANIPULATOR.controller.leftBumper()),
     SHOOT(Controller.MANIPULATOR.controller.rightTrigger(0.5)),
+    SCORE_AMP(Controller.MANIPULATOR.controller.x()),
+
     AIM_AUTO(Controller.MANIPULATOR.controller.leftTrigger(0.5)),
 
     INTAKE(Controller.MANIPULATOR.controller.a()),
     OUTTAKE(Controller.MANIPULATOR.controller.b()),
+
+    TEST_UTIL(Controller.MANIPULATOR.controller.y()),
 
     // Driver
     RESET_HEADING(Controller.DRIVER.controller.y()),
