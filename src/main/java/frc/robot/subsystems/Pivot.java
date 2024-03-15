@@ -73,7 +73,7 @@ public class Pivot extends PositionController {
   }
 
   public boolean isAtAngle(DoubleSupplier targetAngle){
-    return Math.abs(targetAngle.getAsDouble() - getPosition()) < 0.5;
+    return Math.abs(targetAngle.getAsDouble() - getPosition()) < 1.0;
   }
 
   public double getTargetAngle(DoubleSupplier distanceSupplier){

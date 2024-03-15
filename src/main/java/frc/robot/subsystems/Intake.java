@@ -25,12 +25,12 @@ public class Intake extends VelocityController {
       new TargetVelocity( // Intake 
         new TalonFX(Constants.Intake.leftId),
         new TalonFX(Constants.Intake.rightId),
-        38,
+        65,
         Constants.Intake.intakeKp,
-        Constants.Intake.intakeKv
+        Constants.Intake.intakeKv, false
       ),
       new TargetVelocity( // Indexer
-        new TalonFX(Constants.Intake.indexerId),
+        new TalonFX(Constants.Intake.indexerId, "CANivore"),
         38,
         Constants.Intake.indexerKp,
         Constants.Intake.indexerKv
@@ -65,7 +65,7 @@ public class Intake extends VelocityController {
     return new Command() {
       @Override
       public void initialize() {
-        applyVelocity(() -> (-Constants.Intake.indexerActiveVelocity.getAsDouble()));
+        applyVelocities(() -> (-Constants.Intake.indexerActiveVelocity.getAsDouble()));
       }
 
       @Override 
@@ -81,6 +81,10 @@ public class Intake extends VelocityController {
 
   public boolean noteIsIndexed() {
     return !beamBreak.getValue().equals(ReverseLimitValue.Open);
+  }
+
+  public void index() {
+    
   }
 
   @Override
