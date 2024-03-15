@@ -17,7 +17,6 @@ import frc.robot.supersystems.VelocityController;
 import frc.robot.constants.Constants;
 
 public class Intake extends VelocityController {
-  /** Creates a new Intake. */
 
   private final StatusSignal<ReverseLimitValue> beamBreak;
 
@@ -37,6 +36,7 @@ public class Intake extends VelocityController {
         Constants.Intake.indexerKv
       )
     );
+    
     beamBreak = getSensorSignal(Constants.Intake.indexerId);
 
     SmartDashboard.putBoolean("INTAKE", false);

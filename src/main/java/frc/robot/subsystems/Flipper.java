@@ -4,10 +4,13 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.Constants;
 import frc.robot.supersystems.PositionController;
+import frc.robot.supersystems.TargetPosition;
 
 public class Flipper extends PositionController {
   
@@ -20,7 +23,12 @@ public class Flipper extends PositionController {
   }
 
   public Flipper() {
-    super(Constants.Flipper.id, "CANivore", Constants.Flipper.stowPosition);
+    super(
+      new TargetPosition(
+        new TalonFX(Constants.Flipper.id, "CANivore"), Constants.Flipper.stowPosition,
+        Constants.Flipper.kP, Constants.Flipper.kV, Constants.Flipper.kG
+      )
+    );
   }
 
   @Override

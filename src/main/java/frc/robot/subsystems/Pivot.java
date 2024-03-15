@@ -6,17 +6,25 @@ package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.Constants;
 import frc.robot.supersystems.PositionController;
+import frc.robot.supersystems.TargetPosition;
 
 public class Pivot extends PositionController {
   /** Creates a new Pivot_Subsystem. */
 
   public Pivot() {
-    super(Constants.Pivot.id, "CANivore", () -> 0);
+    super(
+      new TargetPosition(
+        new TalonFX(Constants.Pivot.id, "CANivore"), () -> -1, 
+        Constants.Pivot.kP, Constants.Pivot.kV, Constants.Pivot.kG
+      )
+    );
     // var motionMagicConfigs = talonFXConfigs.MotionMagic;
     // motionMagicConfigs.MotionMagicCruiseVelocity = 100; // 80 rps cruise velocity
     // motionMagicConfigs.MotionMagicAcceleration = 310; // 160 rps/s acceleration (0.5 seconds)
@@ -28,7 +36,17 @@ public class Pivot extends PositionController {
 
   public Command setAngleCommand(DoubleSupplier angle){
     // Stows pivot if it is unsafe
-    return Commands.runOnce(() -> setPosition(angle.getAsDouble() >= 65 ? () -> -4 : angle));
+    return new Command () {
+      @Override 
+      public void initialize() {
+        setPosition(angle);
+      }
+
+      @Override 
+      public boolean isFinished() {
+        return isAtAngle(angle);
+      }
+    };
   }
 
   public Command stowCommand() {
@@ -36,26 +54,26 @@ public class Pivot extends PositionController {
   }
 
   /**
-       * Returns to stowed position when interrupted (on trigger release).
-       * */
+   * Returns to stowed position when interrupted (on trigger release).
+   * */
   public Command autoAngleCommand(DoubleSupplier distance) {
     return new Command() {
         @Override
         public void execute() {
-            if(distance.getAsDouble() < -4 || distance.getAsDouble() > 25)
-                return;
-            setPosition(() -> getTargetAngle(distance));
+          if(distance.getAsDouble() < -4 || distance.getAsDouble() > 25)
+            return;
+          setPosition(() -> getTargetAngle(distance));
         }
 
         @Override
         public void end(boolean interrupted) {
-            setPosition(() -> -4);
+          setPosition(() -> -4);
         }
     };
   }
 
   public boolean isAtAngle(DoubleSupplier targetAngle){
-    return Math.abs(targetAngle.getAsDouble() - getPosition())<0.5;
+    return Math.abs(targetAngle.getAsDouble() - getPosition()) < 0.5;
   }
 
   public double getTargetAngle(DoubleSupplier distanceSupplier){

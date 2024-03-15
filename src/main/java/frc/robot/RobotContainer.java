@@ -21,8 +21,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.groups.AimShootCommand;
 import frc.robot.groups.AmpScoreCommand;
-import frc.robot.groups.IntakeStowCommand;
-import frc.robot.groups.VisionAutoAimCommand;
+import frc.robot.groups.IntakeCommand;
+import frc.robot.groups.StowCommand;
+import frc.robot.groups.VisionShootCommand;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Flipper;
 import frc.robot.subsystems.Intake;
@@ -56,12 +57,14 @@ public class RobotContainer {
   private final Flipper flipper = new Flipper();
 
 
-  private final Command autoAimCommand = new VisionAutoAimCommand(
-          pivot, drivetrain,
+  private final Command autoShootCommand = new VisionShootCommand(
+          pivot, drivetrain, shooter, intake,
           this::getAlliance,
           blueSpeaker::getTranslation,
           redSpeaker::getTranslation
   );
+
+  private final Command stowCommand = new StowCommand(pivot, intake, shooter, flipper);
 
   //Field Centric Request - field-centric in open loop
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -91,30 +94,30 @@ public class RobotContainer {
 
     PathPlannerPath midNoteShootPos = PathPlannerPath.fromPathFile("driveToNoteShot");
 
-    Controller.DRIVER.controller.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.isLockedRotational = !drivetrain.isLockedRotational));
+    // Controller.DRIVER.controller.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.isLockedRotational = !drivetrain.isLockedRotational));
     Controller.DRIVER.controller.rightBumper().onTrue(
-    AutoBuilder.followPath(midNoteShootPos)
-                .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5) // Cancels on driver input
+      AutoBuilder.followPath(midNoteShootPos)
+                  .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5) // Cancels on driver input
     );
     ControlScheme.RESET_HEADING.button.onTrue(Commands.runOnce(drivetrain::seedFieldRelative));
 
     // Manipulator controls
     ControlScheme.SHOOT_SPEAKER.button.whileTrue(
       new AimShootCommand(pivot, intake, shooter, () -> 16)
-    ).onFalse(pivot.stowCommand());
+    ).onFalse(stowCommand);
 
     ControlScheme.SHOOT_STAGE.button.whileTrue(new AimShootCommand(pivot, intake, shooter, () -> 27));
     ControlScheme.SHOOT.button.whileTrue(shooter.shootCommand(intake));
     ControlScheme.SCORE_AMP.button.whileTrue(new AmpScoreCommand(pivot, flipper))
-                    .onFalse(pivot.stowCommand());
+                    .onFalse(stowCommand);
 
-    ControlScheme.AIM_AUTO.button.whileTrue(autoAimCommand)
+    ControlScheme.AIM_AUTO.button.whileTrue(autoShootCommand)
                     .onFalse(Commands.sequence(
                             Commands.runOnce(() -> drivetrain.isLockedRotational = false),
-                            pivot.stowCommand()
+                            stowCommand
                     ));
 
-    ControlScheme.INTAKE.button.whileTrue(new IntakeStowCommand(pivot, intake));
+    ControlScheme.INTAKE.button.whileTrue(new IntakeCommand(pivot, intake));
     ControlScheme.OUTTAKE.button.whileTrue(intake.outtakeCommand());
 
     ControlScheme.TEST_UTIL.button.whileTrue(pivot.setAngleCommand(() -> 55));
