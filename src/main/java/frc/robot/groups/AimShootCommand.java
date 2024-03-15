@@ -10,18 +10,15 @@ import frc.robot.subsystems.Shooter;
 import java.util.function.DoubleSupplier;
 
 public class AimShootCommand extends SequentialCommandGroup {
-    public AimShootCommand(Pivot pivot, Intake intake, Shooter shooter, DoubleSupplier angle) {
+    public AimShootCommand(/*Pivot pivot, Intake intake, Shooter shooter, DoubleSupplier angle*/) {
         addCommands(
-            Commands.parallel(
-                pivot.setAngleCommand(angle),
-                shooter.applyVelocitiesCommand() // Finishes when at velocity   
-            ),
-            shooter.shootCommand(intake),
-            Commands.parallel(
-                shooter.idleCommand(),
-                pivot.stowCommand(),
-                intake.stopCommand()
-            ) // See RobotContainer for redundant interrupt behavior  
+            // Commands.parallel(
+            //     pivot.setAngleCommand(angle),
+            //     shooter.applyVelocitiesCommand() // Finishes when at velocity   
+            // ),
+            // shooter.shootCommand(intake)
         );
+
+        //addRequirements(pivot, intake, shooter);
     }
 }

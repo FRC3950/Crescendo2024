@@ -19,7 +19,7 @@ public class Shooter extends VelocityController {
       new TargetVelocity(
         new TalonFX(Constants.Shooter.topId, "CANivore"), 
         new TalonFX(Constants.Shooter.bottomId, "CANivore"), Constants.Shooter.activeSpeed.getAsDouble(), 
-        Constants.Shooter.kP, Constants.Shooter.kV
+        Constants.Shooter.kP, Constants.Shooter.kV, true
       )
     );
   }
@@ -29,7 +29,7 @@ public class Shooter extends VelocityController {
   }
 
   public Command idleCommand() {
-    return Commands.runOnce(() -> applyVelocity(Constants.Shooter.idleSpeed));
+    return Commands.runOnce(() -> applyVelocities(Constants.Shooter.idleSpeed));
   }
 
   public Command shootCommand(Intake intake) {
@@ -48,7 +48,7 @@ public class Shooter extends VelocityController {
 
       @Override 
       public void end(boolean interrupted){
-        applyVelocity(Constants.Shooter.idleSpeed);
+        applyVelocities(Constants.Shooter.idleSpeed);
         intake.stop();
       }
     };
@@ -64,7 +64,7 @@ public class Shooter extends VelocityController {
 
       @Override 
       public boolean isFinished(){
-        return getVelocity(Constants.Shooter.topId) >= targets[0].targetVelocity;
+        return Math.abs(getVelocity(Constants.Shooter.topId)) >= targets[0].targetVelocity - 1;
       }
     };
   }

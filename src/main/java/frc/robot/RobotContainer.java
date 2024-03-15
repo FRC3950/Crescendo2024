@@ -103,16 +103,20 @@ public class RobotContainer {
 
     // Manipulator controls
     ControlScheme.SHOOT_SPEAKER.button.whileTrue(
-      new AimShootCommand(pivot, intake, shooter, () -> 16)
-    ).onFalse(stowCommand);
+      //new AimShootCommand(pivot, intake, shooter, () -> 16)
+      new AimShootCommand()
+    );
 
-    ControlScheme.SHOOT_STAGE.button.whileTrue(new AimShootCommand(pivot, intake, shooter, () -> 27));
+    ControlScheme.SHOOT_STAGE.button.whileTrue(
+      //new AimShootCommand(pivot, intake, shooter, () -> 27)
+      new AimShootCommand()
+    ).onFalse(stowCommand);
     ControlScheme.SHOOT.button.whileTrue(shooter.shootCommand(intake));
     ControlScheme.SCORE_AMP.button.whileTrue(new AmpScoreCommand(pivot, flipper))
                     .onFalse(stowCommand);
 
     ControlScheme.AIM_AUTO.button.whileTrue(autoShootCommand)
-                    .onFalse(Commands.sequence(
+                    .onFalse(Commands.parallel(
                             Commands.runOnce(() -> drivetrain.isLockedRotational = false),
                             stowCommand
                     ));
@@ -139,8 +143,8 @@ public class RobotContainer {
 
     SmartDashboard.putData(Commands.runOnce(() -> intake.intakeCommand()));
 
-    NamedCommands.registerCommand("shootHub", new AimShootCommand(pivot, intake, shooter, () -> 17));
-    NamedCommands.registerCommand("shootNote", new AimShootCommand(pivot, intake, shooter, () -> 26));
+   // NamedCommands.registerCommand("shootHub", new AimShootCommand(pivot, intake, shooter, () -> 17));
+   // NamedCommands.registerCommand("shootNote", new AimShootCommand(pivot, intake, shooter, () -> 26));
     NamedCommands.registerCommand("intakeOn", intake.intakeCommand().withTimeout(1.5));
     NamedCommands.registerCommand("intakeOff", intake.stopCommand());
     // Constructs AutoBuilder (SendableChooser<Command>):

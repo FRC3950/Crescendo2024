@@ -13,14 +13,6 @@ import frc.robot.supersystems.PositionController;
 import frc.robot.supersystems.TargetPosition;
 
 public class Flipper extends PositionController {
-  
-  public Command stowCommand() {
-    return Commands.runOnce(() -> setPosition(Constants.Flipper.stowPosition));
-  } 
-
-  public Command ampCommand() {
-    return Commands.runOnce(() -> setPosition(Constants.Flipper.ampPosition));
-  }
 
   public Flipper() {
     super(
@@ -29,6 +21,14 @@ public class Flipper extends PositionController {
         Constants.Flipper.kP, Constants.Flipper.kV, Constants.Flipper.kG
       )
     );
+  }
+  
+  public Command stowCommand() {
+    return Commands.runOnce(() -> setPosition(Constants.Flipper.stowPosition));
+  } 
+
+  public Command ampCommand() {
+    return Commands.runOnce(() -> setPosition(Constants.Flipper.ampPosition));
   }
 
   @Override
