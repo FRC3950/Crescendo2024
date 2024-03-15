@@ -18,8 +18,18 @@ public class Shooter extends VelocityController {
     super(
       new TargetVelocity(
         new TalonFX(Constants.Shooter.topId, "CANivore"), 
-        new TalonFX(Constants.Shooter.bottomId, "CANivore"), Constants.Shooter.activeSpeed.getAsDouble(), Constants.Shooter.kP, Constants.Shooter.kV)
+        new TalonFX(Constants.Shooter.bottomId, "CANivore"), Constants.Shooter.activeSpeed.getAsDouble(), 
+        Constants.Shooter.kP, Constants.Shooter.kV
+      )
     );
+  }
+
+  public Command stopCommand() {
+    return Commands.runOnce(super::stop);
+  }
+
+  public Command idleCommand() {
+    return Commands.runOnce(() -> applyVelocity(Constants.Shooter.idleSpeed));
   }
 
   public Command shootCommand(Intake intake) {
@@ -31,7 +41,7 @@ public class Shooter extends VelocityController {
 
       @Override 
       public void execute() {
-        if(getVelocity() >= Constants.Shooter.activeSpeed.getAsDouble()){
+        if(getVelocity(Constants.Shooter.topId) >= Constants.Shooter.activeSpeed.getAsDouble()){
           intake.applyInitialTargetVelocities();
         }
       }
@@ -40,6 +50,21 @@ public class Shooter extends VelocityController {
       public void end(boolean interrupted){
         applyVelocity(Constants.Shooter.idleSpeed);
         intake.stop();
+      }
+    };
+  }
+
+  // Used in aim-shoot commands 
+  public Command applyVelocitiesCommand() {
+    return new Command() {
+      @Override
+      public void initialize() {
+        applyInitialTargetVelocities();
+      }
+
+      @Override 
+      public boolean isFinished(){
+        return getVelocity(Constants.Shooter.topId) >= targets[0].targetVelocity;
       }
     };
   }

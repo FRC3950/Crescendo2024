@@ -1,6 +1,7 @@
 package frc.robot.groups;
 
 
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Pivot;
@@ -11,10 +12,16 @@ import java.util.function.DoubleSupplier;
 public class AimShootCommand extends SequentialCommandGroup {
     public AimShootCommand(Pivot pivot, Intake intake, Shooter shooter, DoubleSupplier angle) {
         addCommands(
+            Commands.parallel(
                 pivot.setAngleCommand(angle),
-                shooter.shootCommand(intake).withTimeout(1.25),
-                intake.stopCommand(),
-                pivot.stowCommand()
+                shooter.applyVelocitiesCommand() // Finishes when at velocity   
+            ),
+            shooter.shootCommand(intake),
+            Commands.parallel(
+                shooter.idleCommand(),
+                pivot.stowCommand(),
+                intake.stopCommand()
+            ) // See RobotContainer for redundant interrupt behavior  
         );
     }
 }

@@ -8,14 +8,9 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Pivot;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class IntakeStowCommand extends ParallelCommandGroup {
+public class IntakeCommand extends ParallelCommandGroup {
   /** Creates a new IntakeStowCommand. */
-  public IntakeStowCommand(Pivot pivot, Intake intake) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+  public IntakeCommand(Pivot pivot, Intake intake) {
     addCommands(
       intake.intakeCommand(),
       pivot.stowCommand()

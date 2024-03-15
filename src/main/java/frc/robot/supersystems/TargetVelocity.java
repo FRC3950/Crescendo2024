@@ -6,17 +6,17 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 public class TargetVelocity {
-    public TalonFX motor;
-    public double velocity;
+    public final TalonFX motor;
+    public final double targetVelocity;
 
-    public double kP;
-    public double kV;
+    public final double kP;
+    public final double kV;
 
-    public VelocityVoltage velVoltage = new VelocityVoltage(0);
+    public final VelocityVoltage velVoltage = new VelocityVoltage(0);
 
-    public TargetVelocity(TalonFX motor, double velocity, double kP, double kV){
+    public TargetVelocity(TalonFX motor, double targetVelocity, double kP, double kV){
         this.motor = motor; 
-        this.velocity = velocity;
+        this.targetVelocity = targetVelocity;
 
         this.kP = kP;
         this.kV = kV;
@@ -30,18 +30,20 @@ public class TargetVelocity {
     }
 
     /**
-     * Constructor for two-motor systems. 
+     * Target velocity for two-motor leader-follower systems. 
      * @param leader The leader motor.
      * @param follower Follows (and is inverted from) leader motor.
-     * @param velocity The target velocity for both motors.
-     * @param kP The kP of the velocity profile for both motors. 
-     * @param kV The kV of the velocity profile for both motors.
+     * @param targetVelocity The target velocity for both motors.
+     * @param kP The kP of the targetVelocity profile for both motors. 
+     * @param kV The kV of the targetVelocity profile for both motors.
      */
-    public TargetVelocity(TalonFX leader, TalonFX follower, double velocity, double kP, double kV){
+    public TargetVelocity(TalonFX leader, TalonFX follower, double targetVelocity, double kP, double kV){
         this.motor = leader;
 
         this.kP = kP;
         this.kV = kV;
+
+        this.targetVelocity = targetVelocity;
 
         var slot0Configs = new Slot0Configs();
 

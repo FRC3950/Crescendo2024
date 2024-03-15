@@ -7,39 +7,35 @@ package frc.robot.supersystems;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 public abstract class PositionController extends SubsystemBase {
   /** Creates a new StateController. */
-  private final TalonFX controlledMotor;
-  private final MotionMagicVoltage mmVoltageController;
+  private final TargetPosition targetPosition;
+  private final MotionMagicVoltage mmVoltage;
 
-  protected PositionController(int canId, String busName, DoubleSupplier initialPosition) {
-    controlledMotor = new TalonFX(canId, busName);
-    mmVoltageController = new MotionMagicVoltage(initialPosition.getAsDouble());
+  protected PositionController(TargetPosition targetPosition) {
 
-    setPosition(initialPosition);
+    this.targetPosition = targetPosition;
+    mmVoltage = targetPosition.mmVoltage;
+
+    setPosition(targetPosition.initalPosition);
   }
 
   protected void setPosition(DoubleSupplier position){
-    controlledMotor.setControl(mmVoltageController.withPosition(position.getAsDouble()));
+    targetPosition.motor.setControl(mmVoltage.withPosition(position.getAsDouble()));
   }
 
   protected void setZero(){
-    controlledMotor.setControl(mmVoltageController.withPosition(0));
+    targetPosition.motor.setControl(mmVoltage.withPosition(0));
   }
 
   protected double getPosition() {
-    return controlledMotor.getPosition().getValueAsDouble();
+    return targetPosition.motor.getPosition().getValueAsDouble();
   }
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+  public void periodic() {}
 }

@@ -6,10 +6,18 @@ public interface Constants {
 
         public static final class Pivot {
             public static final int id = 15;
+
+            public static final double kP = 0.05;
+            public static final double kV = 0.115;
+            public static final double kG = 0.4;
         }
 
         public static final class Flipper {
             public static final int id = 31;
+
+            public static final double kP = 12;
+            public static final double kV = 0.12;
+            public static final double kG = 0.2;
 
             public static final DoubleSupplier stowPosition = () -> 0.4;
             public static final DoubleSupplier ampPosition = () -> -1.15;
