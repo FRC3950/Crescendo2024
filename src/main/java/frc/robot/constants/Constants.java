@@ -4,7 +4,7 @@ import java.util.function.DoubleSupplier;
 
 public interface Constants {
 
-        public static final class Pivot {
+        final class Pivot {
             public static final int id = 15;
 
             public static final double kP = 2.5;
@@ -12,7 +12,16 @@ public interface Constants {
             public static final double kG = 0;
         }
 
-        public static final class Flipper {
+        final class Climber {
+            public static final int motor1Id = 30;
+            public static final int motor2Id = 31;
+
+            public static final double kP = 0.05;
+            public static final double kV = 0.05;
+            public static final double kG = 0.05;
+        }
+
+        final class Flipper {
             public static final int id = 31;
 
             public static final double kP = 12;
@@ -23,12 +32,12 @@ public interface Constants {
             public static final DoubleSupplier ampPosition = () -> -1.15;
         }
 
-        public static final class Elevator {
+        final class Elevator {
             public static final int leftId = 49;
             public static final int rightId = 19;
         }
 
-        public static final class Intake {
+        final class Intake {
             public static final int rightId = 42;
             public static final int leftId = 41;
             public static final int indexerId = 14;
@@ -41,10 +50,10 @@ public interface Constants {
             public static final double intakeKv = 0.0;
 
             public static final DoubleSupplier indexerActiveVelocity = () -> 38;
-            public static final DoubleSupplier intakeActiveVelocity = () -> 65; 
+            public static final DoubleSupplier intakeActiveVelocity = () -> 65;
         }
-    
-        public static final class Shooter {
+
+        final class Shooter {
             public static final int topId = 17;
             public static final int bottomId = 13;
 

@@ -114,6 +114,7 @@ public class RobotContainer {
     ));
 
     ControlScheme.SHOOT.button.whileTrue(shooter.shootCommand(intake));
+
     ControlScheme.SCORE_AMP.button.whileTrue(new AmpScoreCommand(pivot, flipper))
       .onFalse(Commands.parallel(
         pivot.stowCommand(),
@@ -152,7 +153,7 @@ public class RobotContainer {
   }
 
   public RobotContainer() {
-    
+
     SmartDashboard.putData(Commands.runOnce(() -> intake.intakeCommand()));
 
    // NamedCommands.registerCommand("shootHub", new AimShootCommand(pivot, intake, shooter, () -> 17));

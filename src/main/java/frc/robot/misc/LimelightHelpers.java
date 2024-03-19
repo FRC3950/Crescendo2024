@@ -30,7 +30,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class LimelightHelpers {
 
-    
+
     public static class LimelightTarget_Retro {
 
         @JsonProperty("t6c_ts")
@@ -768,8 +768,8 @@ public class LimelightHelpers {
 
         try {
             results = mapper.readValue(getJSONDump(limelightName), LimelightResults.class);
-        } catch (JsonProcessingException e) {
-           
+        } catch (JsonProcessingException ignored) {
+
         }
 
         long end = System.nanoTime();
