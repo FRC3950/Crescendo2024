@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public enum ControlScheme {
     // Manipulator
-    SHOOT_SPEAKER(Controller.MANIPULATOR.controller.rightBumper()),
-    SHOOT_STAGE(Controller.MANIPULATOR.controller.leftBumper()),
+    SHOOT_SPEAKER(Controller.MANIPULATOR.controller.leftBumper()),
+    SHOOT_STAGE(Controller.MANIPULATOR.controller.rightBumper()),
     SHOOT(Controller.MANIPULATOR.controller.rightTrigger(0.5)),
     SCORE_AMP(Controller.MANIPULATOR.controller.x()),
 

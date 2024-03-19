@@ -24,10 +24,7 @@ public class VisionShootCommand extends SequentialCommandGroup {
                     ((isBlue) ? blueSpeaker.get() : redSpeaker.get())
                 )),
                 Commands.runOnce(() -> drivetrain.isLockedRotational = true)
-            ),
-            shooter.shootCommand(intake).withTimeout(0.75),
-            shooter.idleCommand(),
-            pivot.stowCommand()
-        ); // See RobotContainer for redundant interrupt behavior
+            )
+        ); // See RobotContainer for interrupt behavior
     }
 }

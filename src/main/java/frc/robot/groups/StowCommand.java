@@ -4,10 +4,10 @@
 
 package frc.robot.groups;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.*;
 
-public class StowCommand extends ParallelCommandGroup {
+public class StowCommand extends SequentialCommandGroup {
   /** Creates a new StowCommand. */
   public StowCommand(Pivot pivot, Intake intake, Shooter shooter, Flipper flipper) {
     addCommands(
@@ -16,5 +16,7 @@ public class StowCommand extends ParallelCommandGroup {
       intake.stopCommand(),
       shooter.idleCommand()
     );
+
+    addRequirements(pivot, intake, shooter, flipper);
   }
 }

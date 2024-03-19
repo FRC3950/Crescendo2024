@@ -126,15 +126,12 @@ public class Robot extends TimedRobot {
 
      if (lastResult.valid) {
       if (lastResult.targets_Fiducials.length > 1) {
-
-        m_robotContainer.drivetrain.addVisionMeasurement(llPose, Timer.getFPGATimestamp()- (lastResult.latency_capture + lastResult.latency_jsonParse + lastResult.latency_pipeline)/1000
-         );
-        //(lastResult.latency_capture + lastResult.latency_jsonParse + lastResult.latency_pipeline)/1000);
+        m_robotContainer.drivetrain.addVisionMeasurement(llPose, Timer.getFPGATimestamp()- (lastResult.latency_capture + lastResult.latency_jsonParse + lastResult.latency_pipeline)/1000);
+        }
       }
-
     }
-  }
-
+    
+    //(lastResult.latency_capture + lastResult.latency_jsonParse + lastResult.latency_pipeline)/1000);
   @Override
   public void teleopExit() {
   }

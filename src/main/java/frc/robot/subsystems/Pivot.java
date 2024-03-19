@@ -8,6 +8,7 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.units.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -16,6 +17,8 @@ import frc.robot.supersystems.PositionController;
 import frc.robot.supersystems.TargetPosition;
 
 public class Pivot extends PositionController {
+  protected double AngleWeWantToSet=0;
+
   /** Creates a new Pivot_Subsystem. */
 
   public Pivot() {
@@ -58,11 +61,13 @@ public class Pivot extends PositionController {
    * */
   public Command autoAngleCommand(DoubleSupplier distance) {
     return new Command() {
+
         @Override
         public void execute() {
           if(distance.getAsDouble() < -4 || distance.getAsDouble() > 25)
             return;
           setPosition(() -> getTargetAngle(distance));
+          AngleWeWantToSet = distance.getAsDouble();
         }
 
         @Override
@@ -83,7 +88,8 @@ public class Pivot extends PositionController {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Pivot angle", getPosition());
+    SmartDashboard.putNumber("Target pivot angle", AngleWeWantToSet);
+    SmartDashboard.putNumber("Actual pivot angle", getPosition());
     // This method will be called once per scheduler run
   }
 }
