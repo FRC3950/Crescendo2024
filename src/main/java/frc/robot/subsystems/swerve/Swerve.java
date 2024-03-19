@@ -138,7 +138,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     }
 
 
-    public void applyVisiontoPose() {
+    public void applyVisionToPose() {
         //ToDo: Test STD Values
 
         var visionResults = LimelightHelpers.getLatestResults("limelight").targetingResults;
