@@ -30,6 +30,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class LimelightHelpers {
 
+    
     public static class LimelightTarget_Retro {
 
         @JsonProperty("t6c_ts")
@@ -46,6 +47,7 @@ public class LimelightHelpers {
 
         @JsonProperty("t6t_rs")
         private double[] targetPose_RobotSpace;
+
 
         public Pose3d getCameraPose_TargetSpace()
         {
@@ -767,7 +769,7 @@ public class LimelightHelpers {
         try {
             results = mapper.readValue(getJSONDump(limelightName), LimelightResults.class);
         } catch (JsonProcessingException e) {
-            System.err.println("lljson error: " + e.getMessage());
+           
         }
 
         long end = System.nanoTime();

@@ -18,11 +18,10 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.groups.AimShootCommand;
 import frc.robot.groups.AmpScoreCommand;
 import frc.robot.groups.IntakeCommand;
-import frc.robot.groups.StowCommand;
 import frc.robot.groups.VisionShootCommand;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Flipper;
@@ -64,7 +63,10 @@ public class RobotContainer {
           redSpeaker::getTranslation
   );
 
-  private final Command stowCommand = new StowCommand(pivot, intake, shooter, flipper);
+  // private final StowCommand stowCommand = new StowCommand(pivot, intake, shooter, flipper);
+  // This causes WPILib to crash for some reason whenever it is ran
+
+  // private final Command stowCommand;
 
   //Field Centric Request - field-centric in open loop
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -103,22 +105,32 @@ public class RobotContainer {
 
     // Manipulator controls
     ControlScheme.SHOOT_SPEAKER.button.whileTrue(
-      //new AimShootCommand(pivot, intake, shooter, () -> 16)
-      new AimShootCommand()
-    );
+      new AimShootCommand(pivot, intake, shooter, () -> 17)
+    ).onFalse(Commands.parallel(
+      pivot.stowCommand(),
+      flipper.stowCommand(),
+      shooter.idleCommand(),
+      intake.stopCommand()
+    ));
 
-    ControlScheme.SHOOT_STAGE.button.whileTrue(
-      //new AimShootCommand(pivot, intake, shooter, () -> 27)
-      new AimShootCommand()
-    ).onFalse(stowCommand);
     ControlScheme.SHOOT.button.whileTrue(shooter.shootCommand(intake));
     ControlScheme.SCORE_AMP.button.whileTrue(new AmpScoreCommand(pivot, flipper))
-                    .onFalse(stowCommand);
+      .onFalse(Commands.parallel(
+        pivot.stowCommand(),
+        flipper.stowCommand(),
+        shooter.idleCommand(),
+        intake.stopCommand()
+      ));
 
     ControlScheme.AIM_AUTO.button.whileTrue(autoShootCommand)
                     .onFalse(Commands.parallel(
                             Commands.runOnce(() -> drivetrain.isLockedRotational = false),
-                            stowCommand
+                            Commands.parallel(
+                              pivot.stowCommand(),
+                              flipper.stowCommand(),
+                              shooter.idleCommand(),
+                              intake.stopCommand()
+                            )
                     ));
 
     ControlScheme.INTAKE.button.whileTrue(new IntakeCommand(pivot, intake));
@@ -140,7 +152,7 @@ public class RobotContainer {
   }
 
   public RobotContainer() {
-
+    
     SmartDashboard.putData(Commands.runOnce(() -> intake.intakeCommand()));
 
    // NamedCommands.registerCommand("shootHub", new AimShootCommand(pivot, intake, shooter, () -> 17));

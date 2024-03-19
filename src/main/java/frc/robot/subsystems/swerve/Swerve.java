@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -60,6 +61,11 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     private final Limelight lime = Limelight.getInstance();
 
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();   //.withDriveRequestType(DriveRequestType.Velocity);
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("Speaker distance", this.getState().Pose.getTranslation().getDistance(blueSpeakerPose.getTranslation()));
+    }
 
     public double getRotationalSpeed(DoubleSupplier xboxInput) {
         if (isLockedRotational) {
