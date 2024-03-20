@@ -10,6 +10,7 @@ import com.ctre.phoenix6.signals.ReverseLimitValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.misc.LimelightHelpers;
 import frc.robot.supersystems.TargetVelocity;
@@ -31,7 +32,7 @@ public class Intake extends VelocityController {
       ),
       new TargetVelocity( // Indexer
         new TalonFX(Constants.Intake.indexerId, "CANivore"),
-        38,
+        40,
         Constants.Intake.indexerKp,
         Constants.Intake.indexerKv
       )
@@ -41,6 +42,26 @@ public class Intake extends VelocityController {
 
     SmartDashboard.putBoolean("INTAKE", false);
   }
+
+  public Command intakeInstantCommand() {
+    return new Command() {
+      @Override
+      public void initialize() {
+        applyInitialTargetVelocities();
+      }
+
+      @Override
+      public void end(boolean interrupted){
+        
+      }
+
+      @Override
+      public boolean isFinished() {
+        return true;
+      }
+    };
+  }
+  
 
   public Command intakeCommand() {
     return new Command() {
@@ -66,6 +87,20 @@ public class Intake extends VelocityController {
       @Override
       public void initialize() {
         applyVelocities(() -> (-Constants.Intake.indexerActiveVelocity.getAsDouble()));
+      }
+
+      @Override 
+      public void end(boolean interrupted) {
+        stop();
+      }
+    };
+  }
+
+  public Command ampOuttakeCommand() {
+    return new Command() {
+      @Override 
+      public void initialize() {
+        applyVelocities(() -> (Constants.Intake.ampActiveVelocity.getAsDouble()));
       }
 
       @Override 

@@ -48,8 +48,13 @@ public class Shooter extends VelocityController {
 
       @Override 
       public void end(boolean interrupted){
+        
         applyVelocities(Constants.Shooter.idleSpeed);
         intake.stop();
+      }
+
+      public boolean isFinished(){
+       return false;
       }
     };
   }

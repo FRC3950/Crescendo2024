@@ -18,6 +18,7 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -52,7 +53,11 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     private double lastSimTime;
 
     public boolean isLockedRotational = false;
-    private final double rotationalKp = 0.0265;
+
+    private final double rotationalKp = 0.0260;
+    private final double rotationalKd = 0.002;
+    private final PIDController rotationalPid = new PIDController(rotationalKp, 0, rotationalKd);
+    
 
     //red and blue speaker pose
     Pose2d redSpeakerPose = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
@@ -69,7 +74,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
     public double getRotationalSpeed(DoubleSupplier xboxInput) {
         if (isLockedRotational) {
-            return -(lime.getTx() * rotationalKp);
+            return rotationalPid.calculate(lime.getTx());
         }
 
         return xboxInput.getAsDouble();
