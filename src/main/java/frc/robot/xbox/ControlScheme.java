@@ -16,6 +16,9 @@ public enum ControlScheme {
 
     TEST_UTIL(Controller.MANIPULATOR.controller.y()),
 
+    CLIMBER_UP(Controller.MANIPULATOR.controller.pov(0)),
+    CLIMBER_DOWN(Controller.MANIPULATOR.controller.pov(180)),
+
     // Driver
     RESET_HEADING(Controller.DRIVER.controller.y()),
     PATH_SPEAKER(Controller.DRIVER.controller.leftBumper());

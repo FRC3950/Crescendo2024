@@ -4,9 +4,14 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.*;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.misc.LimelightHelpers;
+import frc.robot.misc.LimelightHelpers.LimelightResults;
+import frc.robot.misc.LimelightHelpers.Results;
 
 public class Limelight extends SubsystemBase {
   /** Creates a new Limelight. */
@@ -15,13 +20,15 @@ public class Limelight extends SubsystemBase {
 
   private static Limelight instance;
 
+  public static Results limelightResults; 
+  public static Pose2d llPose;
+
   public static Limelight getInstance() {
     if (instance == null) {
       instance = new Limelight();
     }
     return instance;
   }
-  // if two apriltags in view, access tx of only apriltag ID #7
 
   private Limelight() {
   }
@@ -29,12 +36,13 @@ public class Limelight extends SubsystemBase {
   public double getTx() {
     // Only pull tx value for tag id #7
     //limelightTable.getValue(getName())
-      var results = LimelightHelpers.getLatestResults("limelight").targetingResults;
-      for (LimelightHelpers.LimelightTarget_Fiducial result : results.targets_Fiducials) {
-        if(result.fiducialID == 7 || result.fiducialID == 4){
-          return result.tx;
-        }
+    var results = limelightResults;
+
+    for (LimelightHelpers.LimelightTarget_Fiducial result : results.targets_Fiducials) {
+      if(result.fiducialID == 7 || result.fiducialID == 4){
+        return result.tx;
       }
+    }
 
     return 0;
   }
@@ -52,7 +60,7 @@ public class Limelight extends SubsystemBase {
 
   @Override
   public void periodic() {
-
-    // This method will be called once per scheduler run
+    limelightResults = LimelightHelpers.getLatestResults("limelight").targetingResults;
+    llPose = limelightResults.getBotPose3d_wpiBlue().toPose2d();    // This method will be called once per scheduler run
   }
 }

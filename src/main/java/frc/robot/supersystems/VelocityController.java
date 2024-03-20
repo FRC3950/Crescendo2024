@@ -25,10 +25,10 @@ public abstract class VelocityController extends SubsystemBase {
       target.motor.setControl(target.velVoltage.withVelocity(target.targetVelocity));
   }
 
-  public void applyVelocity(int motorId){
+  public void applyVelocity(int motorId, double percent){
     for(TargetVelocity target : targets) {
       if(target.motor.getDeviceID() == motorId){
-        target.motor.setControl(target.velVoltage.withVelocity(target.targetVelocity));
+        target.motor.set(percent);
         return;
       }
     }

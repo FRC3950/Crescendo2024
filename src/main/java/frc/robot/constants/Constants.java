@@ -1,6 +1,7 @@
 package frc.robot.constants;
 
 import java.util.function.DoubleSupplier;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 public interface Constants {
 
@@ -10,13 +11,16 @@ public interface Constants {
             public static final double kP = 2.5;
             public static final double kV = 0.1185;
             public static final double kG = 0;
+
+            public static final DoubleSupplier stowPosition = () -> -2;
+          //  public static final DoubleSupplier shuttlePosition = () -> Shuffleboard.getTab("Tab 5").add("Shuttle Position", 30).getEntry().getDouble(30);
         }
 
         final class Climber {
-            public static final int motor1Id = 30;
-            public static final int motor2Id = 31;
+            public static final int motor1Id = 19;
+            public static final int motor2Id = 49;
 
-            public static final double kP = 0.05;
+            public static final double kP = 0.0005;
             public static final double kV = 0.05;
             public static final double kG = 0.05;
         }
@@ -29,7 +33,7 @@ public interface Constants {
             public static final double kG = 0.2;
 
             public static final DoubleSupplier stowPosition = () -> 0.5;
-            public static final DoubleSupplier ampPosition = () -> -1.15;
+            public static final DoubleSupplier ampPosition = () -> -1.25;
         }
 
         final class Elevator {
@@ -51,6 +55,7 @@ public interface Constants {
 
             public static final DoubleSupplier indexerActiveVelocity = () -> 38;
             public static final DoubleSupplier intakeActiveVelocity = () -> 65;
+            public static final DoubleSupplier ampActiveVelocity = () -> -40;
         }
 
         final class Shooter {
@@ -63,5 +68,6 @@ public interface Constants {
             public static final DoubleSupplier activeSpeed = () -> 75;
             public static final DoubleSupplier idleSpeed = () -> 3;
             public static final DoubleSupplier ampSpeed = () -> 18;
+         //   public static final DoubleSupplier shuttleSpeed = () -> Shuffleboard.getTab("Tab 5").add("Shuttle Speed", 75).getEntry().getDouble(75);
         }
 }

@@ -21,10 +21,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.groups.AimShootCommand;
 import frc.robot.groups.AmpScoreCommand;
+import frc.robot.groups.AutoAimShootCommand;
 import frc.robot.groups.IntakeCommand;
 import frc.robot.groups.VisionShootCommand;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Flipper;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
@@ -54,6 +56,8 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter();
   private final Pivot pivot = new Pivot();
   private final Flipper flipper = new Flipper();
+  private final Climber climber = new Climber();
+
 
 
   private final Command autoShootCommand = new VisionShootCommand(
@@ -135,9 +139,13 @@ public class RobotContainer {
                     ));
 
     ControlScheme.INTAKE.button.whileTrue(new IntakeCommand(pivot, intake));
-    ControlScheme.OUTTAKE.button.whileTrue(intake.outtakeCommand());
 
-    ControlScheme.TEST_UTIL.button.whileTrue(pivot.setAngleCommand(() -> 55));
+    ControlScheme.OUTTAKE.button.whileTrue(intake.outtakeCommand());
+    ControlScheme.TEST_UTIL.button.whileTrue(intake.ampOuttakeCommand());
+
+    ControlScheme.CLIMBER_UP.button.whileTrue(climber.raiseCommand());
+    ControlScheme.CLIMBER_DOWN.button.whileTrue(climber.stowCommand());
+    
 
     Controller.DRIVER.controller.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
     Controller.DRIVER.controller.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
@@ -156,10 +164,13 @@ public class RobotContainer {
 
     SmartDashboard.putData(Commands.runOnce(() -> intake.intakeCommand()));
 
-   // NamedCommands.registerCommand("shootHub", new AimShootCommand(pivot, intake, shooter, () -> 17));
-   // NamedCommands.registerCommand("shootNote", new AimShootCommand(pivot, intake, shooter, () -> 26));
-    NamedCommands.registerCommand("intakeOn", intake.intakeCommand().withTimeout(1.5));
+    NamedCommands.registerCommand("shootHub", new AutoAimShootCommand(pivot, intake, shooter, () -> 17));
+    NamedCommands.registerCommand("shootNote", new AutoAimShootCommand(pivot, intake, shooter, () -> 26));
+    NamedCommands.registerCommand("shootFarNote", new AutoAimShootCommand(pivot, intake, shooter, () -> 28
+    ));
+    NamedCommands.registerCommand("intakeOn", intake.intakeCommand());
     NamedCommands.registerCommand("intakeOff", intake.stopCommand());
+
     // Constructs AutoBuilder (SendableChooser<Command>):
     autoChooser = AutoBuilder.buildAutoChooser("andy");
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -170,14 +181,13 @@ public class RobotContainer {
 
     my_alliance = DriverStation.getAlliance().get();
 
-
-    SmartDashboard.putData("toggleAutoAngle",
-    pivot.autoAngleCommand(
-            my_alliance == Alliance.Blue ?
-        () -> drivetrain.getState().Pose.getTranslation().getDistance(blueSpeaker.getTranslation()) :
-        () -> drivetrain.getState().Pose.getTranslation().getDistance(redSpeaker.getTranslation()))
-            .onlyIf(()->DriverStation.getAlliance().isPresent())
-    );
+    // SmartDashboard.putData("toggleAutoAngle",
+    // pivot.autoAngleCommand(
+    //         my_alliance == Alliance.Blue ?
+    //     () -> drivetrain.getState().Pose.getTranslation().getDistance(blueSpeaker.getTranslation()) :
+    //     () -> drivetrain.getState().Pose.getTranslation().getDistance(redSpeaker.getTranslation()))
+    //         .onlyIf(()->DriverStation.getAlliance().isPresent())
+    // );
 
     configureBindings();
   }

@@ -8,7 +8,6 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.units.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -24,7 +23,7 @@ public class Pivot extends PositionController {
   public Pivot() {
     super(
       new TargetPosition(
-        new TalonFX(Constants.Pivot.id, "CANivore"), () -> -1, 
+        new TalonFX(Constants.Pivot.id, "CANivore"), Constants.Pivot.stowPosition, 
         Constants.Pivot.kP, Constants.Pivot.kV, Constants.Pivot.kG
       )
     );
@@ -38,7 +37,7 @@ public class Pivot extends PositionController {
   }
 
   public Command setAngleCommand(DoubleSupplier angle){
-    // Stows pivot if it is unsafe
+    System.out.println("Set angle " + angle.getAsDouble());
     return new Command () {
       @Override 
       public void initialize() {
@@ -53,7 +52,8 @@ public class Pivot extends PositionController {
   }
 
   public Command stowCommand() {
-    return Commands.runOnce(() -> setPosition(() -> -4));
+    System.out.println("Stow command " + Constants.Pivot.stowPosition);
+    return Commands.runOnce(() -> setPosition(Constants.Pivot.stowPosition));
   }
 
   /**
@@ -61,19 +61,19 @@ public class Pivot extends PositionController {
    * */
   public Command autoAngleCommand(DoubleSupplier distance) {
     return new Command() {
+      @Override
+      public void execute() {
+        if(distance.getAsDouble() < 1.1 || distance.getAsDouble() > 25 || getTargetAngle(distance) > 40)
+          return;
+          
+        setPosition(() -> getTargetAngle(distance));
+        AngleWeWantToSet = distance.getAsDouble();
+      }
 
-        @Override
-        public void execute() {
-          if(distance.getAsDouble() < -4 || distance.getAsDouble() > 25)
-            return;
-          setPosition(() -> getTargetAngle(distance));
-          AngleWeWantToSet = distance.getAsDouble();
-        }
-
-        @Override
-        public void end(boolean interrupted) {
-          setPosition(() -> -4);
-        }
+      @Override
+      public void end(boolean interrupted) {
+        setPosition(Constants.Pivot.stowPosition);
+      }
     };
   }
 
@@ -82,8 +82,16 @@ public class Pivot extends PositionController {
   }
 
   public double getTargetAngle(DoubleSupplier distanceSupplier){
-      double distance = distanceSupplier.getAsDouble();
-      return -1.094 * Math.pow(distance, 2) + 9.854 * distance + 6.827;
+    double distance = distanceSupplier.getAsDouble();
+    // Quintic return 39.48 + (-45.98 * distance) 
+    //   + Math.pow(36.25 * distance, 2) 
+    //   - Math.pow(11.62 * distance, 3)
+    //   + Math.pow(1.707, 4)
+    //   - Math.pow(-0.0095 * distance, 5);
+    // Cosine squared return 2946 * Math.pow(Math.cos(0.01909 * distance - 0.08999), 2) - 2914;
+    // Gaussian return -15.57 * -Math.pow(Math.pow((distance - 0.2858), 2) / Math.pow(-2.156, 2), Math.E) + 32.2;
+    return -1.072 * Math.pow(distance, 2) + 10.10 * distance + 8.177;
+    // Sine return 49.74 * Math.sin(0.2245 * distance + 0.5432) - 15.89;
   }
 
   @Override

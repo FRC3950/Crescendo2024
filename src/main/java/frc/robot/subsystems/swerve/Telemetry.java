@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.misc.LimelightHelpers;
+import frc.robot.subsystems.Limelight;
 
 public class Telemetry {
     private final double MaxSpeed;
@@ -109,11 +110,11 @@ public class Telemetry {
         /* Telmeterize Vision Pose */
 
         
-        var lastResult = LimelightHelpers.getLatestResults("limelight").targetingResults;
-        if(lastResult.valid && lastResult.getBotPose2d().getX() != 0.0){
-                 visionPose.set(lastResult.getBotPose3d_wpiBlue());
+        var lastResult = Limelight.limelightResults;
+        
+        if(lastResult != null && lastResult.valid && lastResult.getBotPose2d().getX() != 0.0){
+            visionPose.set(lastResult.getBotPose3d_wpiBlue());
         }
-
 
         /* Telemeterize the robot's general speeds */
         double currentTime = Utils.getCurrentTimeSeconds();
