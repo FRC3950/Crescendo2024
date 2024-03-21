@@ -53,7 +53,11 @@ public class Limelight extends SubsystemBase {
 
   public void blink() {
     limelightTable.getEntry("ledMode").setNumber(2);
-    System.out.println("ll blink");
+   // System.out.println("ll blink");
+  }
+
+  public void seedVision(){
+   // This method will be called once per scheduler run
   }
 
 

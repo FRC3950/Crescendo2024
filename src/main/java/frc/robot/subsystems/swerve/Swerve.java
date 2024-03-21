@@ -143,6 +143,23 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     }
 
 
+    public void applyVisionIncrementallyForAuto(){
+
+        if (Limelight.limelightResults != null && Limelight.llPose != null && Limelight.limelightResults.valid) {
+            if (Limelight.limelightResults.targets_Fiducials.length > 1 && (
+              getState().Pose.getX() < 4.55 || getState().Pose.getX() > 12
+            )) {
+              addVisionMeasurement(Limelight.llPose, Timer.getFPGATimestamp() - (
+                Limelight.limelightResults.latency_capture 
+                + Limelight.limelightResults.latency_jsonParse 
+                + Limelight.limelightResults.latency_pipeline) / 1000
+              );
+            }
+          }
+    }
+
+
+
     public void applyVisionToPose() {
         //ToDo: Test STD Values
 
@@ -150,7 +167,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
        // System.out.println("past the var");
 
         if (visionResults.getBotPose2d_wpiBlue().getX() == 0.0) {
-            System.out.println("was at 0");
+        //    System.out.println("was at 0");
             return;
         }
 
@@ -173,7 +190,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
             else if (visionResults.targets_Fiducials[0].ta > 0.8 && poseDifference < 0.5) {
                 xyStds = 1.0;
                 degStds = 12;
-                System.out.println("caught a single one");
+              //  System.out.println("caught a single one");
             }
 
             // 1 target farther away and estimated pose is close
@@ -184,7 +201,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
             // conditions don't match to add a vision measurement
             else {
-                System.out.println("no conditions matched - no vision applied");
+            //    System.out.println("no conditions matched - no vision applied");
                 return;
             }
 

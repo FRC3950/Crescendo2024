@@ -1,6 +1,5 @@
 package frc.robot.groups;
 
-
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -13,23 +12,16 @@ import java.util.function.DoubleSupplier;
 public class AutoAimShootCommand extends SequentialCommandGroup {
     public AutoAimShootCommand(Pivot pivot, Intake intake, Shooter shooter, DoubleSupplier angle) {
         addCommands(
-            Commands.parallel(
-                pivot.setAngleCommand(angle),
-                shooter.applyVelocitiesCommand() // Finishes when at velocity   
-            ).andThen(Commands.waitSeconds(0.25)),
+                Commands.parallel(
+                        pivot.setAngleCommand(angle),
+                        shooter.applyVelocitiesCommand() // Finishes when at velocity
+                ),
 
-            
-         shooter.shootCommand(intake).withTimeout(1.25),
-            
+                shooter.shootForAutoCommand(intake).withTimeout(2),
+                shooter.idleCommand(),
+                intake.stopCommand(),
+                pivot.stowCommand());
 
-
-
-            
-
-
-            
-            pivot.stowCommand()
-        );
         addRequirements(pivot, intake, shooter);
     }
 }

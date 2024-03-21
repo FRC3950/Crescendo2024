@@ -59,6 +59,37 @@ public class Shooter extends VelocityController {
     };
   }
 
+
+
+
+ public Command shootForAutoCommand(Intake intake) {
+    return new Command() {
+      @Override 
+      public void initialize() {
+        applyInitialTargetVelocities();
+      }
+
+      @Override 
+      public void execute() {
+        if(getVelocity(Constants.Shooter.topId) >= Constants.Shooter.activeSpeed.getAsDouble()-0.2){
+          intake.applyInitialTargetVelocities();
+        }
+      }
+
+      @Override 
+      public void end(boolean interrupted){
+        
+       
+      }
+
+      public boolean isFinished(){
+       return !intake.noteIsIndexed();
+      }
+    };
+  }
+
+
+
   // Used in aim-shoot commands 
   public Command applyVelocitiesCommand() {
     return new Command() {

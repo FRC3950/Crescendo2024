@@ -171,6 +171,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("intakeOn", intake.intakeCommand());
     NamedCommands.registerCommand("intakeOff", intake.stopCommand());
 
+    //TESTING
+    NamedCommands.registerCommand("seedVisionOnce", drivetrain.runOnce(drivetrain::applyVisionIncrementallyForAuto));
+
     // Constructs AutoBuilder (SendableChooser<Command>):
     autoChooser = AutoBuilder.buildAutoChooser("andy");
     SmartDashboard.putData("Auto Chooser", autoChooser);

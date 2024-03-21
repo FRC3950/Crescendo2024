@@ -37,7 +37,7 @@ public class Pivot extends PositionController {
   }
 
   public Command setAngleCommand(DoubleSupplier angle){
-    System.out.println("Set angle " + angle.getAsDouble());
+    //System.out.println("Set angle " + angle.getAsDouble());
     return new Command () {
       @Override 
       public void initialize() {
@@ -52,7 +52,7 @@ public class Pivot extends PositionController {
   }
 
   public Command stowCommand() {
-    System.out.println("Stow command " + Constants.Pivot.stowPosition);
+    //System.out.println("Stow command " + Constants.Pivot.stowPosition);
     return Commands.runOnce(() -> setPosition(Constants.Pivot.stowPosition));
   }
 

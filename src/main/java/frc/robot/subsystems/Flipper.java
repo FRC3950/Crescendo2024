@@ -28,7 +28,7 @@ public class Flipper extends PositionController {
   } 
 
   public Command ampCommand() {
-    System.out.println("AMP");
+  // System.out.println("AMP");
     return Commands.runOnce(() -> setPosition(Constants.Flipper.ampPosition));
   }
 
