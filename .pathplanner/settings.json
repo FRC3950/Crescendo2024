@@ -4,15 +4,12 @@
   "holonomicMode": true,
   "pathFolders": [
     "BasicMoves",
-    "comp mid 3 piece",
-    "WithBritish",
-    "comp mid 2 piece",
-    "comp north 2 piece",
-    "comp north 4 piece",
-    "comp south 2 piece",
-    "comp south 4 piece",
-    "comp south dub rush 3 piece",
-    "comp south rush 3 piece"
+    "Comp 2pc",
+    "Comp mid dub rush 3pc",
+    "Comp north 4pc",
+    "Comp north rush 3pc",
+    "Comp south dub rush 3pc",
+    "Comp south rush 3pc"
   ],
   "autoFolders": [],
   "defaultMaxVel": 4.0,

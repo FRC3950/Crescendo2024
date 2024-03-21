@@ -23,15 +23,17 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+
+    Timer.delay(4);
     m_robotContainer = new RobotContainer();
 
     m_robotContainer.drivetrain.getDaqThread().setThreadPriority(99);
 
-//     for (int port = 5800; port <= 5805; port++) {
-// PortForwarder.add(port, "limelight.local", port);
-// }
-
+  // for (int port = 5800; port <= 5805; port++) {
+  //    PortForwarder.add(port, "limelight.local", port);
+  // }
   }
+  
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
@@ -93,10 +95,6 @@ public class Robot extends TimedRobot {
     //   }
 
     // }
-
-
-
-
   }
 
   @Override

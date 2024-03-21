@@ -3,13 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7016407177345699,
-        "y": 4.407748477948993
+        "x": 2.894982565999367,
+        "y": 5.550936522700434
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6401814461472888,
-        "y": 4.450088661185657
+        "x": 1.894982565999367,
+        "y": 5.550936522700434
+      },
+      "isLocked": false,
+      "linkedName": "comp pickup note 2"
+    },
+    {
+      "anchor": {
+        "x": 1.80825808932417,
+        "y": 4.71046056409538
+      },
+      "prevControl": {
+        "x": 1.3752453874319506,
+        "y": 4.96046056409538
+      },
+      "nextControl": {
+        "x": 2.0247644402702796,
+        "y": 4.58546056409538
       },
       "isLocked": false,
       "linkedName": null
@@ -20,15 +36,21 @@
         "y": 4.286166175756032
       },
       "prevControl": {
-        "x": 1.633124748941178,
-        "y": 5.056964620911176
+        "x": 2.3505727917713757,
+        "y": 4.411166175756032
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "comp pickup note 3"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": -30.0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -39,13 +61,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -30.862840739770807,
+    "rotation": -28.290950340810568,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "comp south rush 3 piece",
+  "folder": "Comp north 4pc",
   "previewStartingState": {
-    "rotation": -60.0,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": true

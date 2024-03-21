@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5872260835430763,
-        "y": 5.550603828480384
+        "x": 8.398762191531043,
+        "y": 2.489148596499191
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.467226083543076,
-        "y": 5.550603828480384
+        "x": 5.562458894063182,
+        "y": 0.8093961581929819
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "comp pickup note 7"
     },
     {
       "anchor": {
-        "x": 2.8782413928464217,
-        "y": 5.550603828480384
+        "x": 2.202954017450766,
+        "y": 3.5906256052245733
       },
       "prevControl": {
-        "x": 2.9382413928464217,
-        "y": 5.550603828480384
+        "x": 2.2304909426689,
+        "y": 1.4794613385009237
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,14 +39,14 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": -40.364536573097375,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Comp south rush 3pc",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": 35.13419305691566,
     "velocity": 0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

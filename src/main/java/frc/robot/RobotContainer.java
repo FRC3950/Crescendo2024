@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.groups.AimShootCommand;
 import frc.robot.groups.AmpScoreCommand;
@@ -127,21 +126,30 @@ public class RobotContainer {
         intake.stopCommand()
       ));
 
+    /*ControlScheme.SCORE_AMP.button.toggleOnTrue(Commands.runEnd(
+      new AmpScoreCommand(pivot, flipper),
+      Commands.parallel(
+        pivot.stowCommand(),
+        flipper.stowCommand(),
+        shooter.idleCommand(),
+        intake.stopCommand())
+      ));*/
+
     ControlScheme.AIM_AUTO.button.whileTrue(autoShootCommand)
-                    .onFalse(Commands.parallel(
-                            Commands.runOnce(() -> drivetrain.isLockedRotational = false),
-                            Commands.parallel(
-                              pivot.stowCommand(),
-                              flipper.stowCommand(),
-                              shooter.idleCommand(),
-                              intake.stopCommand()
-                            )
-                    ));
+      .onFalse(Commands.parallel(
+              Commands.runOnce(() -> drivetrain.isLockedRotational = false),
+              Commands.parallel(
+                pivot.stowCommand(),
+                flipper.stowCommand(),
+                shooter.idleCommand(),
+                intake.stopCommand()
+              )
+      ));
 
     ControlScheme.INTAKE.button.whileTrue(new IntakeCommand(pivot, intake));
 
     ControlScheme.OUTTAKE.button.whileTrue(intake.outtakeCommand());
-    ControlScheme.TEST_UTIL.button.whileTrue(intake.ampOuttakeCommand());
+    ControlScheme.AMP_OUTTAKE.button.whileTrue(intake.ampOuttakeCommand());
 
     ControlScheme.CLIMBER_UP.button.whileTrue(climber.raiseCommand());
     ControlScheme.CLIMBER_DOWN.button.whileTrue(climber.stowCommand());
@@ -166,13 +174,14 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("shootHub", new AutoAimShootCommand(pivot, intake, shooter, () -> 17));
     NamedCommands.registerCommand("shootNote", new AutoAimShootCommand(pivot, intake, shooter, () -> 26));
-    NamedCommands.registerCommand("shootFarNote", new AutoAimShootCommand(pivot, intake, shooter, () -> 28
-    ));
+    NamedCommands.registerCommand("shootFarNote", new AutoAimShootCommand(pivot, intake, shooter, () -> 28));
+    NamedCommands.registerCommand("shootReallyFar", new AutoAimShootCommand(pivot, intake, shooter, () -> 29));
+
     NamedCommands.registerCommand("intakeOn", intake.intakeCommand());
     NamedCommands.registerCommand("intakeOff", intake.stopCommand());
 
     // Constructs AutoBuilder (SendableChooser<Command>):
-    autoChooser = AutoBuilder.buildAutoChooser("andy");
+    autoChooser = AutoBuilder.buildAutoChooser("1pc");
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
     PathPlannerPath upperStage = PathPlannerPath.fromPathFile("UpperStage");
