@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7050561319382253,
-        "y": 4.414985377759629
+        "x": 2.5670791427174855,
+        "y": 4.286166175756032
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7050561319382247,
-        "y": 4.414985377759629
+        "x": 0.5232015791445568,
+        "y": 1.5437141640099044
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "comp pickup note 3"
     },
     {
       "anchor": {
-        "x": 2.578789979263267,
-        "y": 4.27445533921025
+        "x": 8.398762191531043,
+        "y": 2.489148596499191
       },
       "prevControl": {
-        "x": 1.7590314210585614,
-        "y": 5.023948878140266
+        "x": 5.828649171171818,
+        "y": 0.9287228341382313
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "comp pickup note 7"
     }
   ],
   "rotationTargets": [],
@@ -39,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -28.88658176691078,
+    "rotation": 27.790316530720073,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "comp south 2 piece",
+  "folder": "Comp south rush 3pc",
   "previewStartingState": {
-    "rotation": -60.0,
+    "rotation": -29.90438393102232,
     "velocity": 0
   },
   "useDefaultConstraints": true

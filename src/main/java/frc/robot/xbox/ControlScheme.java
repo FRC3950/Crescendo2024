@@ -14,7 +14,7 @@ public enum ControlScheme {
     INTAKE(Controller.MANIPULATOR.controller.a()),
     OUTTAKE(Controller.MANIPULATOR.controller.b()),
 
-    TEST_UTIL(Controller.MANIPULATOR.controller.y()),
+    AMP_OUTTAKE(Controller.MANIPULATOR.controller.y()),
 
     CLIMBER_UP(Controller.MANIPULATOR.controller.pov(0)),
     CLIMBER_DOWN(Controller.MANIPULATOR.controller.pov(180)),

@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.325730468864645,
-      "y": 5.539225686154654
+      "x": 0.7050561319382253,
+      "y": 6.663465994549679
     },
-    "rotation": 0
+    "rotation": 60.0
   },
   "command": {
     "type": "sequential",
@@ -28,7 +28,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "New New Path"
+                        "pathName": "Comp north 2pc 1"
                       }
                     },
                     {
@@ -52,7 +52,7 @@
         {
           "type": "named",
           "data": {
-            "name": "shootNote"
+            "name": "shootFarNote"
           }
         },
         {
@@ -66,7 +66,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "brige"
+                        "pathName": "Comp north rush 3pc 2"
                       }
                     },
                     {
@@ -85,6 +85,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Comp north rush 3pc 3"
           }
         },
         {

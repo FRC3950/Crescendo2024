@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7050561319382253,
-      "y": 4.414985377759629
+      "x": 0.6933452953924437,
+      "y": 4.403274541213847
     },
     "rotation": -60.0
   },
@@ -22,9 +22,22 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "sequential",
                 "data": {
-                  "pathName": "comp south 2 piece 1"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Comp south 2pc 1"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -39,7 +52,7 @@
         {
           "type": "named",
           "data": {
-            "name": "shootNote"
+            "name": "shootFarNote"
           }
         }
       ]
