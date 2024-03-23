@@ -6,6 +6,7 @@
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Better Rotate To Shoot": "Command",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/InstantCommand": "Command",
       "/SmartDashboard/Module 0": "Mechanism2d",
       "/SmartDashboard/Module 1": "Mechanism2d",
       "/SmartDashboard/Module 2": "Mechanism2d",

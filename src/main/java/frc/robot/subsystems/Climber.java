@@ -1,31 +1,47 @@
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
-import frc.robot.supersystems.PositionController;
-import frc.robot.supersystems.TargetPosition;
 
-public class Climber extends PositionController {
+public class Climber extends SubsystemBase {
 
-    public Climber() {
-        super(new TargetPosition(
-                new TalonFX(Constants.Climber.motor1Id),
-                new TalonFX(Constants.Climber.motor2Id),
-                () -> 0,
-                Constants.Climber.kP,
-                Constants.Climber.kV,
-                Constants.Climber.kG,
-                false
-        ));
+    private final TalonFX motor1 = new TalonFX(Constants.Climber.motor1Id);
+    private final TalonFX motor2 = new TalonFX(Constants.Climber.motor2Id);
+
+    public Climber() {}
+
+    public Command climbCommand(DoubleSupplier yAxisPercentage) {
+        return Commands.runOnce(() -> setMotorVoltage(yAxisPercentage), this);
     }
 
-    public Command stowCommand() {
-        return Commands.runOnce(() -> setPosition(() -> 0));
+    private double getTargetVoltage(DoubleSupplier yAxisPercentage, double motorPosition){
+        var percent = yAxisPercentage.getAsDouble();
+
+        if(motorPosition < 3.95 && percent > 0.15){
+            return -yAxisPercentage.getAsDouble() * 6;
+        }
+        else if(percent < -0.15){
+            return yAxisPercentage.getAsDouble() * -8;
+        }
+
+        return 0;
     }
 
-    public Command raiseCommand() {
-        return Commands.runOnce(() -> setPosition(() -> 10));
+    private void setMotorVoltage(DoubleSupplier yAxisPercentage){
+        motor1.getPosition().refresh();
+        motor2.getPosition().refresh();
+
+        motor1.setVoltage(-getTargetVoltage(yAxisPercentage, Math.abs(motor1.getPosition().getValueAsDouble())));
+        motor2.setVoltage(-getTargetVoltage(yAxisPercentage, Math.abs(motor2.getPosition().getValueAsDouble())));
     }
+
+    @Override
+    public void periodic() {}
 }

@@ -36,8 +36,11 @@ public class Pivot extends PositionController {
     // target position of 200 rotations
   }
 
+  public Command setAngleInstantCommand(DoubleSupplier angle){
+    return Commands.runOnce(() -> setPosition(angle));
+  } 
+
   public Command setAngleCommand(DoubleSupplier angle){
-    System.out.println("Set angle " + angle.getAsDouble());
     return new Command () {
       @Override 
       public void initialize() {
@@ -52,8 +55,22 @@ public class Pivot extends PositionController {
   }
 
   public Command stowCommand() {
-    System.out.println("Stow command " + Constants.Pivot.stowPosition);
     return Commands.runOnce(() -> setPosition(Constants.Pivot.stowPosition));
+  }
+
+  // Prevents limit switch snafus 
+  public Command forceStowCommand() {
+    return new Command() {
+      @Override 
+      public void initialize () {
+        targetPosition.motor.setVoltage(-3.0);
+      }
+
+      @Override 
+      public void end(boolean interrupted) {
+        targetPosition.motor.setVoltage(0);
+      }
+    };
   }
 
   /**

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.groups.AimCommand;
 import frc.robot.groups.AimShootCommand;
 import frc.robot.groups.AmpScoreCommand;
 import frc.robot.groups.AutoAimShootCommand;
@@ -40,7 +41,7 @@ public class RobotContainer {
   Alliance my_alliance;
 
 
-  private final double MaxSpeed = 4.73; // 6 meters per second desired top speed *t3x*  //was 5 before
+  private final double MaxSpeed = 4.3; // 6 meters per second desired top speed *t3x*  //was 5 before
   private final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
   //Joystick and drivetrain
@@ -51,12 +52,12 @@ public class RobotContainer {
   Pose2d inFrontOfSpeaker = new Pose2d(2,5.55, Rotation2d.fromDegrees(0));
 
   // Subsystems
-  private final Intake intake = new Intake();
-  private final Shooter shooter = new Shooter();
-  private final Pivot pivot = new Pivot();
-  private final Flipper flipper = new Flipper();
-  private final Climber climber = new Climber();
+  public final Pivot pivot = new Pivot();
+  public final Flipper flipper = new Flipper();
 
+  private final Shooter shooter = new Shooter();
+  private final Intake intake = new Intake();
+  private final Climber climber = new Climber();
 
 
   private final Command autoShootCommand = new VisionShootCommand(
@@ -68,8 +69,6 @@ public class RobotContainer {
 
   // private final StowCommand stowCommand = new StowCommand(pivot, intake, shooter, flipper);
   // This causes WPILib to crash for some reason whenever it is ran
-
-  // private final Command stowCommand;
 
   //Field Centric Request - field-centric in open loop
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -92,10 +91,13 @@ public class RobotContainer {
   private void configureBindings() {
 
     drivetrain.setDefaultCommand(
-    drivetrain.applyRequest(() -> drive.withVelocityX(-Controller.DRIVER.controller.getLeftY() * MaxSpeed)
-        .withVelocityY(-Controller.DRIVER.controller.getLeftX() * MaxSpeed)
-        .withRotationalRate(drivetrain.getRotationalSpeed(() -> -Controller.DRIVER.controller.getRightX()) * MaxAngularRate)                                                                                // X (left)
-    ).ignoringDisable(true));
+      drivetrain.applyRequest(() -> drive.withVelocityX(-Controller.DRIVER.controller.getLeftY() * MaxSpeed)
+          .withVelocityY(-Controller.DRIVER.controller.getLeftX() * MaxSpeed)
+          .withRotationalRate(drivetrain.getRotationalSpeed(() -> -Controller.DRIVER.controller.getRightX()) * MaxAngularRate)                                                                                // X (left)
+      ).ignoringDisable(true)
+    );
+
+    climber.setDefaultCommand(climber.climbCommand(() -> Controller.MANIPULATOR.controller.getRightY()));
 
     PathPlannerPath midNoteShootPos = PathPlannerPath.fromPathFile("driveToNoteShot");
 
@@ -104,11 +106,12 @@ public class RobotContainer {
       AutoBuilder.followPath(midNoteShootPos)
                   .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5) // Cancels on driver input
     );
+
     ControlScheme.RESET_HEADING.button.onTrue(Commands.runOnce(drivetrain::seedFieldRelative));
 
     // Manipulator controls
     ControlScheme.SHOOT_SPEAKER.button.whileTrue(
-      new AimShootCommand(pivot, intake, shooter, () -> 17)
+      new AimCommand(pivot, shooter, () -> 17)
     ).onFalse(Commands.parallel(
       pivot.stowCommand(),
       flipper.stowCommand(),
@@ -146,14 +149,13 @@ public class RobotContainer {
               )
       ));
 
-    ControlScheme.INTAKE.button.whileTrue(new IntakeCommand(pivot, intake));
+    ControlScheme.INTAKE.button.whileTrue(new IntakeCommand(pivot, intake))
+      .onFalse(pivot.stowCommand());
+
+    ControlScheme.FORCE_STOW.button.whileTrue(pivot.forceStowCommand());
 
     ControlScheme.OUTTAKE.button.whileTrue(intake.outtakeCommand());
     ControlScheme.AMP_OUTTAKE.button.whileTrue(intake.ampOuttakeCommand());
-
-    ControlScheme.CLIMBER_UP.button.whileTrue(climber.raiseCommand());
-    ControlScheme.CLIMBER_DOWN.button.whileTrue(climber.stowCommand());
-    
 
     Controller.DRIVER.controller.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
     Controller.DRIVER.controller.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
@@ -170,11 +172,13 @@ public class RobotContainer {
 
   public RobotContainer() {
 
+    
+
     SmartDashboard.putData(Commands.runOnce(() -> intake.intakeCommand()));
 
     NamedCommands.registerCommand("shootHub", new AutoAimShootCommand(pivot, intake, shooter, () -> 17));
     NamedCommands.registerCommand("shootNote", new AutoAimShootCommand(pivot, intake, shooter, () -> 26));
-    NamedCommands.registerCommand("shootFarNote", new AutoAimShootCommand(pivot, intake, shooter, () -> 28));
+    NamedCommands.registerCommand("shootFarNote", new AutoAimShootCommand(pivot, intake, shooter, () -> 28.5));
     NamedCommands.registerCommand("shootReallyFar", new AutoAimShootCommand(pivot, intake, shooter, () -> 29));
 
     NamedCommands.registerCommand("intakeOn", intake.intakeCommand());

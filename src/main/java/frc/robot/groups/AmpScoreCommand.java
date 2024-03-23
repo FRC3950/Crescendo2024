@@ -4,8 +4,8 @@
 
 package frc.robot.groups;
 
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Flipper;
 import frc.robot.subsystems.Pivot;
 
@@ -16,7 +16,8 @@ public class AmpScoreCommand extends SequentialCommandGroup {
   /** Creates a new AmpScoreCommand. */
   public AmpScoreCommand(Pivot pivot, Flipper flipper) {
     addCommands(
-      pivot.setAngleCommand(() -> 50),
+      pivot.setAngleInstantCommand(() -> 50),
+      Commands.waitSeconds(0.75),
       flipper.ampCommand()
     ); // Stow command runs on button false (See RobotContainer)
 

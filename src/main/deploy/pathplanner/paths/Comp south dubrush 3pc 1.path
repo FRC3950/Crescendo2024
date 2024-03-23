@@ -3,38 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.6933452953924437,
-        "y": 4.403274541213847
+        "x": 0.693930515496991,
+        "y": 4.4130617717395255
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5058601948502455,
-        "y": 4.5268810626411495
+        "x": 2.5517550702093064,
+        "y": 1.4519244132786269
       },
       "isLocked": false,
-      "linkedName": "south"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.5670791427174855,
-        "y": 4.286166175756032
+        "x": 8.279435515581298,
+        "y": 0.7726802578979737
       },
       "prevControl": {
-        "x": 2.037732466141958,
-        "y": 4.581954913077419
+        "x": 7.279435515581298,
+        "y": 0.7726802578979737
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "comp pickup note 3"
+      "linkedName": "comp pickup note 8"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": -30.0,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -45,11 +39,11 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -28.96728327463405,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Comp 2pc",
+  "folder": "Comp south dubrush 3pc",
   "previewStartingState": {
     "rotation": -60.0,
     "velocity": 0

@@ -8,7 +8,8 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
         import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-        import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.misc.LimelightHelpers;
 import frc.robot.subsystems.Limelight;
@@ -20,7 +21,6 @@ public class Robot extends TimedRobot {
 
   private final boolean UseLimelight = true;
 
-
   @Override
   public void robotInit() {
 
@@ -28,7 +28,6 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     m_robotContainer.drivetrain.getDaqThread().setThreadPriority(99);
-
   // for (int port = 5800; port <= 5805; port++) {
   //    PortForwarder.add(port, "limelight.local", port);
   // }
@@ -110,6 +109,9 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
+    m_robotContainer.flipper.init();
+    m_robotContainer.pivot.init();
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
@@ -123,6 +125,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+
+    m_robotContainer.flipper.init();
+    m_robotContainer.pivot.init();
+
+    if(m_robotContainer.my_alliance == Alliance.Red){
+      m_robotContainer.drivetrain.seedFieldRelative();
+    }
+
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

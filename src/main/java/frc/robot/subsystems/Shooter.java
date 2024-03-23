@@ -42,19 +42,14 @@ public class Shooter extends VelocityController {
       @Override 
       public void execute() {
         if(getVelocity(Constants.Shooter.topId) >= Constants.Shooter.activeSpeed.getAsDouble()){
-          intake.applyInitialTargetVelocities();
+          intake.applyVelocity(Constants.Intake.indexerId, Constants.Intake.indexerActiveVelocity);
         }
       }
 
       @Override 
       public void end(boolean interrupted){
-        
         applyVelocities(Constants.Shooter.idleSpeed);
         intake.stop();
-      }
-
-      public boolean isFinished(){
-       return false;
       }
     };
   }
@@ -69,7 +64,7 @@ public class Shooter extends VelocityController {
 
       @Override 
       public boolean isFinished(){
-        return Math.abs(getVelocity(Constants.Shooter.topId)) >= targets[0].targetVelocity - 1;
+        return Math.abs(getVelocity(Constants.Shooter.topId) - targets[0].targetVelocity) <= 1;
       }
     };
   }
