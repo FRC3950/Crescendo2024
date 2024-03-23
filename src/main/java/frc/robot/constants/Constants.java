@@ -12,7 +12,7 @@ public interface Constants {
             public static final double kV = 0.1185;
             public static final double kG = 0;
 
-            public static final DoubleSupplier stowPosition = () -> -2;
+            public static final DoubleSupplier stowPosition = () -> -3.0;
           //  public static final DoubleSupplier shuttlePosition = () -> Shuffleboard.getTab("Tab 5").add("Shuttle Position", 30).getEntry().getDouble(30);
         }
 
@@ -23,6 +23,8 @@ public interface Constants {
             public static final double kP = 0.0005;
             public static final double kV = 0.05;
             public static final double kG = 0.05;
+
+            public static final DoubleSupplier highPosition = () -> 48.5;
         }
 
         final class Flipper {

@@ -43,7 +43,7 @@ public class Intake extends VelocityController {
     SmartDashboard.putBoolean("INTAKE", false);
   }
 
-  public Command intakeInstantCommand() {
+  public Command intakeForeverCommand() {
     return new Command() {
       @Override
       public void initialize() {
@@ -51,9 +51,7 @@ public class Intake extends VelocityController {
       }
 
       @Override
-      public void end(boolean interrupted){
-        
-      }
+      public void end(boolean interrupted){}
 
       @Override
       public boolean isFinished() {
@@ -100,7 +98,7 @@ public class Intake extends VelocityController {
     return new Command() {
       @Override 
       public void initialize() {
-        applyVelocities(() -> (Constants.Intake.ampActiveVelocity.getAsDouble()));
+        applyVelocity(Constants.Intake.indexerId, () -> -Constants.Intake.indexerActiveVelocity.getAsDouble());
       }
 
       @Override 
@@ -111,7 +109,7 @@ public class Intake extends VelocityController {
   }
 
   public Command stopCommand() {
-    return Commands.runOnce(() -> stop());
+    return Commands.runOnce(super::stop);
   }
 
   public boolean noteIsIndexed() {

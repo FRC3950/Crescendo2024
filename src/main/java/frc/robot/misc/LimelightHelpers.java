@@ -768,7 +768,7 @@ public class LimelightHelpers {
 
         try {
             results = mapper.readValue(getJSONDump(limelightName), LimelightResults.class);
-        } catch (JsonProcessingException ignored) {
+        } catch (Exception ignored) {
 
         }
 

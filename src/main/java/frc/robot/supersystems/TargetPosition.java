@@ -39,7 +39,7 @@ public class TargetPosition {
         mmVoltage.Slot = 0;
     }
 
-    public TargetPosition(TalonFX motor1, TalonFX motor2, DoubleSupplier initialPosition, double kP, double kV, double kG, boolean isInverted){
+    public TargetPosition(TalonFX motor1, TalonFX motor2, DoubleSupplier initialPosition, double kP, double kV, double kG, boolean motorsAreInverted){
         this.motor = motor1;
         this.initalPosition = initialPosition;
 
@@ -57,6 +57,6 @@ public class TargetPosition {
 
         mmVoltage.Slot = 0;
 
-        motor2.setControl(new Follower(motor1.getDeviceID(), isInverted));
+        motor2.setControl(new Follower(motor1.getDeviceID(), motorsAreInverted));
     }
 }

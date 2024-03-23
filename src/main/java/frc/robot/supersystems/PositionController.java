@@ -13,22 +13,24 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class PositionController extends SubsystemBase {
   /** Creates a new StateController. */
-  private final TargetPosition targetPosition;
-  private final MotionMagicVoltage mmVoltage;
+  protected final TargetPosition targetPosition;
+  protected final MotionMagicVoltage mmVoltage;
 
   protected PositionController(TargetPosition targetPosition) {
 
     this.targetPosition = targetPosition;
     mmVoltage = targetPosition.mmVoltage;
+  }
 
+  public void init() {
     setPosition(targetPosition.initalPosition);
   }
 
-  protected void setPosition(DoubleSupplier position){
+  protected void setPosition(DoubleSupplier position) {
     targetPosition.motor.setControl(mmVoltage.withPosition(position.getAsDouble()));
   }
 
-  protected void setZero(){
+  protected void stow() {
     targetPosition.motor.setControl(mmVoltage.withPosition(0));
   }
 
