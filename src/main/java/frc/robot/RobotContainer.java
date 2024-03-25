@@ -38,7 +38,7 @@ import frc.robot.xbox.Controller;
 public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
-  Alliance my_alliance;
+  public static Alliance my_alliance;
 
 
   private final double MaxSpeed = 4.3; // 6 meters per second desired top speed *t3x*  //was 5 before
@@ -171,9 +171,6 @@ public class RobotContainer {
   }
 
   public RobotContainer() {
-
-    
-
     SmartDashboard.putData(Commands.runOnce(() -> intake.intakeCommand()));
 
     NamedCommands.registerCommand("shootHub", new AutoAimShootCommand(pivot, intake, shooter, () -> 17));

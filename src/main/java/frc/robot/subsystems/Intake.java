@@ -104,11 +104,14 @@ public class Intake extends VelocityController {
   }
 
   public boolean noteIsIndexed() {
-    return !targets[0].motor.getReverseLimit().getValue().equals(ReverseLimitValue.Open);
+    return !targets[1].motor.getReverseLimit().getValue().equals(ReverseLimitValue.Open);
   }
 
   @Override
   public void periodic() {
+
+    SmartDashboard.putBoolean("INTAKE", noteIsIndexed());
+
     if(noteIsIndexed()){
       LimelightHelpers.setLEDMode_ForceOn("limelight");
     }

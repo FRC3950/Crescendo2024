@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.misc.LimelightHelpers;
+import frc.robot.RobotContainer;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Limelight;
 
@@ -54,9 +55,9 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
     public boolean isLockedRotational = false;
 
-    private final double rotationalKp = 0.0260;
-    private final double rotationalKd = 0.002;
-    private final PIDController rotationalPid = new PIDController(rotationalKp, 0, rotationalKd);
+    private final double rotationalKp = 0.100;
+    private final double rotationalKi = 0.0000;
+    private final PIDController rotationalPid = new PIDController(rotationalKp, rotationalKi, 0);
 
 
     //red and blue speaker pose
@@ -73,13 +74,18 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     }
 
     public double getRotationalSpeed(DoubleSupplier xboxInput) {
-        if (isLockedRotational && xboxInput.getAsDouble() < 0.5) {
-            var activeSpeaker = DriverStation.getAlliance().equals(DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
+        if (isLockedRotational) {
+            var activeSpeaker = DriverStation.getAlliance().get().equals(DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
             var currentPose = getState().Pose;
             var distance = currentPose.getTranslation().getDistance(activeSpeaker.getTranslation());
 
-            var targetAngle = Math.acos(distance/currentPose.getY());
-            var angleDifference = currentPose.getRotation().getRadians() - targetAngle;
+            var xDistance = distance/Math.cos(currentPose.getRotation().getRadians());
+            var yDistance = distance/Math.sin(currentPose.getRotation().getRadians());
+
+            var targetAngle = Math.atan2(yDistance, xDistance);
+            var angleDifference = targetAngle + currentPose.getRotation().getRadians();
+
+            System.out.println(angleDifference * 55.7);
 
             return rotationalPid.calculate(angleDifference);
         }
