@@ -65,7 +65,6 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
     private final Limelight lime = Limelight.getInstance();
 
-
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();   //.withDriveRequestType(DriveRequestType.Velocity);
 
     @Override
@@ -76,7 +75,13 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     public double getRotationalSpeed(DoubleSupplier xboxInput) {
         if (isLockedRotational && xboxInput.getAsDouble() < 0.5) {
             var activeSpeaker = DriverStation.getAlliance().equals(DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
-            return rotationalPid.calculate(activeSpeaker.getRotation().getDegrees());
+            var currentPose = getState().Pose;
+            var distance = currentPose.getTranslation().getDistance(activeSpeaker.getTranslation());
+
+            var targetAngle = Math.acos(distance/currentPose.getY());
+            var angleDifference = currentPose.getRotation().getRadians() - targetAngle;
+
+            return rotationalPid.calculate(angleDifference);
         }
 
         return xboxInput.getAsDouble();
