@@ -57,25 +57,26 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     private final double rotationalKp = 0.0260;
     private final double rotationalKd = 0.002;
     private final PIDController rotationalPid = new PIDController(rotationalKp, 0, rotationalKd);
-    
+
 
     //red and blue speaker pose
-    Pose2d redSpeakerPose = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
-    Pose2d blueSpeakerPose = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
+    // Pose2d redSpeakerPose = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
+    Pose2d blueSpeaker = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
 
     private final Limelight lime = Limelight.getInstance();
-    
+
 
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();   //.withDriveRequestType(DriveRequestType.Velocity);
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Speaker distance", this.getState().Pose.getTranslation().getDistance(blueSpeakerPose.getTranslation()));
+        SmartDashboard.putNumber("Speaker distance", this.getState().Pose.getTranslation().getDistance(blueSpeaker.getTranslation()));
     }
 
     public double getRotationalSpeed(DoubleSupplier xboxInput) {
-        if (isLockedRotational) {
-            return rotationalPid.calculate(lime.getTx());
+        if (isLockedRotational && xboxInput.getAsDouble() < 0.5) {
+            var activeSpeaker = DriverStation.getAlliance().equals(DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
+            return rotationalPid.calculate(activeSpeaker.getRotation().getDegrees());
         }
 
         return xboxInput.getAsDouble();
@@ -139,7 +140,6 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     }
 
     public Command getAutoPath(String pathName) {
-
         return new PathPlannerAuto(pathName);
     }
 
@@ -201,10 +201,6 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
         }
 
     }
-
-// public PathPlannerPath centerOnSpeakerPathCommand() {
-
-//     );
 
 
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {
@@ -307,11 +303,4 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
 
     }
-
-
-
-
-
-
-
 }

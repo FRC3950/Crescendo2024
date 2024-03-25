@@ -19,7 +19,7 @@ public abstract class VelocityController extends SubsystemBase {
   protected VelocityController(TargetVelocity...targets) {
     this.targets = targets;
   }
-  
+
   public void applyInitialTargetVelocities() {
     for(TargetVelocity target : targets)
       target.motor.setControl(target.velVoltage.withVelocity(target.targetVelocity));
@@ -40,28 +40,9 @@ public abstract class VelocityController extends SubsystemBase {
   }
 
   public void stop() {
-    for(TargetVelocity target : targets)
-      target.motor.setControl(target.velVoltage.withVelocity(0));
+      for (TargetVelocity target : targets)
+          target.motor.setControl(target.velVoltage.withVelocity(0));
   }
-
-  protected double getVelocity(int motorId) {
-    for(TargetVelocity target : targets){
-      if(target.motor.getDeviceID() == motorId)
-        return target.motor.getVelocity().getValueAsDouble();
-    }
-
-    return 0;
-  }
-
-  protected StatusSignal<ReverseLimitValue> getSensorSignal(int motorId) {
-    for(TargetVelocity target : targets){
-      if(target.motor.getDeviceID() == motorId)
-        return target.motor.getReverseLimit();
-    }
-
-    return null;
-  }
-
   @Override
   public void periodic() {}
 }

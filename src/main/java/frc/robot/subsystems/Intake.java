@@ -4,13 +4,11 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.misc.LimelightHelpers;
 import frc.robot.supersystems.TargetVelocity;
@@ -19,11 +17,9 @@ import frc.robot.constants.Constants;
 
 public class Intake extends VelocityController {
 
-  private final StatusSignal<ReverseLimitValue> beamBreak;
-
   public Intake() {
     super(
-      new TargetVelocity( // Intake 
+      new TargetVelocity( // Intake
         new TalonFX(Constants.Intake.leftId),
         new TalonFX(Constants.Intake.rightId),
         65,
@@ -37,8 +33,6 @@ public class Intake extends VelocityController {
         Constants.Intake.indexerKv
       )
     );
-    
-    beamBreak = getSensorSignal(Constants.Intake.indexerId);
 
     SmartDashboard.putBoolean("INTAKE", false);
   }
@@ -51,15 +45,12 @@ public class Intake extends VelocityController {
       }
 
       @Override
-      public void end(boolean interrupted){}
-
-      @Override
       public boolean isFinished() {
         return true;
       }
     };
   }
-  
+
 
   public Command intakeCommand() {
     return new Command() {
@@ -87,7 +78,7 @@ public class Intake extends VelocityController {
         applyVelocities(() -> (-Constants.Intake.indexerActiveVelocity.getAsDouble()));
       }
 
-      @Override 
+      @Override
       public void end(boolean interrupted) {
         stop();
       }
@@ -96,12 +87,12 @@ public class Intake extends VelocityController {
 
   public Command ampOuttakeCommand() {
     return new Command() {
-      @Override 
+      @Override
       public void initialize() {
         applyVelocity(Constants.Intake.indexerId, () -> -Constants.Intake.indexerActiveVelocity.getAsDouble());
       }
 
-      @Override 
+      @Override
       public void end(boolean interrupted) {
         stop();
       }
@@ -113,19 +104,11 @@ public class Intake extends VelocityController {
   }
 
   public boolean noteIsIndexed() {
-    return !beamBreak.getValue().equals(ReverseLimitValue.Open);
-  }
-
-  public void index() {
-    
+    return !targets[0].motor.getReverseLimit().getValue().equals(ReverseLimitValue.Open);
   }
 
   @Override
   public void periodic() {
-    beamBreak.refresh();
-
-    SmartDashboard.putBoolean("INTAKE", noteIsIndexed());
-
     if(noteIsIndexed()){
       LimelightHelpers.setLEDMode_ForceOn("limelight");
     }
