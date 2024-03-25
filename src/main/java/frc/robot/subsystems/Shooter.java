@@ -17,8 +17,8 @@ public class Shooter extends VelocityController {
   public Shooter() {
     super(
       new TargetVelocity(
-        new TalonFX(Constants.Shooter.topId, "CANivore"), 
-        new TalonFX(Constants.Shooter.bottomId, "CANivore"), Constants.Shooter.activeSpeed.getAsDouble(), 
+        new TalonFX(Constants.Shooter.topId, "CANivore"),
+        new TalonFX(Constants.Shooter.bottomId, "CANivore"), Constants.Shooter.activeSpeed.getAsDouble(),
         Constants.Shooter.kP, Constants.Shooter.kV, true
       )
     );
@@ -34,19 +34,19 @@ public class Shooter extends VelocityController {
 
   public Command shootCommand(Intake intake) {
     return new Command() {
-      @Override 
+      @Override
       public void initialize() {
         applyInitialTargetVelocities();
       }
 
-      @Override 
+      @Override
       public void execute() {
-        if(getVelocity(Constants.Shooter.topId) >= Constants.Shooter.activeSpeed.getAsDouble()){
+        if(getVelocity() >= Constants.Shooter.activeSpeed.getAsDouble()){
           intake.applyVelocity(Constants.Intake.indexerId, Constants.Intake.indexerActiveVelocity);
         }
       }
 
-      @Override 
+      @Override
       public void end(boolean interrupted){
         applyVelocities(Constants.Shooter.idleSpeed);
         intake.stop();
@@ -54,7 +54,7 @@ public class Shooter extends VelocityController {
     };
   }
 
-  // Used in aim-shoot commands 
+  // Used in aim-shoot commands
   public Command applyVelocitiesCommand() {
     return new Command() {
       @Override
@@ -62,11 +62,18 @@ public class Shooter extends VelocityController {
         applyInitialTargetVelocities();
       }
 
-      @Override 
+      @Override
       public boolean isFinished(){
-        return Math.abs(getVelocity(Constants.Shooter.topId) - targets[0].targetVelocity) <= 1;
+        return Math.abs(getVelocity() - targets[0].targetVelocity) <= 1;
       }
     };
+  }
+
+  private double getVelocity() {
+      if(targets.length < 1)
+          return 0;
+
+      return targets[0].motor.getVelocity().getValueAsDouble();
   }
 
   @Override
