@@ -9,8 +9,8 @@ public interface Constants {
     final class Physics {
         public static final double noteExitVelocity = 10; // Immediately after leaving shooter
 
-        public static final double targetAmpHeight = 3.211;
-        public static final double shooterHeight = 2; //FIXME
+        public static final double targetSpeakerHeight = 3.211;
+        public static final double shooterHeight = 1.5; //FIXME
     }
 
     final class Pivot {

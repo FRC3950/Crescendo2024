@@ -55,9 +55,11 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
     public boolean isLockedRotational = false;
 
-    private final double rotationalKp = 0.100;
-    private final double rotationalKi = 0.0000;
-    private final PIDController rotationalPid = new PIDController(rotationalKp, rotationalKi, 0);
+    private final double rotationalKp = 1.200;
+    private final double rotationalKi = 0.00001;
+    private final double rotationalKd = 0.00001;
+
+    private final PIDController rotationalPid = new PIDController(rotationalKp, rotationalKi, rotationalKd);
 
 
     //red and blue speaker pose
@@ -77,15 +79,12 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
         if (isLockedRotational) {
             var activeSpeaker = DriverStation.getAlliance().get().equals(DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
             var currentPose = getState().Pose;
-            var distance = currentPose.getTranslation().getDistance(activeSpeaker.getTranslation());
 
-            var xDistance = distance/Math.cos(currentPose.getRotation().getRadians());
-            var yDistance = distance/Math.sin(currentPose.getRotation().getRadians());
+            var xDistance = currentPose.getTranslation().getX() - activeSpeaker.getX();
+            var yDistance = currentPose.getTranslation().getY() - activeSpeaker.getY();
 
-            var targetAngle = Math.atan2(yDistance, xDistance);
-            var angleDifference = targetAngle + currentPose.getRotation().getRadians();
-
-            System.out.println(angleDifference * 55.7);
+            var targetAngle = Math.atan(yDistance/xDistance);
+            var angleDifference = currentPose.getRotation().getRadians() - targetAngle;
 
             return rotationalPid.calculate(angleDifference);
         }
