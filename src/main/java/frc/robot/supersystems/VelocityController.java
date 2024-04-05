@@ -6,9 +6,6 @@ package frc.robot.supersystems;
 
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.signals.ReverseLimitValue;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class VelocityController extends SubsystemBase {
@@ -41,7 +38,7 @@ public abstract class VelocityController extends SubsystemBase {
 
   public void stop() {
       for (TargetVelocity target : targets)
-          target.motor.setControl(target.velVoltage.withVelocity(0));
+        target.motor.setControl(target.velVoltage.withVelocity(0));
   }
   @Override
   public void periodic() {}

@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
@@ -28,12 +29,15 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.misc.LimelightHelpers;
 import frc.robot.RobotContainer;
+import frc.robot.constants.Constants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Limelight;
 
@@ -47,7 +51,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 // swerveDriveFXConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = Constants.Swerve.openLoopRamp;
 // swerveDriveFXConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = Constants.Swerve.openLoopRamp;
 
-    Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
+    Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(0));
 
     private static final double SIM_LOOP_PERIOD = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
@@ -55,18 +59,21 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
     public boolean isLockedRotational = false;
 
-    private final double rotationalKp = 1.200;
-    private final double rotationalKi = 0.00001;
-    private final double rotationalKd = 0.00001;
+    private final double rotationalKpBlue = 1.200;
+    private final double rotationalKiBlue = 0.00001;
+    private final double rotationalKdBlue = 0.00001;
 
-    private final PIDController rotationalPid = new PIDController(rotationalKp, rotationalKi, rotationalKd);
+    private final double rotationalKpRed = .12;
+    private final double rotationalKiRed = 0.00001;
+    private final double rotationalKdRed = 0.00001;
 
+    private final PIDController rotationalBluePid = new PIDController(rotationalKpBlue, rotationalKiBlue, rotationalKdBlue);
+    private final PIDController rotationalRedPid = new PIDController(rotationalKpRed, rotationalKiRed, rotationalKdRed);
+    
 
     //red and blue speaker pose
     // Pose2d redSpeakerPose = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
     Pose2d blueSpeaker = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
-
-    private final Limelight lime = Limelight.getInstance();
 
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();   //.withDriveRequestType(DriveRequestType.Velocity);
 
@@ -76,6 +83,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     }
 
     public double getRotationalSpeed(DoubleSupplier xboxInput) {
+        rotationalRedPid.setSetpoint(Math.PI);
         if (isLockedRotational) {
             var activeSpeaker = DriverStation.getAlliance().get().equals(DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
             var currentPose = getState().Pose;
@@ -83,10 +91,47 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
             var xDistance = currentPose.getTranslation().getX() - activeSpeaker.getX();
             var yDistance = currentPose.getTranslation().getY() - activeSpeaker.getY();
 
-            var targetAngle = Math.atan(yDistance/xDistance);
-            var angleDifference = currentPose.getRotation().getRadians() - targetAngle;
+            if(activeSpeaker == blueSpeaker){
 
-            return rotationalPid.calculate(angleDifference);
+                var targetAngle = Math.atan2(yDistance, xDistance);
+                var currentAngle = currentPose.getRotation().getRadians();
+                var angleDifference = currentAngle - targetAngle;
+                
+                return rotationalBluePid.calculate(angleDifference) * 0.85;
+            }
+
+            else if(activeSpeaker == redSpeaker){
+                
+                // return xboxInput.getAsDouble() * 1.5 * Math.PI;
+
+                var targetAngle = Math.atan2(yDistance, 
+                -xDistance);
+                
+                var currentAngle = Math.abs(currentPose.getRotation().getRadians());
+
+             
+                var  angleDifference = currentAngle - (Math.PI + targetAngle);
+
+                // if(currentAngle < 0){
+                //     angleDifference = Math.PI - Math.abs(currentAngle);
+                //     angleDifference += (Math.PI - Math.abs(targetAngle));
+
+                //     return rotationalPid.calculate(angleDifference) * 0.85;
+                // }
+
+                SmartDashboard.putNumber("targetAngle", targetAngle);
+                SmartDashboard.putNumber("currentAngle  ", currentAngle);
+                    SmartDashboard.putNumber("angleDiff", angleDifference);
+
+                  
+
+
+                        return rotationalRedPid.calculate(angleDifference) ;
+                    
+                 
+                
+            }
+
         }
 
         return xboxInput.getAsDouble();
@@ -161,7 +206,6 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
        // System.out.println("past the var");
 
         if (visionResults.getBotPose2d_wpiBlue().getX() == 0.0) {
-            System.out.println("was at 0");
             return;
         }
 

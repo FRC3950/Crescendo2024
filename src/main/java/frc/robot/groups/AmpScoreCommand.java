@@ -4,6 +4,8 @@
 
 package frc.robot.groups;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Flipper;
@@ -14,11 +16,11 @@ import frc.robot.subsystems.Pivot;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AmpScoreCommand extends SequentialCommandGroup {
   /** Creates a new AmpScoreCommand. */
-  public AmpScoreCommand(Pivot pivot, Flipper flipper) {
+  public AmpScoreCommand(Pivot pivot, Flipper flipper, DoubleSupplier pivotPos, DoubleSupplier flipperPos) {
     addCommands(
-      pivot.setAngleInstantCommand(() -> 50),
+      pivot.setAngleInstantCommand(pivotPos),
       Commands.waitSeconds(0.75),
-      flipper.ampCommand()
+      flipper.ampCommand(flipperPos)
     ); // Stow command runs on button false (See RobotContainer)
 
     addRequirements(pivot, flipper);

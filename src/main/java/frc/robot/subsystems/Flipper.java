@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,9 +29,8 @@ public class Flipper extends PositionController {
     return Commands.runOnce(() -> setPosition(Constants.Flipper.stowPosition));
   } 
 
-  public Command ampCommand() {
-    System.out.println("AMP");
-    return Commands.runOnce(() -> setPosition(Constants.Flipper.ampPosition));
+  public Command ampCommand(DoubleSupplier pos) {
+    return Commands.runOnce(() -> setPosition(pos));
   }
 
   @Override

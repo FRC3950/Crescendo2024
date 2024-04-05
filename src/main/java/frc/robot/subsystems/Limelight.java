@@ -6,17 +6,14 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.*;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
 import frc.robot.misc.LimelightHelpers;
-import frc.robot.misc.LimelightHelpers.LimelightResults;
 import frc.robot.misc.LimelightHelpers.Results;
 
 public class Limelight extends SubsystemBase {
   /** Creates a new Limelight. */
 
-  private final NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
+  private final NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("");
 
   private static Limelight instance;
 
@@ -53,14 +50,12 @@ public class Limelight extends SubsystemBase {
 
   public void blink() {
     limelightTable.getEntry("ledMode").setNumber(2);
-    System.out.println("ll blink");
   }
-
-
 
   @Override
   public void periodic() {
     limelightResults = LimelightHelpers.getLatestResults("limelight").targetingResults;
-    llPose = limelightResults.getBotPose3d_wpiBlue().toPose2d();    // This method will be called once per scheduler run
+    llPose = limelightResults.getBotPose3d_wpiBlue().toPose2d(); 
+       // This method will be called once per scheduler run
   }
 }

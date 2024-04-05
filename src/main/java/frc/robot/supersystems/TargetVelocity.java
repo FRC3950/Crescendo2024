@@ -27,6 +27,8 @@ public class TargetVelocity {
         slot0Configs.kV = kV;
 
         velVoltage.Slot = 0;
+
+        //motor.getConfigurator().apply(slot0Configs);
     }
 
     /**
@@ -51,6 +53,9 @@ public class TargetVelocity {
         slot0Configs.kV = kV;
 
         velVoltage.Slot = 0;
+
+        motor.getConfigurator().apply(slot0Configs);
+        follower.getConfigurator().apply(slot0Configs);
 
         follower.setControl(new Follower(motor.getDeviceID(), isInverted));
     }

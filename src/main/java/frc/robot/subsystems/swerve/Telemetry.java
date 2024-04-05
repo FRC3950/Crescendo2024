@@ -52,15 +52,14 @@ public class Telemetry {
     private final DoublePublisher speed = driveStats.getDoubleTopic("Speed").publish();
     private final DoublePublisher odomFreq = driveStats.getDoubleTopic("Odometry Frequency").publish();
 
-    // private final NetworkTable vision = inst.getTable("Vision");
-    // private final DoublePublisher visionX = vision.getDoubleTopic("Vision X").publish();
-    // private final DoublePublisher visionY = vision.getDoubleTopic("Vision Y").publish();
-    // private final DoublePublisher visionAngle = vision.getDoubleTopic("Vision Angle").publish();
-
-
+    
+    
     private final NetworkTable vision = inst.getTable("Vision");
     private final StructPublisher<Pose3d> visionPose = vision.getStructTopic("Vision Pose", Pose3d.struct).publish();
     //private final DoublePublisher visionDistance = vision.getDoubleTopic("Vision Distance").publish();
+    private final DoublePublisher visionX = vision.getDoubleTopic("Vision X").publish();
+    private final DoublePublisher visionY = vision.getDoubleTopic("Vision Y").publish();
+    private final DoublePublisher visionAngle = vision.getDoubleTopic("Vision Angle").publish();
 
 
     /* Keep a reference of the last pose to calculate the speeds */
@@ -103,12 +102,11 @@ public class Telemetry {
             pose.getY(),
             pose.getRotation().getDegrees()
         });
-      //  fieldX.set(pose.getX());
-       // fieldY.set(pose.getY());
-      //  fieldAngle.set(pose.getRotation().getDegrees());
+        //  fieldX.set(pose.getX());
+        // fieldY.set(pose.getY());
+        //  fieldAngle.set(pose.getRotation().getDegrees());
 
         /* Telmeterize Vision Pose */
-
         
         var lastResult = Limelight.limelightResults;
         

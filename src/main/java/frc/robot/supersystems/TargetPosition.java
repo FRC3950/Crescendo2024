@@ -3,11 +3,9 @@ package frc.robot.supersystems;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.controls.DifferentialMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
 
 public class TargetPosition {
 
@@ -37,6 +35,8 @@ public class TargetPosition {
         slot0Configs.kG = kG;
 
         mmVoltage.Slot = 0;
+
+        motor.getConfigurator().apply(slot0Configs);
     }
 
     public TargetPosition(TalonFX motor1, TalonFX motor2, DoubleSupplier initialPosition, double kP, double kV, double kG, boolean motorsAreInverted){
@@ -56,6 +56,9 @@ public class TargetPosition {
         slot0Configs.kG = kG;
 
         mmVoltage.Slot = 0;
+
+        motor1.getConfigurator().apply(slot0Configs);
+        motor2.getConfigurator().apply(slot0Configs);
 
         motor2.setControl(new Follower(motor1.getDeviceID(), motorsAreInverted));
     }

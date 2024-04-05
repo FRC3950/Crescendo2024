@@ -1,26 +1,29 @@
 package frc.robot.constants;
 
 import java.util.function.DoubleSupplier;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 public interface Constants {
-
 
     final class Physics {
         public static final double noteExitVelocity = 10; // Immediately after leaving shooter
 
         public static final double targetSpeakerHeight = 3.211;
         public static final double shooterHeight = 1.5; //FIXME
+
+        public static final int gyroId = 40;
     }
 
     final class Pivot {
         public static final int id = 15;
+        public static final int cancoderId = 52;
 
-        public static final double kP = 2.5;
-        public static final double kV = 0.1185;
+        public static final double kD = 0.00;
+        public static final double kV = 21.75;
+        public static final double kP = 200;
+
         public static final double kG = 0;
 
-        public static final DoubleSupplier stowPosition = () -> -3.0;
+        public static final DoubleSupplier stowPosition = () -> -0.005;
       //  public static final DoubleSupplier shuttlePosition = () -> Shuffleboard.getTab("Tab 5").add("Shuttle Position", 30).getEntry().getDouble(30);
     }
 
@@ -44,6 +47,7 @@ public interface Constants {
 
         public static final DoubleSupplier stowPosition = () -> 0.5;
         public static final DoubleSupplier ampPosition = () -> -1.25;
+        public static final DoubleSupplier trapPosition = () -> -0.75;
     }
 
     final class Elevator {
@@ -59,9 +63,9 @@ public interface Constants {
         public static final double indexerKp = 0.01;
         public static final double indexerKv = 0.12;
 
-        public static final double intakeKp = 0.764999999888241291;
+        public static final double intakeKp = 0.1;
         //public static final double intakeKs = 7.1;
-        public static final double intakeKv = 0.0;
+        public static final double intakeKv = 0.115;
 
         public static final DoubleSupplier indexerActiveVelocity = () -> 38;
         public static final DoubleSupplier intakeActiveVelocity = () -> 65;

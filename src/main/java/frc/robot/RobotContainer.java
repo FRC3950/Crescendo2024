@@ -13,6 +13,9 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -21,9 +24,10 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.groups.AimCommand;
 import frc.robot.groups.AimShootCommand;
 import frc.robot.groups.AmpScoreCommand;
-import frc.robot.groups.AutoAimShootCommand;
 import frc.robot.groups.IntakeCommand;
 import frc.robot.groups.VisionShootCommand;
+import frc.robot.groups.auto.AutoAimShootCommand;
+import frc.robot.constants.Constants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Flipper;
 import frc.robot.subsystems.Climber;
@@ -39,6 +43,9 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
   public static Alliance my_alliance;
+
+  public final NetworkTableEntry velocityX = NetworkTableInstance.getDefault().getEntry("Drive").getTopic().getInstance().getEntry("Velocity X");
+  public final NetworkTableEntry velocity = NetworkTableInstance.getDefault().getEntry("Drive").getTopic().getInstance().getEntry("Velocity Y");
 
 
   private final double MaxSpeed = 4.3; // 6 meters per second desired top speed *t3x*  //was 5 before
@@ -97,21 +104,23 @@ public class RobotContainer {
       ).ignoringDisable(true)
     );
 
+    
+
     climber.setDefaultCommand(climber.climbCommand(() -> Controller.MANIPULATOR.controller.getRightY()));
 
-    PathPlannerPath midNoteShootPos = PathPlannerPath.fromPathFile("driveToNoteShot");
+   // PathPlannerPath midNoteShootPos = PathPlannerPath.fromPathFile("driveToNoteShot");
 
     // Controller.DRIVER.controller.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.isLockedRotational = !drivetrain.isLockedRotational));
-    Controller.DRIVER.controller.rightBumper().onTrue(
-      AutoBuilder.followPath(midNoteShootPos)
-                  .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5) // Cancels on driver input
-    );
+    // Controller.DRIVER.controller.rightBumper().onTrue(
+    //   AutoBuilder.followPath(midNoteShootPos)
+    //               .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5) // Cancels on driver input
+    // );
 
     ControlScheme.RESET_HEADING.button.onTrue(Commands.runOnce(drivetrain::seedFieldRelative));
 
     // Manipulator controls
     ControlScheme.SHOOT_SPEAKER.button.whileTrue(
-      new AimCommand(pivot, shooter, () -> 17)
+      new AimCommand(pivot, shooter, () -> 0.1)
     ).onFalse(Commands.parallel(
       pivot.stowCommand(),
       flipper.stowCommand(),
@@ -121,7 +130,7 @@ public class RobotContainer {
 
     ControlScheme.SHOOT.button.whileTrue(shooter.shootCommand(intake));
 
-    ControlScheme.SCORE_AMP.button.whileTrue(new AmpScoreCommand(pivot, flipper))
+    ControlScheme.SCORE_AMP.button.whileTrue(new AmpScoreCommand(pivot, flipper, ()-> 0.3, Constants.Flipper.ampPosition))
       .onFalse(Commands.parallel(
         pivot.stowCommand(),
         flipper.stowCommand(),
@@ -129,14 +138,15 @@ public class RobotContainer {
         intake.stopCommand()
       ));
 
-    /*ControlScheme.SCORE_AMP.button.toggleOnTrue(Commands.runEnd(
-      new AmpScoreCommand(pivot, flipper),
+    /*ControlScheme.SCORE_TRAP.button.toggleOnTrue(Commands.runEnd(
+      new AmpScoreCommand(pivot, flipper, ()-> 0.45, Constants.Flipper.trapPosition),
       Commands.parallel(
         pivot.stowCommand(),
         flipper.stowCommand(),
         shooter.idleCommand(),
         intake.stopCommand())
-      ));*/
+
+    ));*/
 
     ControlScheme.AIM_AUTO.button.whileTrue(autoShootCommand)
       .onFalse(Commands.parallel(
@@ -173,10 +183,20 @@ public class RobotContainer {
   public RobotContainer() {
     SmartDashboard.putData(Commands.runOnce(() -> intake.intakeCommand()));
 
-    NamedCommands.registerCommand("shootHub", new AutoAimShootCommand(pivot, intake, shooter, () -> 17));
-    NamedCommands.registerCommand("shootNote", new AutoAimShootCommand(pivot, intake, shooter, () -> 26));
-    NamedCommands.registerCommand("shootFarNote", new AutoAimShootCommand(pivot, intake, shooter, () -> 28.5));
-    NamedCommands.registerCommand("shootReallyFar", new AutoAimShootCommand(pivot, intake, shooter, () -> 29));
+    NamedCommands.registerCommand("shootHub", new AutoAimShootCommand(pivot, intake, shooter, drivetrain, this::getAlliance, redSpeaker::getTranslation, blueSpeaker::getTranslation));
+    NamedCommands.registerCommand("shootNote", new AutoAimShootCommand(pivot, intake, shooter, () -> 0));
+    NamedCommands.registerCommand("shootFarNote", new AutoAimShootCommand(pivot, intake, shooter, () -> 0));
+    NamedCommands.registerCommand("shootReallyFar", new AutoAimShootCommand(pivot, intake, shooter, () -> 0));
+    //  .onFalse(Commands.parallel(
+    //           Commands.runOnce(() -> drivetrain.isLockedRotational = false),
+    //           Commands.parallel(
+    //             pivot.stowCommand(),
+    //             flipper.stowCommand(),
+    //             shooter.idleCommand(),
+    //             intake.stopCommand()
+    //           )
+    //   ));
+
 
     NamedCommands.registerCommand("intakeOn", intake.intakeCommand());
     NamedCommands.registerCommand("intakeOff", intake.stopCommand());
@@ -185,9 +205,9 @@ public class RobotContainer {
     autoChooser = AutoBuilder.buildAutoChooser("1pc");
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
-    PathPlannerPath upperStage = PathPlannerPath.fromPathFile("UpperStage");
-    PathPlannerPath lowerStage = PathPlannerPath.fromPathFile("LowerStage");
-    PathPlannerPath amp = PathPlannerPath.fromPathFile("Amp");
+    // PathPlannerPath upperStage = PathPlannerPath.fromPathFile("UpperStage");
+    // PathPlannerPath lowerStage = PathPlannerPath.fromPathFile("LowerStage");
+    // PathPlannerPath amp = PathPlannerPath.fromPathFile("Amp");
 
     my_alliance = DriverStation.getAlliance().get();
 

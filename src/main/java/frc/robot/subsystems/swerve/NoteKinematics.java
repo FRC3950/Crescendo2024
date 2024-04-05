@@ -1,29 +1,27 @@
 package frc.robot.subsystems.swerve;
 
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
-import frc.robot.constants.Constants;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public final class NoteKinematics {
 
 
-    public static double getHeadingAdjustment(double longitudinalVel) { // Assumes speaker lock is on 
-        var velocityAngle = Math.atan(longitudinalVel/Constants.Physics.noteExitVelocity);
+    public static double getHeadingAdjustment(Pose2d botPose, Pose2d speakerPose) {
+        var speakerDistance = botPose.getTranslation().getDistance(speakerPose.getTranslation());
+        var speakerTheta = Math.acos(botPose.getX()/speakerDistance);
 
-        return velocityAngle;
+        return speakerTheta;
     }
 
-    public static double getTargetPivot() {
-        // TODO figure out geometry of field, robot & relate to angle reading from CANcoder soon-to-be installed on the pivot shaft
-        // Can hopefully eliminate regression entirely & improve range
-        return 0.0;
-    }
-
-    private static double getPivotAdjustment(double lateralVel, Pose2d botPose, Pose2d speakerPose) {
-        var heightDifference = Constants.Physics.targetSpeakerHeight - Constants.Physics.shooterHeight;
-        var distance = botPose.getX() - speakerPose.getX();
-
-        
-        // TODO figure out field geometry for pivot adjustment based on lateral velocity of bot
-        return 0.0;
+    public static double getTargetPivot(DoubleSupplier distance) {
+        var gravityComp = 0.01 * distance.getAsDouble();
+        //90 -arcTan2 (SpeakerHeight - pivotAngleHeight / RobotDistance) 
+        return 0.25 - ((Math.atan2(1.8 + gravityComp, distance.getAsDouble()) * (180/Math.PI)) / 360);
+        // return -((Math.atan2(1.7, distance.getAsDouble()) * (180/Math.PI)) / 360);
     }
 }

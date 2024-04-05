@@ -6,7 +6,7 @@ package frc.robot;
 
 /////
 import edu.wpi.first.math.geometry.Pose2d;
-        import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,13 +19,12 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
-  private final boolean UseLimelight = true;
-
   @Override
   public void robotInit() {
 
     Timer.delay(4);
     m_robotContainer = new RobotContainer();
+    Limelight.getInstance().blink();
 
     m_robotContainer.drivetrain.getDaqThread().setThreadPriority(99);
   // for (int port = 5800; port <= 5805; port++) {
@@ -41,7 +40,8 @@ public class Robot extends TimedRobot {
 
     if (Limelight.limelightResults != null && Limelight.llPose != null && Limelight.limelightResults.valid) {
       if (Limelight.limelightResults.targets_Fiducials.length > 1 && (
-        m_robotContainer.drivetrain.getState().Pose.getX() < 4 || m_robotContainer.drivetrain.getState().Pose.getX() > 12.55
+       
+      m_robotContainer.drivetrain.getState().Pose.getX() < 4 || m_robotContainer.drivetrain.getState().Pose.getX() > 12.55
       )) {
         m_robotContainer.drivetrain.addVisionMeasurement(Limelight.llPose, Timer.getFPGATimestamp() - (
           Limelight.limelightResults.latency_capture 

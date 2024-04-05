@@ -8,6 +8,7 @@ public enum ControlScheme {
     FORCE_STOW(Controller.MANIPULATOR.controller.rightBumper()),
     SHOOT(Controller.MANIPULATOR.controller.rightTrigger(0.5)),
     SCORE_AMP(Controller.MANIPULATOR.controller.x()),
+    SCORE_TRAP(Controller.MANIPULATOR.controller.pov(0)),
 
     AIM_AUTO(Controller.MANIPULATOR.controller.leftTrigger(0.5)),
 
@@ -15,9 +16,6 @@ public enum ControlScheme {
     OUTTAKE(Controller.MANIPULATOR.controller.b()),
 
     AMP_OUTTAKE(Controller.MANIPULATOR.controller.y()),
-
-    // CLIMBER_UP(Controller.MANIPULATOR.controller.pov(0)),
-    // CLIMBER_DOWN(Controller.MANIPULATOR.controller.pov(180)),
 
     // Driver
     RESET_HEADING(Controller.DRIVER.controller.y()),
