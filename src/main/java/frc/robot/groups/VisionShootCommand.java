@@ -19,7 +19,7 @@ public class VisionShootCommand extends SequentialCommandGroup {
 
         addCommands(
             Commands.parallel(
-                shooter.applyVelocitiesCommand(),
+                // shooter.applyVelocitiesCommand(),
                 // pivot.autoAngleCommand(() -> drivetrain.getState().Pose.getTranslation().getDistance(
                 //     ((isBlue) ? blueSpeaker.get() : redSpeaker.get())
                 // )),

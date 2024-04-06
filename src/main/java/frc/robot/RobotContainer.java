@@ -183,21 +183,8 @@ public class RobotContainer {
   public RobotContainer() {
     SmartDashboard.putData(Commands.runOnce(() -> intake.intakeCommand()));
 
-    NamedCommands.registerCommand("shootHub", new AutoAimShootCommand(pivot, intake, shooter, drivetrain, this::getAlliance, redSpeaker::getTranslation, blueSpeaker::getTranslation));
-    NamedCommands.registerCommand("shootNote", new AutoAimShootCommand(pivot, intake, shooter, () -> 0));
-    NamedCommands.registerCommand("shootFarNote", new AutoAimShootCommand(pivot, intake, shooter, () -> 0));
-    NamedCommands.registerCommand("shootReallyFar", new AutoAimShootCommand(pivot, intake, shooter, () -> 0));
-    //  .onFalse(Commands.parallel(
-    //           Commands.runOnce(() -> drivetrain.isLockedRotational = false),
-    //           Commands.parallel(
-    //             pivot.stowCommand(),
-    //             flipper.stowCommand(),
-    //             shooter.idleCommand(),
-    //             intake.stopCommand()
-    //           )
-    //   ));
-
-
+    NamedCommands.registerCommand("simpleAimAndShoot", new AutoAimShootCommand(pivot, intake, shooter, drivetrain, this::getAlliance, redSpeaker::getTranslation, blueSpeaker::getTranslation));
+    
     NamedCommands.registerCommand("intakeOn", intake.intakeCommand());
     NamedCommands.registerCommand("intakeOff", intake.stopCommand());
 

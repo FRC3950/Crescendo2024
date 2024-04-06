@@ -63,7 +63,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     private final double rotationalKiBlue = 0.00001;
     private final double rotationalKdBlue = 0.00001;
 
-    private final double rotationalKpRed = .12;
+    private final double rotationalKpRed = 1.2;
     private final double rotationalKiRed = 0.00001;
     private final double rotationalKdRed = 0.00001;
 
@@ -104,34 +104,42 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
                 
                 // return xboxInput.getAsDouble() * 1.5 * Math.PI;
 
-                var targetAngle = Math.atan2(yDistance, 
-                -xDistance);
+                var targetAngle = Math.atan2(yDistance,xDistance);
                 
-                var currentAngle = Math.abs(currentPose.getRotation().getRadians());
+                var currentAngle = currentPose.getRotation().getRadians();
+                var angleDifference = currentAngle - targetAngle;
 
-             
-                var  angleDifference = currentAngle - (Math.PI + targetAngle);
-
-                // if(currentAngle < 0){
-                //     angleDifference = Math.PI - Math.abs(currentAngle);
-                //     angleDifference += (Math.PI - Math.abs(targetAngle));
-
-                //     return rotationalPid.calculate(angleDifference) * 0.85;
+                // if(currentAngle > -180 && currentAngle < 0){
+                //     currentAngle = Math.PI + currentAngle;
+                //     targetAngle = Math.PI + targetAngle;
                 // }
 
-                SmartDashboard.putNumber("targetAngle", targetAngle);
-                SmartDashboard.putNumber("currentAngle  ", currentAngle);
-                    SmartDashboard.putNumber("angleDiff", angleDifference);
+                // else {
+                //     currentAngle = Math.PI - currentAngle;
+                //     targetAngle = Math.PI - targetAngle;
+                // }
 
-                  
+                angleDifference = currentAngle - targetAngle;
+                return rotationalRedPid.calculate(angleDifference) * 0.85;
 
-
-                        return rotationalRedPid.calculate(angleDifference) ;
+                // SmartDashboard.putNumber("targetAngle", targetAngle);
+                // SmartDashboard.putNumber("currentAngle  ", currentAngle);
+                // SmartDashboard.putNumber("angleDiff", angleDifference);
+                // return rotationalRedPid.calculate(angleDifference) ;
                     
-                 
-                
-            }
 
+                // var targetAngleReflect = Math.atan2(yDistance, -xDistance);
+                // var currentAngle = currentPose.getRotation().getRadians();
+                // var currentAngleReflect = 0.0;
+                // if (currentAngle >= 0) {
+                //     currentAngleReflect = 180 - currentAngle;
+                // } else {
+                //     currentAngleReflect = -180 - currentAngle;
+                // }
+
+                // var angleDifferenceReflect = currentAngleReflect - targetAngleReflect;
+                //return -rotationalBluePid.calculate(angleDifferenceReflect) * 0.85;
+            }
         }
 
         return xboxInput.getAsDouble();
