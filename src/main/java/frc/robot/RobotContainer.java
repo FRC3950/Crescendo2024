@@ -158,6 +158,9 @@ public class RobotContainer {
                 intake.stopCommand()
               )
       ));
+      SmartDashboard.putData("AutoAim", autoShootCommand);
+            SmartDashboard.putData("RotationOff", Commands.runOnce(() -> drivetrain.isLockedRotational = false));
+
 
     ControlScheme.INTAKE.button.whileTrue(new IntakeCommand(pivot, intake))
       .onFalse(pivot.stowCommand());
