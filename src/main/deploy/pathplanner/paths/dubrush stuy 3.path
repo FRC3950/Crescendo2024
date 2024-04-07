@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.634874128794595,
-        "y": 1.2316290115411466
+        "x": 2.5184351557368077,
+        "y": 2.2469135367808626
       },
       "isLocked": false,
       "linkedName": "dubrush shoot"
     },
     {
       "anchor": {
-        "x": 8.398762191531043,
-        "y": 2.489148596499191
+        "x": 8.293678213604645,
+        "y": 0.7612043754757987
       },
       "prevControl": {
-        "x": 6.305990928331145,
-        "y": 1.1306062861176858
+        "x": 6.295165811095847,
+        "y": 0.6840799499122003
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "comp pickup note 7"
+      "linkedName": "comp pickup note 8"
     }
   ],
   "rotationTargets": [],
@@ -33,12 +33,12 @@
     {
       "name": "New Constraints Zone",
       "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.25,
+      "maxWaypointRelativePos": 0.3,
       "constraints": {
         "maxVelocity": 4.5,
         "maxAcceleration": 4.25,
-        "maxAngularVelocity": 360.0,
-        "maxAngularAcceleration": 360.0
+        "maxAngularVelocity": 90.0,
+        "maxAngularAcceleration": 720.0
       }
     }
   ],
@@ -51,13 +51,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0,
+    "rotation": 0.6,
     "rotateFast": true
   },
   "reversed": false,
-  "folder": "Comp south dubrush 3pc",
+  "folder": "dubrush stuy",
   "previewStartingState": {
-    "rotation": -60.0,
+    "rotation": -58.40999999999997,
     "velocity": 0
   },
   "useDefaultConstraints": true

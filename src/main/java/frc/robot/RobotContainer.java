@@ -104,8 +104,6 @@ public class RobotContainer {
       ).ignoringDisable(true)
     );
 
-    
-
     climber.setDefaultCommand(climber.climbCommand(() -> Controller.MANIPULATOR.controller.getRightY()));
 
    // PathPlannerPath midNoteShootPos = PathPlannerPath.fromPathFile("driveToNoteShot");

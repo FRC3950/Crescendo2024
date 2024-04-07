@@ -20,7 +20,7 @@ public class Flipper extends PositionController {
     super(
       new TargetPosition(
         new TalonFX(Constants.Flipper.id, "CANivore"), Constants.Flipper.stowPosition,
-        Constants.Flipper.kP, Constants.Flipper.kV, Constants.Flipper.kG
+        Constants.Flipper.kP, Constants.Flipper.kV, Constants.Flipper.kG, false
       )
     );
   }

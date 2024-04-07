@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.293678213604645,
-        "y": 0.7612043754757987
+        "x": 8.398762191531043,
+        "y": 2.489148596499191
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.79798850601262,
-        "y": 0.7612043754757991
+        "x": 5.6812377846869975,
+        "y": 1.149013865135617
       },
       "isLocked": false,
-      "linkedName": "comp pickup note 8"
+      "linkedName": "comp pickup note 7"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 2.869154953716469
       },
       "prevControl": {
-        "x": 2.8821981728314183,
-        "y": 1.2958818370466927
+        "x": 3.9605285509955817,
+        "y": 1.1006423137048247
       },
       "nextControl": null,
       "isLocked": false,
@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Comp south dubrush 3pc",
+  "folder": "dubrush stuy",
   "previewStartingState": {
     "rotation": 0.0,
     "velocity": 0

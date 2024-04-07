@@ -10,8 +10,9 @@
     "Comp north 4pc",
     "Comp north rush 3pc",
     "Comp south dub rush 3pc",
+    "Comp south dubrush 3pc",
     "Comp south rush 3pc",
-    "Comp south dubrush 3pc"
+    "dubrush stuy"
   ],
   "autoFolders": [],
   "defaultMaxVel": 4.5,
