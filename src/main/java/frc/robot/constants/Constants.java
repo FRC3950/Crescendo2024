@@ -11,6 +11,10 @@ public interface Constants {
         public static final double shooterHeight = 1.5; //FIXME
 
         public static final int gyroId = 40;
+
+        public static final double lobVertexHeight = 3;
+        public static final double yVelocity = Math.sqrt(9.81 * 2 * lobVertexHeight);
+        public static final double airTime = 1.564;
     }
 
     final class Pivot {

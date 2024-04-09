@@ -13,7 +13,7 @@ import frc.robot.subsystems.swerve.Swerve;
 import java.util.function.Supplier;
 
 public class VisionShootCommand extends SequentialCommandGroup {
-    public VisionShootCommand(Pivot pivot, Swerve drivetrain, Shooter shooter, Intake intake, Supplier<DriverStation.Alliance> alliance, Supplier<Translation2d> blueSpeaker, Supplier<Translation2d> redSpeaker) {
+    public VisionShootCommand(Pivot pivot, Swerve drivetrain, Shooter shooter, Supplier<DriverStation.Alliance> alliance, Supplier<Translation2d> blueSpeaker, Supplier<Translation2d> redSpeaker) {
 
         final boolean isBlue = alliance.get() == DriverStation.Alliance.Blue;
 

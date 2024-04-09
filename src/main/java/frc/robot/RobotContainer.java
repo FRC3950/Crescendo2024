@@ -5,6 +5,9 @@
 package frc.robot;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+
+import java.util.Optional;
+
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -23,6 +26,7 @@ import frc.robot.constants.TunerConstants;
 import frc.robot.groups.AimCommand;
 import frc.robot.groups.AmpScoreCommand;
 import frc.robot.groups.IntakeCommand;
+import frc.robot.groups.LobShootCommand;
 import frc.robot.groups.VisionShootCommand;
 import frc.robot.groups.auto.AutoAimShootCommand;
 import frc.robot.subsystems.*;
@@ -59,10 +63,20 @@ public class RobotContainer {
 
 
     private final Command autoShootCommand = new VisionShootCommand(
-            pivot, drivetrain, shooter, intake,
+            pivot, drivetrain, shooter,
             this::getAlliance,
             blueSpeaker::getTranslation,
             redSpeaker::getTranslation
+    );
+
+    private final Command lobShootCommand = new LobShootCommand(
+        shooter, 
+        drivetrain,
+        pivot, 
+        intake,
+        this::getAlliance, 
+        blueSpeaker::getTranslation, 
+        redSpeaker::getTranslation
     );
 
     // private final StowCommand stowCommand = new StowCommand(pivot, intake, shooter, flipper);
@@ -117,7 +131,18 @@ public class RobotContainer {
                 intake.stopCommand()
         ));
 
-        ControlScheme.SHOOT.button.whileTrue(shooter.shootCommand(intake));
+        ControlScheme.SHOOT.button.whileTrue(shooter.shootCommand(intake, Constants.Shooter.activeSpeed, drivetrain));
+
+        ControlScheme.SHOOT_LOB.button.whileTrue(
+                lobShootCommand
+        ).onFalse(Commands.parallel(
+                Commands.runOnce(() -> shooter.isLobbing = false),
+                Commands.runOnce(() -> drivetrain.isLockedRotational = false),
+                pivot.stowCommand(),
+                flipper.stowCommand(),
+                shooter.idleCommand(),
+                intake.stopCommand()
+        ));
 
         ControlScheme.SCORE_AMP.button.whileTrue(new AmpScoreCommand(pivot, flipper, shooter, () -> 0.3, Constants.Flipper.ampPosition))
                 .onFalse(Commands.parallel(

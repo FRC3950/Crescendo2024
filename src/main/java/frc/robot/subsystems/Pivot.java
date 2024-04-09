@@ -23,8 +23,6 @@ import java.util.function.DoubleSupplier;
 
 public class Pivot extends PositionController {
 
-    protected double targetPivotAngle = 0;
-
     private final CANcoder cancoder = new CANcoder(Constants.Pivot.cancoderId, "CANivore");
 
     private final Slot1Configs slot1Pid = new Slot1Configs();
@@ -100,7 +98,22 @@ public class Pivot extends PositionController {
                     return;
 
                 setPosition(() -> NoteKinematics.getTargetPivot(distance));
-                targetPivotAngle = distance.getAsDouble();
+            }
+        };
+    }
+
+    @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
+    @EndsOn(endsOn = EndType.INTERRUPT)
+    public Command lobAngleCommand(DoubleSupplier distance){
+        return new Command() {
+            @Override
+            public void execute() {
+                if(distance.getAsDouble() < 1.0 || distance.getAsDouble() > 25 || NoteKinematics.getLobPivot(distance) > 0.25 || NoteKinematics.getLobPivot(distance) < 0) {
+                    System.out.println(NoteKinematics.getLobPivot(distance));
+                    return;
+                }
+                
+                setPosition(() -> NoteKinematics.getLobPivot(distance));
             }
         };
     }

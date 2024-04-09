@@ -72,10 +72,21 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     public double getRotationalSpeed(DoubleSupplier xboxInput) {
         // rotationalRedPid.setTolerance(0.02);
         rotationalRedPid.enableContinuousInput(-Math.PI, Math.PI);
+        var activeSpeaker = DriverStation.getAlliance().get() == (DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
+
 
         if (isLockedRotational) {
-            var activeSpeaker = DriverStation.getAlliance().equals(DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
-            var angleDifference = NoteKinematics.getHeadingDifference(activeSpeaker, getState().Pose);
+            System.out.println(activeSpeaker.getX());
+            
+            var botPose = this.getState().Pose;
+            var xDistance = botPose.getTranslation().getX() - activeSpeaker.getX();
+            var yDistance = botPose.getTranslation().getY() - activeSpeaker.getY();
+    
+            var targetAngle = Math.atan2(yDistance, xDistance);
+            var currentAngle = botPose.getRotation().getRadians();
+    
+            var angleDifference= currentAngle - targetAngle;
+           // var angleDifference = NoteKinematics.getHeadingDifference(activeSpeaker, getState().Pose);
 
             if (activeSpeaker == blueSpeaker) {
                 return rotationalBluePid.calculate(angleDifference) * 0.85;

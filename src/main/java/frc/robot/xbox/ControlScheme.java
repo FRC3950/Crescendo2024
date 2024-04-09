@@ -7,8 +7,9 @@ public enum ControlScheme {
     SHOOT_SPEAKER(Controller.MANIPULATOR.controller.leftBumper()),
     FORCE_STOW(Controller.MANIPULATOR.controller.rightBumper()),
     SHOOT(Controller.MANIPULATOR.controller.rightTrigger(0.5)),
+    SHOOT_LOB(Controller.MANIPULATOR.controller.pov(0)),
     SCORE_AMP(Controller.MANIPULATOR.controller.x()),
-    SCORE_TRAP(Controller.MANIPULATOR.controller.pov(0)),
+    SCORE_TRAP(Controller.MANIPULATOR.controller.pov(180)),
 
     AIM_AUTO(Controller.MANIPULATOR.controller.leftTrigger(0.5)),
 

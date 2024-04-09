@@ -98,6 +98,22 @@ public class Intake extends VelocityController {
         };
     }
 
+    @CommandBehavior(behavior = CommandType.INITIALIZE)
+    @EndsOn(endsOn = EndType.INTERRUPT_OR_FINISH)
+    public Command indexCommand() {
+        return new Command() {
+            @Override
+            public void initialize() {
+                applyVelocity(Constants.Intake.indexerId, Constants.Intake.indexerActiveVelocity);
+            }
+
+            @Override 
+            public void end(boolean interrupted){
+                stop();
+            }
+        };
+    }
+
     @CommandBehavior(behavior = CommandType.INSTANT)
     public Command stopCommand() {
         return Commands.runOnce(super::stop);

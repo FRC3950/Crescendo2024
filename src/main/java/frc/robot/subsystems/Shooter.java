@@ -4,14 +4,19 @@
 
 package frc.robot.subsystems;
 
+import java.util.Optional;
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.Constants;
+import frc.robot.subsystems.swerve.Swerve;
 import lib.meta.CommandBehavior;
 import lib.meta.CommandType;
 import lib.meta.EndType;
 import lib.meta.EndsOn;
+import lib.odometry.NoteKinematics;
 import lib.system.TargetVelocity;
 import lib.system.VelocityController;
 
@@ -27,6 +32,8 @@ public class Shooter extends VelocityController {
         );
     }
 
+    public boolean isLobbing = false;
+
     private double getVelocity() {
         if (targets.length < 1)
             return 0;
@@ -34,13 +41,10 @@ public class Shooter extends VelocityController {
         return targets[0].motor.getVelocity().getValueAsDouble();
     }
 
-
     @CommandBehavior(behavior = CommandType.INSTANT)
     public Command stopCommand() {
         return Commands.runOnce(super::stop);
     }
-
-    // TODO link with odometry in default to adjust idle speed depending on speaker distance
 
     @CommandBehavior(behavior = CommandType.INSTANT)
     public Command idleCommand() {
@@ -49,16 +53,45 @@ public class Shooter extends VelocityController {
 
     @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
     @EndsOn(endsOn = EndType.INTERRUPT)
-    public Command shootCommand(Intake intake) {
+    public Command applyLobVelocity(DoubleSupplier distance) {
+        return new Command() {
+            @Override
+            public void execute() {
+                applyVelocity(targets[0].motor.getDeviceID(), () -> NoteKinematics.getLobVelocityRps(distance));
+            }
+
+            @Override 
+            public boolean isFinished() {
+                return Math.abs(getVelocity() - NoteKinematics.getLobPivot(distance)) <= 1;
+            }
+        };
+    }
+
+    @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
+    @EndsOn(endsOn = EndType.INTERRUPT)
+    public Command shootCommand(Intake intake, DoubleSupplier velocity, Swerve drive) {
         return new Command() {
             @Override
             public void initialize() {
-                applyInitialTargetVelocities();
+                if(!isLobbing){
+                    applyInitialTargetVelocities();
+                }
             }
 
             @Override
             public void execute() {
-                if (getVelocity() >= Constants.Shooter.activeSpeed.getAsDouble()) {
+
+                DoubleSupplier velocity = Constants.Shooter.activeSpeed;
+
+                if(isLobbing){
+                    velocity = () -> 1.75 * NoteKinematics.getLobVelocityRps(() -> NoteKinematics.getAllianceSpeakerDistance(drive));
+
+                    if(velocity.getAsDouble() != 0){
+                        applyVelocities(velocity);
+                    }
+                }
+                
+                if (getVelocity() >= velocity.getAsDouble() - 1) {
                     intake.applyVelocity(Constants.Intake.indexerId, Constants.Intake.indexerActiveVelocity);
                 }
             }

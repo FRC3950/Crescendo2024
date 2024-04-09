@@ -57,8 +57,10 @@ public class Limelight extends SubsystemBase {
 
     @Override
     public void periodic() {
+
         limelightResults = LimelightHelpers.getLatestResults("limelight").targetingResults;
         llPose = limelightResults.getBotPose3d_wpiBlue().toPose2d();
+
         // This method will be called once per scheduler run
     }
 }
