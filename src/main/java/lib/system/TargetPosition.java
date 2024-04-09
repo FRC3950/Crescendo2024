@@ -1,4 +1,4 @@
-package frc.robot.supersystems;
+package lib.supersystems;
 
 import java.util.function.DoubleSupplier;
 
@@ -38,7 +38,7 @@ public class TargetPosition {
         if(kA){
             slot0Configs.kA = 1.0;
         }
-        
+
         mmVoltage.Slot = 0;
 
         motor.getConfigurator().apply(slot0Configs);

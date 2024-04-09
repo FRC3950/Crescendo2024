@@ -1,4 +1,4 @@
-package frc.robot.supersystems;
+package lib.supersystems;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.Follower;
@@ -15,7 +15,7 @@ public class TargetVelocity {
     public final VelocityVoltage velVoltage = new VelocityVoltage(0);
 
     public TargetVelocity(TalonFX motor, double targetVelocity, double kP, double kV){
-        this.motor = motor; 
+        this.motor = motor;
         this.targetVelocity = targetVelocity;
 
         this.kP = kP;
@@ -32,11 +32,11 @@ public class TargetVelocity {
     }
 
     /**
-     * Target velocity for two-motor leader-follower systems. 
+     * Target velocity for two-motor leader-follower systems.
      * @param leader The leader motor.
      * @param follower Follows leader motor.
      * @param targetVelocity The target velocity for both motors.
-     * @param kP The kP of the targetVelocity profile for both motors. 
+     * @param kP The kP of the targetVelocity profile for both motors.
      * @param kV The kV of the targetVelocity profile for both motors.
      */
     public TargetVelocity(TalonFX leader, TalonFX follower, double targetVelocity, double kP, double kV, boolean isInverted){
