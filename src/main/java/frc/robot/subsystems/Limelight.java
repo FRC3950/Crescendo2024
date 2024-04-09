@@ -7,8 +7,8 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.misc.LimelightHelpers;
-import frc.robot.misc.LimelightHelpers.Results;
+import lib.odometry.LimelightHelpers;
+import lib.odometry.LimelightHelpers.Results;
 
 public class Limelight extends SubsystemBase {
   /** Creates a new Limelight. */
@@ -17,7 +17,7 @@ public class Limelight extends SubsystemBase {
 
   private static Limelight instance;
 
-  public static Results limelightResults; 
+  public static Results limelightResults;
   public static Pose2d llPose;
 
   public static Limelight getInstance() {
@@ -55,7 +55,7 @@ public class Limelight extends SubsystemBase {
   @Override
   public void periodic() {
     limelightResults = LimelightHelpers.getLatestResults("limelight").targetingResults;
-    llPose = limelightResults.getBotPose3d_wpiBlue().toPose2d(); 
+    llPose = limelightResults.getBotPose3d_wpiBlue().toPose2d();
        // This method will be called once per scheduler run
   }
 }

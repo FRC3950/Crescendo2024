@@ -2,13 +2,14 @@ package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
+import lib.meta.CommandBehavior;
+import lib.meta.CommandType;
 
 public class Climber extends SubsystemBase {
 
@@ -17,6 +18,7 @@ public class Climber extends SubsystemBase {
 
     public Climber() {}
 
+    @CommandBehavior(behavior = CommandType.DEFAULT)
     public Command climbCommand(DoubleSupplier yAxisPercentage) {
         return Commands.runOnce(() -> setMotorVoltage(yAxisPercentage), this);
     }

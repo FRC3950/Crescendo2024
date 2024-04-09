@@ -9,11 +9,9 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -22,7 +20,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.groups.AimCommand;
-import frc.robot.groups.AimShootCommand;
 import frc.robot.groups.AmpScoreCommand;
 import frc.robot.groups.IntakeCommand;
 import frc.robot.groups.VisionShootCommand;
@@ -56,7 +53,6 @@ public class RobotContainer {
 
   Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(0));
   Pose2d blueSpeaker = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
-  Pose2d inFrontOfSpeaker = new Pose2d(2,5.55, Rotation2d.fromDegrees(0));
 
   // Subsystems
   public final Pivot pivot = new Pivot();
@@ -104,7 +100,7 @@ public class RobotContainer {
       ).ignoringDisable(true)
     );
 
-    climber.setDefaultCommand(climber.climbCommand(() -> Controller.MANIPULATOR.controller.getRightY()));
+    climber.setDefaultCommand(climber.climbCommand(Controller.MANIPULATOR.controller::getRightY));
 
    // PathPlannerPath midNoteShootPos = PathPlannerPath.fromPathFile("driveToNoteShot");
 
@@ -128,7 +124,7 @@ public class RobotContainer {
 
     ControlScheme.SHOOT.button.whileTrue(shooter.shootCommand(intake));
 
-    ControlScheme.SCORE_AMP.button.whileTrue(new AmpScoreCommand(pivot, flipper, ()-> 0.3, Constants.Flipper.ampPosition))
+    ControlScheme.SCORE_AMP.button.whileTrue(new AmpScoreCommand(pivot, flipper, shooter, ()-> 0.3, Constants.Flipper.ampPosition))
       .onFalse(Commands.parallel(
         pivot.stowCommand(),
         flipper.stowCommand(),
@@ -182,10 +178,10 @@ public class RobotContainer {
   }
 
   public RobotContainer() {
-    SmartDashboard.putData(Commands.runOnce(() -> intake.intakeCommand()));
+
 
     NamedCommands.registerCommand("simpleAimAndShoot", new AutoAimShootCommand(pivot, intake, shooter, drivetrain, this::getAlliance, redSpeaker::getTranslation, blueSpeaker::getTranslation));
-    
+
     NamedCommands.registerCommand("intakeOn", intake.intakeCommand());
     NamedCommands.registerCommand("intakeOff", intake.stopCommand());
 
@@ -198,14 +194,6 @@ public class RobotContainer {
     // PathPlannerPath amp = PathPlannerPath.fromPathFile("Amp");
 
     // my_alliance = DriverStation.getAlliance().get();
-
-    // SmartDashboard.putData("toggleAutoAngle",
-    // pivot.autoAngleCommand(
-    //         my_alliance == Alliance.Blue ?
-    //     () -> drivetrain.getState().Pose.getTranslation().getDistance(blueSpeaker.getTranslation()) :
-    //     () -> drivetrain.getState().Pose.getTranslation().getDistance(redSpeaker.getTranslation()))
-    //         .onlyIf(()->DriverStation.getAlliance().isPresent())
-    // );
 
     configureBindings();
   }

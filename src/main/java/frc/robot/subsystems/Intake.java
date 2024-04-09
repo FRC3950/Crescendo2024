@@ -10,48 +10,40 @@ import com.ctre.phoenix6.signals.ReverseLimitValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.misc.LimelightHelpers;
-import frc.robot.supersystems.TargetVelocity;
-import frc.robot.supersystems.VelocityController;
+import lib.odometry.LimelightHelpers;
+import lib.meta.CommandBehavior;
+import lib.meta.CommandType;
+import lib.meta.EndsOn;
+import lib.meta.EndType;
+import lib.system.TargetVelocity;
+import lib.system.VelocityController;
 import frc.robot.constants.Constants;
 
 public class Intake extends VelocityController {
 
   public Intake() {
-    super(
-      new TargetVelocity( // Intake
-        new TalonFX(Constants.Intake.leftId),
-        new TalonFX(Constants.Intake.rightId),
-        65,
-        Constants.Intake.intakeKp,
-        Constants.Intake.intakeKv, false
-      ),
-      new TargetVelocity( // Indexer
-        new TalonFX(Constants.Intake.indexerId, "CANivore"),
-        40,
-        Constants.Intake.indexerKp,
-        Constants.Intake.indexerKv
-      )
-    );
+      super(
+              new TargetVelocity( // Intake
+                      new TalonFX(Constants.Intake.leftId),
+                      new TalonFX(Constants.Intake.rightId),
+                      65,
+                      Constants.Intake.intakeKp,
+                      Constants.Intake.intakeKv, false
+              ),
+              new TargetVelocity( // Indexer
+                      new TalonFX(Constants.Intake.indexerId, "CANivore"),
+                      40,
+                      Constants.Intake.indexerKp,
+                      Constants.Intake.indexerKv
+              )
+      );
 
-    SmartDashboard.putBoolean("INTAKE", false);
-  }
-
-  public Command intakeForeverCommand() {
-    return new Command() {
-      @Override
-      public void initialize() {
-        applyInitialTargetVelocities();
-      }
-
-      @Override
-      public boolean isFinished() {
-        return true;
-      }
-    };
+      SmartDashboard.putBoolean("INTAKE", false);
   }
 
 
+  @CommandBehavior(behavior = CommandType.INITIALIZE)
+  @EndsOn(endsOn = EndType.INTERRUPT_OR_FINISH)
   public Command intakeCommand() {
     return new Command() {
       @Override
@@ -71,6 +63,8 @@ public class Intake extends VelocityController {
     };
   }
 
+  @CommandBehavior(behavior = CommandType.INITIALIZE)
+  @EndsOn(endsOn = EndType.INTERRUPT)
   public Command outtakeCommand() {
     return new Command() {
       @Override
@@ -85,6 +79,8 @@ public class Intake extends VelocityController {
     };
   }
 
+  @CommandBehavior(behavior = CommandType.INITIALIZE)
+  @EndsOn(endsOn = EndType.INTERRUPT)
   public Command ampOuttakeCommand() {
     return new Command() {
       @Override
@@ -99,6 +95,7 @@ public class Intake extends VelocityController {
     };
   }
 
+  @CommandBehavior(behavior = CommandType.INSTANT)
   public Command stopCommand() {
     return Commands.runOnce(super::stop);
   }
