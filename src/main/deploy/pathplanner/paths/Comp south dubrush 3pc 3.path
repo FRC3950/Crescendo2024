@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5670791427174855,
-        "y": 4.286166175756032
+        "x": 1.735609747966998,
+        "y": 2.869154953716469
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.5232015791445568,
-        "y": 1.5437141640099044
+        "x": 3.634874128794595,
+        "y": 1.2316290115411466
       },
       "isLocked": false,
-      "linkedName": "comp pickup note 3"
+      "linkedName": "dubrush shoot"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 2.489148596499191
       },
       "prevControl": {
-        "x": 5.828649171171818,
-        "y": 0.9287228341382313
+        "x": 6.305990928331145,
+        "y": 1.1306062861176858
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,7 +29,19 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "New Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.25,
+      "constraints": {
+        "maxVelocity": 4.5,
+        "maxAcceleration": 4.25,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 360.0
+      }
+    }
+  ],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.5,
@@ -39,13 +51,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 27.790316530720073,
-    "rotateFast": false
+    "rotation": 0.0,
+    "rotateFast": true
   },
   "reversed": false,
-  "folder": "Comp south rush 3pc",
+  "folder": "Comp south dubrush 3pc",
   "previewStartingState": {
-    "rotation": -29.90438393102232,
+    "rotation": -60.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

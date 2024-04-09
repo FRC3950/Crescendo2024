@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
@@ -25,13 +26,17 @@ public class Pivot extends PositionController {
 
   private final CANcoder cancoder = new CANcoder(Constants.Pivot.cancoderId, "CANivore");
 
+  private final Slot1Configs slot1Pid = new Slot1Configs();
+
   public Pivot() {
     super(
       new TargetPosition(
         new TalonFX(Constants.Pivot.id, "CANivore"), Constants.Pivot.stowPosition, 
-        Constants.Pivot.kP, Constants.Pivot.kV, Constants.Pivot.kG
+        Constants.Pivot.kP, Constants.Pivot.kV, Constants.Pivot.kG, true
       )
     );
+
+    slot1Pid.kP = 0.05;
     // var motionMagicConfigs = talonFXConfigs.MotionMagic;
     // motionMagicConfigs.MotionMagicCruiseVelocity = 100; // 80 rps cruise velocity
     // motionMagicConfigs.MotionMagicAcceleration = 310; // 160 rps/s acceleration (0.5 seconds)
@@ -40,6 +45,20 @@ public class Pivot extends PositionController {
     // periodic, run Motion Magic with slot 0 configs,
     // target position of 200 rotations
   }
+
+  private boolean isAtAngle(DoubleSupplier targetAngle){
+    return Math.abs(targetAngle.getAsDouble() - getPosition()) < 1.0;
+  }
+
+  // private void setPidSlotOne(){
+  //   targetPosition.mmVoltage.Slot = 1;
+  //   targetPosition.motor.getConfigurator().apply(slot1Pid);
+  // }
+
+  // private void setPidSlotZero() {
+  //   targetPosition.mmVoltage.Slot = 0;
+  //   targetPosition.motor.getConfigurator().apply(targetPosition.slot0Configs);
+  // }
 
   private boolean isAtLimit() {
     return targetPosition.motor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround;
@@ -53,6 +72,7 @@ public class Pivot extends PositionController {
     return new Command () {
       @Override 
       public void initialize() {
+        // setPidSlotOne();
         setPosition(angle);
       }
 
@@ -64,7 +84,10 @@ public class Pivot extends PositionController {
   }
 
   public Command stowCommand() {
-    return Commands.runOnce(() -> setPosition(Constants.Pivot.stowPosition));
+    return Commands.runOnce(() -> {
+      // setPidSlotZero();
+      setPosition(Constants.Pivot.stowPosition);
+    });
   }
 
   // Prevents limit switch snafus 
@@ -116,15 +139,8 @@ public class Pivot extends PositionController {
     };
   }
 
-  public boolean isAtAngle(DoubleSupplier targetAngle){
-    return Math.abs(targetAngle.getAsDouble() - getPosition()) < 1.0;
-  }
-
   @Override
   public void periodic() {
-    //SmartDashboard.putNumber("Target pivot angle", AngleWeWantToSet);
-    // SmartDashboard.putNumber("Actual pivot angle", getPosition());
-
     if(isAtLimit()){
      // targetPosition.motor.setPosition(0.003 - 0.25);
       cancoder.setPosition(0.003);

@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.693930515496991,
-      "y": 4.4130617717395255
+      "x": 0.6933452953924437,
+      "y": 4.403274541213847
     },
     "rotation": -60.0
   },
@@ -34,7 +34,51 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Comp south dubrush 3pc 1"
+                        "pathName": "dubrush stuy 1"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intakeOn"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "dubrush stuy 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "simpleAimAndShoot"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "dubrush stuy 3"
                       }
                     },
                     {
@@ -59,56 +103,6 @@
           "type": "path",
           "data": {
             "pathName": "Comp south dubrush 3pc 2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "simpleAimAndShoot"
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "Comp south dubrush 3pc 3"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.5
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intakeOn"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Comp south dubrush 3pc 4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "simpleAimAndShoot"
           }
         }
       ]

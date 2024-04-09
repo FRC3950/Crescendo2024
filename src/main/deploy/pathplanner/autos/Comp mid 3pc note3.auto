@@ -14,7 +14,7 @@
         {
           "type": "named",
           "data": {
-            "name": "shootHub"
+            "name": "simpleAimAndShoot"
           }
         },
         {
@@ -34,7 +34,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.0
+                        "waitTime": 0.8
                       }
                     }
                   ]
@@ -52,7 +52,7 @@
         {
           "type": "named",
           "data": {
-            "name": "shootNote"
+            "name": "simpleAimAndShoot"
           }
         },
         {
@@ -90,7 +90,7 @@
         {
           "type": "named",
           "data": {
-            "name": "shootFarNote"
+            "name": "simpleAimAndShoot"
           }
         }
       ]

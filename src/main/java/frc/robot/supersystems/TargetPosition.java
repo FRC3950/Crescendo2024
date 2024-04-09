@@ -17,8 +17,9 @@ public class TargetPosition {
     public final double kG;
 
     public final MotionMagicVoltage mmVoltage;
+    public final Slot0Configs slot0Configs;
 
-    public TargetPosition(TalonFX motor, DoubleSupplier initalPosition, double kP, double kV, double kG){
+    public TargetPosition(TalonFX motor, DoubleSupplier initalPosition, double kP, double kV, double kG, boolean kA){
         this.motor = motor;
         this.initalPosition = initalPosition;
 
@@ -28,12 +29,16 @@ public class TargetPosition {
         this.kV = kV;
         this.kG = kG;
 
-        var slot0Configs = new Slot0Configs();
+        slot0Configs = new Slot0Configs();
 
         slot0Configs.kP = kP;
         slot0Configs.kV = kV;
         slot0Configs.kG = kG;
 
+        if(kA){
+            slot0Configs.kA = 1.0;
+        }
+        
         mmVoltage.Slot = 0;
 
         motor.getConfigurator().apply(slot0Configs);
@@ -49,7 +54,7 @@ public class TargetPosition {
         this.kV = kV;
         this.kG = kG;
 
-        var slot0Configs = new Slot0Configs();
+        slot0Configs = new Slot0Configs();
 
         slot0Configs.kP = kP;
         slot0Configs.kV = kV;

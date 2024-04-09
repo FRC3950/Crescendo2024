@@ -22,6 +22,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
@@ -63,9 +64,9 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     private final double rotationalKiBlue = 0.00001;
     private final double rotationalKdBlue = 0.00001;
 
-    private final double rotationalKpRed = 1.2;
-    private final double rotationalKiRed = 0.00001;
-    private final double rotationalKdRed = 0.00001;
+    private final double rotationalKpRed = 0.0260; // Vision kP
+    private final double rotationalKiRed = 0.0;
+    private final double rotationalKdRed = 0.002;
 
     private final PIDController rotationalBluePid = new PIDController(rotationalKpBlue, rotationalKiBlue, rotationalKdBlue);
     private final PIDController rotationalRedPid = new PIDController(rotationalKpRed, rotationalKiRed, rotationalKdRed);
@@ -98,12 +99,32 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
            
                 
+            //currentPose = currentPose.transformBy(new Transform2d(2*Math.abs(xDistance), 0, new Rotation2d()));
 
+            // var myTrans = new Transform2d(-2*xDistance, 0, new Rotation2d());
+            // currentPose.transformBy(myTrans);
+
+            var targetAngle = Math.atan2(yDistance,xDistance);
+                
+
+            // if (yDistance >0.1){
+            //      targetAngle =Math.PI/2-Math.asin(xDistance / currentPose.getTranslation().getDistance(redSpeaker.getTranslation()));
+            // }else if(yDistance <0.1)
+            // {
+            //      targetAngle =- Math.acos(-xDistance / -currentPose.getTranslation().getDistance(redSpeaker.getTranslation()));
+
+            // }
+            // else{
+            //     targetAngle = 0;
+            // }
                 
                 var currentAngle = currentPose.getRotation().getRadians();
 
                 var  angleDifference = currentAngle - targetAngle;
 
+
+            var currentAngle = currentPose.getRotation().getRadians();
+            var  angleDifference = currentAngle - targetAngle;
 
 
 
@@ -114,29 +135,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
                 return rotationalBluePid.calculate(angleDifference) * 0.85;
             }
 
-            else if(activeSpeaker == redSpeaker){
-
-              
-                // if (currentAngle > 0 )
-                // {
-                //     currentAngle = currentAngle % (-Math.PI/2);
-                //     angleDifference = currentAngle - targetAngle;
-
-                // }
-                // else if (currentAngle < 0)
-                // {
-                //     currentAngle = currentAngle % (Math.PI/2);
-                //     angleDifference = currentAngle - targetAngle;
-
-                // }
-                // else
-                // {
-                //     currentAngle = 0;
-                // }
-            return rotationalRedPid.calculate(angleDifference) *0.85 ;
-                              
-                    
-                 
+            else if(activeSpeaker == redSpeaker){   
                 
             }
 

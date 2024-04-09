@@ -18,13 +18,13 @@ public interface Constants {
         public static final int cancoderId = 52;
 
         public static final double kD = 0.00;
-        public static final double kV = 21.75;
-        public static final double kP = 200;
+        public static final double kV = 24.75;
+        public static final double kP = 100;
 
-        public static final double kG = 0;
+        public static final double kG = 0.3;
 
-        public static final DoubleSupplier stowPosition = () -> -0.005;
-      //  public static final DoubleSupplier shuttlePosition = () -> Shuffleboard.getTab("Tab 5").add("Shuttle Position", 30).getEntry().getDouble(30);
+        public static final DoubleSupplier stowPosition = () -> -0.02;
+    //  public static final DoubleSupplier shuttlePosition = () -> Shuffleboard.getTab("Tab 5").add("Shuttle Position", 30).getEntry().getDouble(30);
     }
 
     final class Climber {

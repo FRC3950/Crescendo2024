@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.609870800340744,
-        "y": 7.237296985292972
+        "x": 8.398762191531043,
+        "y": 2.489148596499191
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.5996752594169195,
-        "y": 7.136328259493146
+        "x": 5.6812377846869975,
+        "y": 1.149013865135617
       },
       "isLocked": false,
-      "linkedName": "comp pickup note 4"
+      "linkedName": "comp pickup note 7"
     },
     {
       "anchor": {
-        "x": 2.9066934025451485,
-        "y": 6.991369417831561
+        "x": 1.735609747966998,
+        "y": 2.869154953716469
       },
       "prevControl": {
-        "x": 5.066794240136761,
-        "y": 7.014383307345971
+        "x": 3.9605285509955817,
+        "y": 1.1006423137048247
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "comp pickup note 1"
+      "linkedName": "dubrush shoot"
     }
   ],
   "rotationTargets": [],
@@ -39,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 30.047176364930476,
+    "rotation": -58.40999999999997,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Comp north rush 3pc",
+  "folder": "dubrush stuy",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": 0.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

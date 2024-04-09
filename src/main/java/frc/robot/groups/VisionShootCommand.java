@@ -20,10 +20,10 @@ public class VisionShootCommand extends SequentialCommandGroup {
         addCommands(
             Commands.parallel(
                 shooter.applyVelocitiesCommand(),
-                // pivot.autoAngleCommand(() -> drivetrain.getState().Pose.getTranslation().getDistance(
-                //     ((isBlue) ? blueSpeaker.get() : redSpeaker.get())
-                // )),
-                Commands.runOnce(() -> drivetrain.isLockedRotational = true)
+                pivot.autoAngleCommand(() -> drivetrain.getState().Pose.getTranslation().getDistance(
+                    ((isBlue) ? blueSpeaker.get() : redSpeaker.get())
+                ))
+                // Commands.runOnce(() -> drivetrain.isLockedRotational = true)
             )
         ); // See RobotContainer for interrupt behavior
     }
