@@ -11,8 +11,10 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.Constants;
-import frc.robot.supersystems.PositionController;
-import frc.robot.supersystems.TargetPosition;
+import lib.meta.CommandBehavior;
+import lib.meta.CommandType;
+import lib.system.PositionController;
+import lib.system.TargetPosition;
 
 public class Flipper extends PositionController {
 
@@ -24,11 +26,13 @@ public class Flipper extends PositionController {
       )
     );
   }
-  
+
+  @CommandBehavior(behavior = CommandType.INSTANT)
   public Command stowCommand() {
     return Commands.runOnce(() -> setPosition(Constants.Flipper.stowPosition));
-  } 
+  }
 
+  @CommandBehavior(behavior = CommandType.INSTANT)
   public Command ampCommand(DoubleSupplier pos) {
     return Commands.runOnce(() -> setPosition(pos));
   }

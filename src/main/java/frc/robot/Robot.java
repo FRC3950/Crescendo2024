@@ -5,13 +5,11 @@
 package frc.robot;
 
 /////
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.misc.LimelightHelpers;
 import frc.robot.subsystems.Limelight;
 
 public class Robot extends TimedRobot {
@@ -31,7 +29,7 @@ public class Robot extends TimedRobot {
   //    PortForwarder.add(port, "limelight.local", port);
   // }
   }
-  
+
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
@@ -40,12 +38,12 @@ public class Robot extends TimedRobot {
 
     if (Limelight.limelightResults != null && Limelight.llPose != null && Limelight.limelightResults.valid) {
       if (Limelight.limelightResults.targets_Fiducials.length > 1 && (
-       
+
       m_robotContainer.drivetrain.getState().Pose.getX() < 4 || m_robotContainer.drivetrain.getState().Pose.getX() > 12.55
       )) {
         m_robotContainer.drivetrain.addVisionMeasurement(Limelight.llPose, Timer.getFPGATimestamp() - (
-          Limelight.limelightResults.latency_capture 
-          + Limelight.limelightResults.latency_jsonParse 
+          Limelight.limelightResults.latency_capture
+          + Limelight.limelightResults.latency_jsonParse
           + Limelight.limelightResults.latency_pipeline) / 1000
         );
       }
@@ -141,9 +139,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    
+
   }
-    
+
     //(lastResult.latency_capture + lastResult.latency_jsonParse + lastResult.latency_pipeline)/1000);
   @Override
   public void teleopExit() {

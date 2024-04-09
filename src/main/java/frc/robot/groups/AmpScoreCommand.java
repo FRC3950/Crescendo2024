@@ -10,19 +10,18 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Flipper;
 import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.Shooter;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AmpScoreCommand extends SequentialCommandGroup {
   /** Creates a new AmpScoreCommand. */
-  public AmpScoreCommand(Pivot pivot, Flipper flipper, DoubleSupplier pivotPos, DoubleSupplier flipperPos) {
+  public AmpScoreCommand(Pivot pivot, Flipper flipper, Shooter shooter, DoubleSupplier pivotPos, DoubleSupplier flipperPos) {
     addCommands(
-      pivot.setAngleInstantCommand(pivotPos),
-      Commands.waitSeconds(0.75),
-      flipper.ampCommand(flipperPos)
+        shooter.stopCommand(),
+        pivot.setAngleInstantCommand(pivotPos),
+        Commands.waitSeconds(0.6),
+        flipper.ampCommand(flipperPos)
     ); // Stow command runs on button false (See RobotContainer)
 
-    addRequirements(pivot, flipper);
+    addRequirements(pivot, flipper, shooter);
   }
 }

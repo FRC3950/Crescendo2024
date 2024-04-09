@@ -1,4 +1,5 @@
 package lib.meta;
 
-public @interface EndBehavior {
+public @interface EndsOn {
+    EndType endsOn();
 }

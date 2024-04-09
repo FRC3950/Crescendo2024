@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.Utils;
-import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
@@ -22,7 +21,6 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
@@ -30,29 +28,15 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.misc.LimelightHelpers;
-import frc.robot.RobotContainer;
-import frc.robot.constants.Constants;
+import lib.odometry.LimelightHelpers;
 import frc.robot.constants.TunerConstants;
-import frc.robot.subsystems.Limelight;
 
-/**
- * Class that extends the Phoenix SwerveDrivetrain class and implements subsystem
- * so it can be used in command-based projects easily.
- */
+
 public class Swerve extends SwerveDrivetrain implements Subsystem {
-//blargh
-//may need to add
-// swerveDriveFXConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = Constants.Swerve.openLoopRamp;
-// swerveDriveFXConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = Constants.Swerve.openLoopRamp;
-
-    Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
 
     private static final double SIM_LOOP_PERIOD = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
@@ -70,11 +54,11 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
     private final PIDController rotationalBluePid = new PIDController(rotationalKpBlue, rotationalKiBlue, rotationalKdBlue);
     private final PIDController rotationalRedPid = new PIDController(rotationalKpRed, rotationalKiRed, rotationalKdRed);
-    
 
     //red and blue speaker pose
-    // Pose2d redSpeakerPose = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
-    Pose2d blueSpeaker = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
+
+    final Pose2d blueSpeaker = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
+    final Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
 
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();   //.withDriveRequestType(DriveRequestType.Velocity);
 
@@ -84,75 +68,75 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     }
 
     public double getRotationalSpeed(DoubleSupplier xboxInput) {
-        rotationalRedPid.setSetpoint(0);
-        if (isLockedRotational) {
-            var activeSpeaker = DriverStation.getAlliance().get().equals(DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
-            var currentPose = getState().Pose;
-
-            var xDistance = currentPose.getTranslation().getX() - activeSpeaker.getX();
-            var yDistance = currentPose.getTranslation().getY() - activeSpeaker.getY();
-
-            //currentPose = currentPose.transformBy(new Transform2d(2*Math.abs(xDistance), 0, new Rotation2d()));
-
-            // var myTrans = new Transform2d(-2*xDistance, 0, new Rotation2d());
-            // currentPose.transformBy(myTrans);
-
-            var targetAngle = Math.atan2(yDistance,xDistance);
-                
-
-            // if (yDistance >0.1){
-            //      targetAngle =Math.PI/2-Math.asin(xDistance / currentPose.getTranslation().getDistance(redSpeaker.getTranslation()));
-            // }else if(yDistance <0.1)
-            // {
-            //      targetAngle =- Math.acos(-xDistance / -currentPose.getTranslation().getDistance(redSpeaker.getTranslation()));
-
-            // }
-            // else{
-            //     targetAngle = 0;
-            // }
-                
-            var currentAngle = currentPose.getRotation().getRadians();
-            var  angleDifference = currentAngle - targetAngle;
-
-            System.out.println("targetAngle: " + targetAngle+ " currentAngle: " + currentAngle + " angleDifference: " + angleDifference);
-
-            if(activeSpeaker == blueSpeaker){
-
-                // var targetAngle = Math.atan2(yDistance, xDistance);
-                // var currentAngle = currentPose.getRotation().getRadians();
-                // var angleDifference = currentAngle - targetAngle;
-                //                 System.out.println("targetAngle: " + targetAngle+ " currentAngle: " + currentAngle + " angleDifference: " + angleDifference);
-
-                return rotationalBluePid.calculate(angleDifference) * 0.85;
-            }
-
-            else if(activeSpeaker == redSpeaker){
-
-                var lime = Limelight.getInstance();
-                
-                return rotationalRedPid.calculate(lime.getTx()) *0.85 ;
-                
-                // return xboxInput.getAsDouble() * 1.5 * Math.PI;
-
-                // var targetAngle = Math.atan2(yDistance, 
-                // -xDistance);
-                
-                // var currentAngle = Math.abs(currentPose.getRotation().getRadians());
-
-             
-                // var  angleDifference = currentAngle - (Math.PI + targetAngle);
-
-                // if(currentAngle < 0){
-                //     angleDifference = Math.PI - Math.abs(currentAngle);
-                //     angleDifference += (Math.PI - Math.abs(targetAngle));
-
-                //     return rotationalPid.calculate(angleDifference) * 0.85;
-                //} 
-            }
-        }
-
-        return xboxInput.getAsDouble();
+        return 0.0;
     }
+
+// Delete when merging/pulling this and implement red speaker in method above
+
+//    public double getRotationalSpeed(DoubleSupplier xboxInput) {
+//        rotationalRedPid.setSetpoint(0);
+//        if (isLockedRotational) {
+//            var activeSpeaker = DriverStation.getAlliance().get().equals(DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
+//            var currentPose = getState().Pose;
+//
+//            //currentPose = currentPose.transformBy(new Transform2d(2*Math.abs(xDistance), 0, new Rotation2d()));
+//
+//            // var myTrans = new Transform2d(-2*xDistance, 0, new Rotation2d());
+//            // currentPose.transformBy(myTrans);
+//
+//            // if (yDistance >0.1){
+//            //      targetAngle =Math.PI/2-Math.asin(xDistance / currentPose.getTranslation().getDistance(redSpeaker.getTranslation()));
+//            // }else if(yDistance <0.1)
+//            // {
+//            //      targetAngle =- Math.acos(-xDistance / -currentPose.getTranslation().getDistance(redSpeaker.getTranslation()));
+//
+//            // }
+//            // else{
+//            //     targetAngle = 0;
+//            // }
+//
+//            var currentAngle = currentPose.getRotation().getRadians();
+//            var  angleDifference = currentAngle - targetAngle;
+//
+//            System.out.println("targetAngle: " + targetAngle+ " currentAngle: " + currentAngle + " angleDifference: " + angleDifference);
+//
+//            if(activeSpeaker == blueSpeaker){
+//
+//                // var targetAngle = Math.atan2(yDistance, xDistance);
+//                // var currentAngle = currentPose.getRotation().getRadians();
+//                // var angleDifference = currentAngle - targetAngle;
+//                //                 System.out.println("targetAngle: " + targetAngle+ " currentAngle: " + currentAngle + " angleDifference: " + angleDifference);
+//
+//                return rotationalBluePid.calculate(angleDifference) * 0.85;
+//            }
+//
+//            else if(activeSpeaker == redSpeaker){
+//
+//                var lime = Limelight.getInstance();
+//
+//                return rotationalRedPid.calculate(lime.getTx()) *0.85 ;
+//
+//                // return xboxInput.getAsDouble() * 1.5 * Math.PI;
+//
+//                // var targetAngle = Math.atan2(yDistance,
+//                // -xDistance);
+//
+//                // var currentAngle = Math.abs(currentPose.getRotation().getRadians());
+//
+//
+//                // var  angleDifference = currentAngle - (Math.PI + targetAngle);
+//
+//                // if(currentAngle < 0){
+//                //     angleDifference = Math.PI - Math.abs(currentAngle);
+//                //     angleDifference += (Math.PI - Math.abs(targetAngle));
+//
+//                //     return rotationalPid.calculate(angleDifference) * 0.85;
+//                //}
+//            }
+//        }
+//
+//        return xboxInput.getAsDouble();
+//    }
 
     public Swerve(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency, SwerveModuleConstants... modules) {
         super(driveTrainConstants, OdometryUpdateFrequency, modules);

@@ -8,8 +8,12 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.constants.Constants;
-import frc.robot.supersystems.TargetVelocity;
-import frc.robot.supersystems.VelocityController;
+import lib.meta.CommandBehavior;
+import lib.meta.CommandType;
+import lib.meta.EndType;
+import lib.meta.EndsOn;
+import lib.system.TargetVelocity;
+import lib.system.VelocityController;
 
 public class Shooter extends VelocityController {
   /** Creates a new Shooter. */
@@ -28,10 +32,15 @@ public class Shooter extends VelocityController {
     return Commands.runOnce(super::stop);
   }
 
+  // TODO link with odometry in default to adjust idle speed depending on speaker distance
+
+  @CommandBehavior(behavior = CommandType.INSTANT)
   public Command idleCommand() {
     return Commands.runOnce(() -> applyVelocities(Constants.Shooter.idleSpeed));
   }
 
+  @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
+  @EndsOn(endsOn = EndType.INTERRUPT)
   public Command shootCommand(Intake intake) {
     return new Command() {
       @Override
@@ -54,20 +63,21 @@ public class Shooter extends VelocityController {
     };
   }
 
-  // Used in aim-shoot commands
-  public Command applyVelocitiesCommand() {
-    return new Command() {
-      @Override
-      public void initialize() {
-        applyInitialTargetVelocities();
-      }
+    @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
+    @EndsOn(endsOn = EndType.FINISH)
+    public Command applyVelocitiesCommand() {
+        return new Command() {
+            @Override
+            public void initialize() {
+            applyInitialTargetVelocities();
+          }
 
-      @Override
-      public boolean isFinished(){
-        return Math.abs(getVelocity() - targets[0].targetVelocity) <= 1;
-      }
-    };
-  }
+            @Override
+            public boolean isFinished(){
+            return Math.abs(getVelocity() - targets[0].targetVelocity) <= 1;
+          }
+        };
+    }
 
   private double getVelocity() {
       if(targets.length < 1)
