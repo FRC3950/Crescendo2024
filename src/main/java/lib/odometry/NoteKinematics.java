@@ -14,7 +14,7 @@ public final class NoteKinematics {
     }
 
     public static double getTargetHeading(DriverStation.Alliance alliance,  Pose2d activeSpeaker, Pose2d botPose) {
-
+//TODO: Patrick, move swerve method over to here
         var xDistance = botPose.getTranslation().getX() - activeSpeaker.getX();
         var yDistance = botPose.getTranslation().getY() - activeSpeaker.getY();
 
@@ -22,6 +22,7 @@ public final class NoteKinematics {
         var currentAngle = botPose.getRotation().getRadians();
 
         var angleDifference = currentAngle - targetAngle;
+        return 0;
     }
 
     public static double getTargetPivot(DoubleSupplier distance) {

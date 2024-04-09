@@ -35,17 +35,17 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import lib.odometry.LimelightHelpers;
 import frc.robot.constants.TunerConstants;
 
-
 public class Swerve extends SwerveDrivetrain implements Subsystem {
 
-//may need to add
-// swerveDriveFXConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = Constants.Swerve.openLoopRamp;
-// swerveDriveFXConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = Constants.Swerve.openLoopRamp;
-// Consider Phoniex Pro - Torque drive controls and 250mhz update rate!!!!!
+    // may need to add
+    // swerveDriveFXConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =
+    // Constants.Swerve.openLoopRamp;
+    // swerveDriveFXConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod =
+    // Constants.Swerve.openLoopRamp;
+    // Consider Phoniex Pro - Torque drive controls and 250mhz update rate!!!!!
 
     Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
     Pose2d blueSpeaker = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
-
 
     private static final double SIM_LOOP_PERIOD = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
@@ -61,22 +61,22 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     private final double rotationalKiRed = 0.00001;
     private final double rotationalKdRed = 0.00001;
 
-    private final PIDController rotationalBluePid = new PIDController(rotationalKpBlue, rotationalKiBlue, rotationalKdBlue);
+    private final PIDController rotationalBluePid = new PIDController(rotationalKpBlue, rotationalKiBlue,
+            rotationalKdBlue);
     private final PIDController rotationalRedPid = new PIDController(rotationalKpRed, rotationalKiRed, rotationalKdRed);
-    
 
-    private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();   //.withDriveRequestType(DriveRequestType.Velocity);
+    private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds(); // .withDriveRequestType(DriveRequestType.Velocity);
 
     @Override
     public void periodic() {
 
-       
-       // SmartDashboard.putNumber("Speaker distance", this.getState().Pose.getTranslation().getDistance(blueSpeaker.getTranslation()));
+        // SmartDashboard.putNumber("Speaker distance",
+        // this.getState().Pose.getTranslation().getDistance(blueSpeaker.getTranslation()));
 
     }
 
     public double getRotationalSpeed(DoubleSupplier xboxInput) {
-       // rotationalRedPid.setTolerance(0.02);
+        // rotationalRedPid.setTolerance(0.02);
         rotationalRedPid.enableContinuousInput(-Math.PI, Math.PI);
 
         if (isLockedRotational) {
@@ -91,14 +91,21 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
             var currentAngle = currentPose.getRotation().getRadians();
             var angleDifference = currentAngle - targetAngle;
 
-            return rotationalBluePid.calculate(angleDifference) * 0.85;
+            if (activeSpeaker == blueSpeaker) {
+                return rotationalBluePid.calculate(angleDifference) * 0.85;
+            } else if (activeSpeaker == redSpeaker) {
+                return rotationalRedPid.calculate(angleDifference) * 0.85;
+            }
+
+            return xboxInput.getAsDouble();
+
         }
 
         return xboxInput.getAsDouble();
     }
 
-
-    public Swerve(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency, SwerveModuleConstants... modules) {
+    public Swerve(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency,
+            SwerveModuleConstants... modules) {
         super(driveTrainConstants, OdometryUpdateFrequency, modules);
         configurePathPlanner();
 
@@ -107,7 +114,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
         }
     }
 
-    public Swerve(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules){
+    public Swerve(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
 
         configurePathPlanner();
@@ -115,7 +122,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
             startSimThread();
         }
     }
-
+    //Patrick will hate me for defining two seperate methods for this.... oh well :)
     public void setDirectionForRedAlliance() {
         this.m_fieldRelativeOffset = new Rotation2d(Math.PI);
     }
@@ -123,7 +130,6 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     public void setDirectionForBlueAlliance() {
         this.m_fieldRelativeOffset = new Rotation2d(0);
     }
-
 
     private void configurePathPlanner() {
 
@@ -136,18 +142,20 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
         NamedCommands.registerCommand("doNothing2", new WaitCommand(2));
 
         AutoBuilder.configureHolonomic(
-            () -> this.getState().Pose, // Supplier of current robot pose
-            this::seedFieldRelative,  // Consumer for seeding pose against auto
-            this::getCurrentRobotChassisSpeeds,
-            (speeds) -> this.setControl(autoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
-            new HolonomicPathFollowerConfig(new PIDConstants(3.05, 0, 0),
-                                            new PIDConstants(2.5, 0, 0),
-                                            TunerConstants.kSpeedAt12VoltsMps,
-                                            driveBaseRadius,
-                                            new ReplanningConfig()),
+                () -> this.getState().Pose, // Supplier of current robot pose
+                this::seedFieldRelative, // Consumer for seeding pose against auto
+                this::getCurrentRobotChassisSpeeds,
+                (speeds) -> this.setControl(autoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the
+                                                                             // robot
+                new HolonomicPathFollowerConfig(new PIDConstants(3.05, 0, 0),
+                        new PIDConstants(2.5, 0, 0),
+                        TunerConstants.kSpeedAt12VoltsMps,
+                        driveBaseRadius,
+                        new ReplanningConfig()),
 
-            () -> {
-                    // Boolean supplier that controls when the path will be mirrored for the red alliance
+                () -> {
+                    // Boolean supplier that controls when the path will be mirrored for the red
+                    // alliance
                     // This will flip the path being followed to the red side of the field.
                     // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
@@ -157,7 +165,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
                     }
                     return false;
                 },
-            this); // Subsystem for requirements
+                this); // Subsystem for requirements
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
@@ -168,16 +176,15 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
         return new PathPlannerAuto(pathName);
     }
 
-
     public void applyVisionToPose() {
-        //ToDo: Test STD Values
+        // ToDo: Test STD Values
 
         var visionResults = LimelightHelpers.getLatestResults("limelight").targetingResults;
-       // System.out.println("past the var");
 
-        if (visionResults.getBotPose2d_wpiBlue().getX() == 0.0) {
-            return;
-        }
+        // if (visionResults.getBotPose2d_wpiBlue().getX() == 0.0) {
+        //     System.out.println("No vision applied - (0,0)");
+        //     return;
+        // }
 
         double poseDifference = this.getState().Pose.getTranslation()
                 .getDistance(visionResults.getBotPose2d_wpiBlue().getTranslation());
@@ -185,26 +192,26 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
         if (visionResults.targets_Fiducials.length > 0) {
             double xyStds;
             double degStds;
-            //System.out.println("caught an april");
-            //System.out.println(poseDifference);
-
-            // multiple targets detected
+            
+            // 2 targets detected
             if (visionResults.targets_Fiducials.length >= 2) {
                 xyStds = 0.4;
-                degStds = 6;
+                degStds = 6;  
+                System.out.println("Two Apriltags detected");
             }
 
             // 1 target with large area and close to estimated pose
             else if (visionResults.targets_Fiducials[0].ta > 0.8 && poseDifference < 0.5) {
                 xyStds = 1.0;
                 degStds = 12;
-                System.out.println("caught a single one");
+                System.out.println("One Apriltag detected with large area and close to estimated pose");
             }
 
             // 1 target farther away and estimated pose is close
             else if (visionResults.targets_Fiducials[0].ta > 0.1 && poseDifference < 0.3) {
                 xyStds = 2.0;
                 degStds = 30;
+                System.out.println("One Apriltag detected farther away");
             }
 
             // conditions don't match to add a vision measurement
@@ -213,19 +220,18 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
                 return;
             }
 
-            if (visionResults.valid){
-//(visionResults.latency_pipeline / 1000.0)
+            if (visionResults.valid) {
 
-                addVisionMeasurement(visionResults.getBotPose2d_wpiBlue(),
-                        Timer.getFPGATimestamp() ,
-                        VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
+                addVisionMeasurement(
+                    visionResults.getBotPose2d_wpiBlue(),
+                    Timer.getFPGATimestamp() -
+                    (visionResults.latency_capture + visionResults.latency_jsonParse + visionResults.latency_pipeline) / 1000,
+                    VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(9999999))); // 9999999 to ignore angle
             }
-
 
         }
 
     }
-
 
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {
         return m_kinematics.toChassisSpeeds(getState().ModuleStates);
@@ -246,13 +252,13 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
         m_simNotifier.startPeriodic(SIM_LOOP_PERIOD);
     }
 
+    // May need to erase
+    // This is a closed loop implementation of chassis drive for pathplanner.
+    // The open/PID version might be good enough, but this could be better if we get
+    // our sysID data 'lit'
+    // blargh
 
-//May need to erase
-//This is a closed loop implementation of chassis drive for pathplanner.
-//The open/PID version might be good enough, but this could be better if we get our sysID data 'lit'
-// blargh
-
-   /**
+    /**
      * Accepts a generic ChassisSpeeds to apply to the drivetrain.
      */
     public class ApplyChassisSpeedsClosed implements SwerveRequest {
@@ -293,6 +299,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
             this.Speeds = speeds;
             return this;
         }
+
         /**
          * Sets the center of rotation to rotate around.
          *
@@ -307,24 +314,26 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
         /**
          * Sets the type of control request to use for the drive motor.
          *
-         * @param driveRequestType The type of control request to use for the drive motor
+         * @param driveRequestType The type of control request to use for the drive
+         *                         motor
          * @return this request
          */
         public ApplyChassisSpeedsClosed withDriveRequestType(SwerveModule.DriveRequestType driveRequestType) {
             this.DriveRequestType = driveRequestType;
             return this;
         }
+
         /**
          * Sets the type of control request to use for the steer motor.
          *
-         * @param steerRequestType The type of control request to use for the steer motor
+         * @param steerRequestType The type of control request to use for the steer
+         *                         motor
          * @return this request
          */
         public ApplyChassisSpeedsClosed withSteerRequestType(SwerveModule.SteerRequestType steerRequestType) {
             this.SteerRequestType = steerRequestType;
             return this;
         }
-
 
     }
 }
