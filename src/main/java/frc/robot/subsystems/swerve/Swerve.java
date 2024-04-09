@@ -47,12 +47,15 @@ import frc.robot.subsystems.Limelight;
  * so it can be used in command-based projects easily.
  */
 public class Swerve extends SwerveDrivetrain implements Subsystem {
-//blargh
+
 //may need to add
 // swerveDriveFXConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = Constants.Swerve.openLoopRamp;
 // swerveDriveFXConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = Constants.Swerve.openLoopRamp;
+// Consider Phoniex Pro - Torque drive controls and 250mhz update rate!!!!!
 
     Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
+    Pose2d blueSpeaker = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
+
 
     private static final double SIM_LOOP_PERIOD = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
@@ -64,85 +67,46 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     private final double rotationalKiBlue = 0.00001;
     private final double rotationalKdBlue = 0.00001;
 
-    private final double rotationalKpRed = 0.0260; // Vision kP
-    private final double rotationalKiRed = 0.0;
-    private final double rotationalKdRed = 0.002;
+    private final double rotationalKpRed = 1.2;
+    private final double rotationalKiRed = 0.00001;
+    private final double rotationalKdRed = 0.00001;
 
     private final PIDController rotationalBluePid = new PIDController(rotationalKpBlue, rotationalKiBlue, rotationalKdBlue);
     private final PIDController rotationalRedPid = new PIDController(rotationalKpRed, rotationalKiRed, rotationalKdRed);
     
 
-    //red and blue speaker pose
-    // Pose2d redSpeakerPose = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(180));
-    Pose2d blueSpeaker = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
-
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();   //.withDriveRequestType(DriveRequestType.Velocity);
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Speaker distance", this.getState().Pose.getTranslation().getDistance(blueSpeaker.getTranslation()));
+
+       
+       // SmartDashboard.putNumber("Speaker distance", this.getState().Pose.getTranslation().getDistance(blueSpeaker.getTranslation()));
+
     }
 
     public double getRotationalSpeed(DoubleSupplier xboxInput) {
-        rotationalRedPid.setSetpoint(0);
+       // rotationalRedPid.setTolerance(0.02);
         rotationalRedPid.enableContinuousInput(-Math.PI, Math.PI);
+
         if (isLockedRotational) {
-            var activeSpeaker = DriverStation.getAlliance().get().equals(DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
+            var activeSpeaker = DriverStation.getAlliance().get().equals(DriverStation.Alliance.Red) ? redSpeaker
+                    : blueSpeaker;
             var currentPose = getState().Pose;
 
             var xDistance = currentPose.getTranslation().getX() - activeSpeaker.getX();
             var yDistance = currentPose.getTranslation().getY() - activeSpeaker.getY();
 
-            var targetAngle = Math.atan2(yDistance, xDistance) ;
-
-           
-
-           
-                
-            //currentPose = currentPose.transformBy(new Transform2d(2*Math.abs(xDistance), 0, new Rotation2d()));
-
-            // var myTrans = new Transform2d(-2*xDistance, 0, new Rotation2d());
-            // currentPose.transformBy(myTrans);
-
-            var targetAngle = Math.atan2(yDistance,xDistance);
-                
-
-            // if (yDistance >0.1){
-            //      targetAngle =Math.PI/2-Math.asin(xDistance / currentPose.getTranslation().getDistance(redSpeaker.getTranslation()));
-            // }else if(yDistance <0.1)
-            // {
-            //      targetAngle =- Math.acos(-xDistance / -currentPose.getTranslation().getDistance(redSpeaker.getTranslation()));
-
-            // }
-            // else{
-            //     targetAngle = 0;
-            // }
-                
-                var currentAngle = currentPose.getRotation().getRadians();
-
-                var  angleDifference = currentAngle - targetAngle;
-
-
+            var targetAngle = Math.atan2(yDistance, xDistance);
             var currentAngle = currentPose.getRotation().getRadians();
-            var  angleDifference = currentAngle - targetAngle;
+            var angleDifference = currentAngle - targetAngle;
 
-
-
-
-
-            if(activeSpeaker == blueSpeaker){
-
-                return rotationalBluePid.calculate(angleDifference) * 0.85;
-            }
-
-            else if(activeSpeaker == redSpeaker){   
-                
-            }
-
+            return rotationalBluePid.calculate(angleDifference) * 0.85;
         }
 
         return xboxInput.getAsDouble();
     }
+
 
     public Swerve(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency, SwerveModuleConstants... modules) {
         super(driveTrainConstants, OdometryUpdateFrequency, modules);
