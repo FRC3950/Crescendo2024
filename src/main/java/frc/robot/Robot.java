@@ -6,6 +6,7 @@ package frc.robot;
 
 /////
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -129,10 +130,14 @@ public class Robot extends TimedRobot {
     m_robotContainer.flipper.init();
     m_robotContainer.pivot.init();
 
-    if(m_robotContainer.my_alliance == Alliance.Red){
-      m_robotContainer.drivetrain.seedFieldRelative();
+    if(DriverStation.getAlliance().get() == Alliance.Red){
+      System.out.println("Setting direction for red alliance");
+     m_robotContainer.drivetrain.setDirectionForRedAlliance();
     }
-
+    else{
+      System.out.println("Setting direction for blue alliance");
+      m_robotContainer.drivetrain.setDirectionForBlueAlliance();
+     }
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();

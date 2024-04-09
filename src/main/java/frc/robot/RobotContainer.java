@@ -212,7 +212,7 @@ public class RobotContainer {
     // PathPlannerPath lowerStage = PathPlannerPath.fromPathFile("LowerStage");
     // PathPlannerPath amp = PathPlannerPath.fromPathFile("Amp");
 
-    my_alliance = DriverStation.getAlliance().get();
+    // my_alliance = DriverStation.getAlliance().get();
 
     // SmartDashboard.putData("toggleAutoAngle",
     // pivot.autoAngleCommand(
@@ -226,7 +226,10 @@ public class RobotContainer {
   }
 
   private Alliance getAlliance() {
+    if (DriverStation.getAlliance().isPresent()) {
     return DriverStation.getAlliance().get();
+    }
+    return Alliance.Red;
   }
 
   public Command getAutonomousCommand() {

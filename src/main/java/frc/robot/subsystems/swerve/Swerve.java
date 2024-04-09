@@ -84,6 +84,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
     public double getRotationalSpeed(DoubleSupplier xboxInput) {
         rotationalRedPid.setSetpoint(0);
+        rotationalRedPid.enableContinuousInput(-Math.PI, Math.PI);
         if (isLockedRotational) {
             var activeSpeaker = DriverStation.getAlliance().get().equals(DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
             var currentPose = getState().Pose;
@@ -91,77 +92,49 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
             var xDistance = currentPose.getTranslation().getX() - activeSpeaker.getX();
             var yDistance = currentPose.getTranslation().getY() - activeSpeaker.getY();
 
-                var targetAngle = Math.atan(yDistance/
-                xDistance);
+            var targetAngle = Math.atan2(yDistance, xDistance) ;
+
+           
+
+           
                 
 
-                if (yDistance >0.1){
-
-                     targetAngle =Math.PI/2-Math.asin(xDistance / currentPose.getTranslation().getDistance(redSpeaker.getTranslation()));
-
-                }else if(yDistance <0.1)
-                {
-                     targetAngle =- Math.acos(-xDistance / -currentPose.getTranslation().getDistance(redSpeaker.getTranslation()));
-
-                }
-                else{
-                    targetAngle = 0;
-                }
                 
                 var currentAngle = currentPose.getRotation().getRadians();
-              
 
                 var  angleDifference = currentAngle - targetAngle;
 
 
 
-                                System.out.println("targetAngle: " + targetAngle+ " currentAngle: " + currentAngle + " angleDifference: " + angleDifference);
+
 
 
             if(activeSpeaker == blueSpeaker){
-
-                // var targetAngle = Math.atan2(yDistance, xDistance);
-                // var currentAngle = currentPose.getRotation().getRadians();
-                // var angleDifference = currentAngle - targetAngle;
-                //                 System.out.println("targetAngle: " + targetAngle+ " currentAngle: " + currentAngle + " angleDifference: " + angleDifference);
 
                 return rotationalBluePid.calculate(angleDifference) * 0.85;
             }
 
             else if(activeSpeaker == redSpeaker){
 
-                if (targetAngle < 0) {
-                    targetAngle *= -1;
-                }
-                
-return rotationalRedPid.calculate(angleDifference) *0.85 ;
-                
-                
-                // return xboxInput.getAsDouble() * 1.5 * Math.PI;
+              
+                // if (currentAngle > 0 )
+                // {
+                //     currentAngle = currentAngle % (-Math.PI/2);
+                //     angleDifference = currentAngle - targetAngle;
 
-                // var targetAngle = Math.atan2(yDistance, 
-                // -xDistance);
-                
-                // var currentAngle = Math.abs(currentPose.getRotation().getRadians());
-
-             
-                // var  angleDifference = currentAngle - (Math.PI + targetAngle);
-
-                // if(currentAngle < 0){
-                //     angleDifference = Math.PI - Math.abs(currentAngle);
-                //     angleDifference += (Math.PI - Math.abs(targetAngle));
-
-                //     return rotationalPid.calculate(angleDifference) * 0.85;
                 // }
+                // else if (currentAngle < 0)
+                // {
+                //     currentAngle = currentAngle % (Math.PI/2);
+                //     angleDifference = currentAngle - targetAngle;
 
-               
-
-
-
-                  
-
-
-                        
+                // }
+                // else
+                // {
+                //     currentAngle = 0;
+                // }
+            return rotationalRedPid.calculate(angleDifference) *0.85 ;
+                              
                     
                  
                 
@@ -189,6 +162,15 @@ return rotationalRedPid.calculate(angleDifference) *0.85 ;
             startSimThread();
         }
     }
+
+    public void setDirectionForRedAlliance() {
+        this.m_fieldRelativeOffset = new Rotation2d(Math.PI);
+    }
+
+    public void setDirectionForBlueAlliance() {
+        this.m_fieldRelativeOffset = new Rotation2d(0);
+    }
+
 
     private void configurePathPlanner() {
 
