@@ -3,16 +3,10 @@ package frc.robot.subsystems.swerve;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain.SwerveDriveState;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.networktables.DoubleArrayPublisher;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StringPublisher;
-import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,7 +34,7 @@ public class Telemetry {
     private final NetworkTable table = inst.getTable("Pose");
     private final DoubleArrayPublisher fieldPub = table.getDoubleArrayTopic("robotPose").publish();
     //private final DoublePublisher fieldX = table.getDoubleTopic("robotX").publish();
-   // private final DoublePublisher fieldY = table.getDoubleTopic("robotY").publish();
+    // private final DoublePublisher fieldY = table.getDoubleTopic("robotY").publish();
     //private final DoublePublisher fieldAngle = table.getDoubleTopic("robotAngle").publish();
     private final StringPublisher fieldTypePub = table.getStringTopic(".type").publish();
 
@@ -50,7 +44,6 @@ public class Telemetry {
     private final DoublePublisher velocityY = driveStats.getDoubleTopic("Velocity Y").publish();
     private final DoublePublisher speed = driveStats.getDoubleTopic("Speed").publish();
     private final DoublePublisher odomFreq = driveStats.getDoubleTopic("Odometry Frequency").publish();
-
 
 
     private final NetworkTable vision = inst.getTable("Vision");
@@ -66,29 +59,29 @@ public class Telemetry {
     private double lastTime = Utils.getCurrentTimeSeconds();
 
     /* Mechanisms to represent the swerve module states */
-    private final Mechanism2d[] m_moduleMechanisms = new Mechanism2d[] {
-        new Mechanism2d(1, 1),
-        new Mechanism2d(1, 1),
-        new Mechanism2d(1, 1),
-        new Mechanism2d(1, 1),
+    private final Mechanism2d[] m_moduleMechanisms = new Mechanism2d[]{
+            new Mechanism2d(1, 1),
+            new Mechanism2d(1, 1),
+            new Mechanism2d(1, 1),
+            new Mechanism2d(1, 1),
     };
     /* A direction and length changing ligament for speed representation */
-    private final MechanismLigament2d[] m_moduleSpeeds = new MechanismLigament2d[] {
-        m_moduleMechanisms[0].getRoot("RootSpeed", 0.5, 0.5).append(new MechanismLigament2d("Speed", 0.5, 0)),
-        m_moduleMechanisms[1].getRoot("RootSpeed", 0.5, 0.5).append(new MechanismLigament2d("Speed", 0.5, 0)),
-        m_moduleMechanisms[2].getRoot("RootSpeed", 0.5, 0.5).append(new MechanismLigament2d("Speed", 0.5, 0)),
-        m_moduleMechanisms[3].getRoot("RootSpeed", 0.5, 0.5).append(new MechanismLigament2d("Speed", 0.5, 0)),
+    private final MechanismLigament2d[] m_moduleSpeeds = new MechanismLigament2d[]{
+            m_moduleMechanisms[0].getRoot("RootSpeed", 0.5, 0.5).append(new MechanismLigament2d("Speed", 0.5, 0)),
+            m_moduleMechanisms[1].getRoot("RootSpeed", 0.5, 0.5).append(new MechanismLigament2d("Speed", 0.5, 0)),
+            m_moduleMechanisms[2].getRoot("RootSpeed", 0.5, 0.5).append(new MechanismLigament2d("Speed", 0.5, 0)),
+            m_moduleMechanisms[3].getRoot("RootSpeed", 0.5, 0.5).append(new MechanismLigament2d("Speed", 0.5, 0)),
     };
     /* A direction changing and length constant ligament for module direction */
-    private final MechanismLigament2d[] m_moduleDirections = new MechanismLigament2d[] {
-        m_moduleMechanisms[0].getRoot("RootDirection", 0.5, 0.5)
-            .append(new MechanismLigament2d("Direction", 0.1, 0, 0, new Color8Bit(Color.kWhite))),
-        m_moduleMechanisms[1].getRoot("RootDirection", 0.5, 0.5)
-            .append(new MechanismLigament2d("Direction", 0.1, 0, 0, new Color8Bit(Color.kWhite))),
-        m_moduleMechanisms[2].getRoot("RootDirection", 0.5, 0.5)
-            .append(new MechanismLigament2d("Direction", 0.1, 0, 0, new Color8Bit(Color.kWhite))),
-        m_moduleMechanisms[3].getRoot("RootDirection", 0.5, 0.5)
-            .append(new MechanismLigament2d("Direction", 0.1, 0, 0, new Color8Bit(Color.kWhite))),
+    private final MechanismLigament2d[] m_moduleDirections = new MechanismLigament2d[]{
+            m_moduleMechanisms[0].getRoot("RootDirection", 0.5, 0.5)
+                    .append(new MechanismLigament2d("Direction", 0.1, 0, 0, new Color8Bit(Color.kWhite))),
+            m_moduleMechanisms[1].getRoot("RootDirection", 0.5, 0.5)
+                    .append(new MechanismLigament2d("Direction", 0.1, 0, 0, new Color8Bit(Color.kWhite))),
+            m_moduleMechanisms[2].getRoot("RootDirection", 0.5, 0.5)
+                    .append(new MechanismLigament2d("Direction", 0.1, 0, 0, new Color8Bit(Color.kWhite))),
+            m_moduleMechanisms[3].getRoot("RootDirection", 0.5, 0.5)
+                    .append(new MechanismLigament2d("Direction", 0.1, 0, 0, new Color8Bit(Color.kWhite))),
     };
 
     /* Accept the swerve drive state and telemeterize it to smartdashboard */
@@ -96,10 +89,10 @@ public class Telemetry {
         /* Telemeterize the pose */
         Pose2d pose = state.Pose;
         fieldTypePub.set("Field2d");
-        fieldPub.set(new double[] {
-            pose.getX(),
-            pose.getY(),
-            pose.getRotation().getDegrees()
+        fieldPub.set(new double[]{
+                pose.getX(),
+                pose.getY(),
+                pose.getRotation().getDegrees()
         });
         //  fieldX.set(pose.getX());
         // fieldY.set(pose.getY());
@@ -109,7 +102,7 @@ public class Telemetry {
 
         var lastResult = Limelight.limelightResults;
 
-        if(lastResult != null && lastResult.valid && lastResult.getBotPose2d().getX() != 0.0){
+        if (lastResult != null && lastResult.valid && lastResult.getBotPose2d().getX() != 0.0) {
             visionPose.set(lastResult.getBotPose3d_wpiBlue());
         }
 
@@ -137,7 +130,7 @@ public class Telemetry {
             SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
         }
 
-        SignalLogger.writeDoubleArray("odometry", new double[] {pose.getX(), pose.getY(), pose.getRotation().getDegrees()});
+        SignalLogger.writeDoubleArray("odometry", new double[]{pose.getX(), pose.getY(), pose.getRotation().getDegrees()});
         SignalLogger.writeDouble("odom period", state.OdometryPeriod, "seconds");
     }
 }

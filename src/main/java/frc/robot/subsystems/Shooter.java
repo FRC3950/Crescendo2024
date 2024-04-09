@@ -5,8 +5,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.Constants;
 import lib.meta.CommandBehavior;
 import lib.meta.CommandType;
@@ -16,52 +16,60 @@ import lib.system.TargetVelocity;
 import lib.system.VelocityController;
 
 public class Shooter extends VelocityController {
-  /** Creates a new Shooter. */
 
-  public Shooter() {
-    super(
-      new TargetVelocity(
-        new TalonFX(Constants.Shooter.topId, "CANivore"),
-        new TalonFX(Constants.Shooter.bottomId, "CANivore"), Constants.Shooter.activeSpeed.getAsDouble(),
-        Constants.Shooter.kP, Constants.Shooter.kV, true
-      )
-    );
-  }
+    public Shooter() {
+        super(
+                new TargetVelocity(
+                        new TalonFX(Constants.Shooter.topId, "CANivore"),
+                        new TalonFX(Constants.Shooter.bottomId, "CANivore"), Constants.Shooter.activeSpeed.getAsDouble(),
+                        Constants.Shooter.kP, Constants.Shooter.kV, true
+                )
+        );
+    }
 
-  public Command stopCommand() {
-    return Commands.runOnce(super::stop);
-  }
+    private double getVelocity() {
+        if (targets.length < 1)
+            return 0;
 
-  // TODO link with odometry in default to adjust idle speed depending on speaker distance
+        return targets[0].motor.getVelocity().getValueAsDouble();
+    }
 
-  @CommandBehavior(behavior = CommandType.INSTANT)
-  public Command idleCommand() {
-    return Commands.runOnce(() -> applyVelocities(Constants.Shooter.idleSpeed));
-  }
 
-  @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
-  @EndsOn(endsOn = EndType.INTERRUPT)
-  public Command shootCommand(Intake intake) {
-    return new Command() {
-      @Override
-      public void initialize() {
-        applyInitialTargetVelocities();
-      }
+    @CommandBehavior(behavior = CommandType.INSTANT)
+    public Command stopCommand() {
+        return Commands.runOnce(super::stop);
+    }
 
-      @Override
-      public void execute() {
-        if(getVelocity() >= Constants.Shooter.activeSpeed.getAsDouble()){
-          intake.applyVelocity(Constants.Intake.indexerId, Constants.Intake.indexerActiveVelocity);
-        }
-      }
+    // TODO link with odometry in default to adjust idle speed depending on speaker distance
 
-      @Override
-      public void end(boolean interrupted){
-        applyVelocities(Constants.Shooter.idleSpeed);
-        intake.stop();
-      }
-    };
-  }
+    @CommandBehavior(behavior = CommandType.INSTANT)
+    public Command idleCommand() {
+        return Commands.runOnce(() -> applyVelocities(Constants.Shooter.idleSpeed));
+    }
+
+    @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
+    @EndsOn(endsOn = EndType.INTERRUPT)
+    public Command shootCommand(Intake intake) {
+        return new Command() {
+            @Override
+            public void initialize() {
+                applyInitialTargetVelocities();
+            }
+
+            @Override
+            public void execute() {
+                if (getVelocity() >= Constants.Shooter.activeSpeed.getAsDouble()) {
+                    intake.applyVelocity(Constants.Intake.indexerId, Constants.Intake.indexerActiveVelocity);
+                }
+            }
+
+            @Override
+            public void end(boolean interrupted) {
+                applyVelocities(Constants.Shooter.idleSpeed);
+                intake.stop();
+            }
+        };
+    }
 
     @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
     @EndsOn(endsOn = EndType.FINISH)
@@ -69,23 +77,17 @@ public class Shooter extends VelocityController {
         return new Command() {
             @Override
             public void initialize() {
-            applyInitialTargetVelocities();
-          }
+                applyInitialTargetVelocities();
+            }
 
             @Override
-            public boolean isFinished(){
-            return Math.abs(getVelocity() - targets[0].targetVelocity) <= 1;
-          }
+            public boolean isFinished() {
+                return Math.abs(getVelocity() - targets[0].targetVelocity) <= 1;
+            }
         };
     }
 
-  private double getVelocity() {
-      if(targets.length < 1)
-          return 0;
-
-      return targets[0].motor.getVelocity().getValueAsDouble();
-  }
-
-  @Override
-  public void periodic(){}
+    @Override
+    public void periodic() {
+    }
 }

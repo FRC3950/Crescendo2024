@@ -3,12 +3,12 @@ package frc.robot;// Copyright (c) FIRST and other WPILib contributors.
 // the WPILib BSD license file in the root directory of this project.
 
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.robot.Robot;
 
 public final class Main {
-  private Main() {}
+    private Main() {
+    }
 
-  public static void main(String... args) {
-    RobotBase.startRobot(Robot::new);
-  }
+    public static void main(String... args) {
+        RobotBase.startRobot(Robot::new);
+    }
 }

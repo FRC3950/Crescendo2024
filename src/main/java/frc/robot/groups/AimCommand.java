@@ -4,21 +4,23 @@
 
 package frc.robot.groups;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
+
+import java.util.function.DoubleSupplier;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AimCommand extends ParallelCommandGroup {
-  /** Creates a new AimCommand. */
-  public AimCommand(Pivot pivot, Shooter shooter, DoubleSupplier angle) {
-    addCommands(
-      pivot.setAngleCommand(angle),
-      shooter.applyVelocitiesCommand()
-    );
-  }
+    /**
+     * Creates a new AimCommand.
+     */
+    public AimCommand(Pivot pivot, Shooter shooter, DoubleSupplier angle) {
+        addCommands(
+                pivot.setAngleCommand(angle),
+                shooter.applyVelocitiesCommand()
+        );
+    }
 }

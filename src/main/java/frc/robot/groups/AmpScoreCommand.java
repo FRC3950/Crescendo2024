@@ -4,24 +4,26 @@
 
 package frc.robot.groups;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Flipper;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
 
-public class AmpScoreCommand extends SequentialCommandGroup {
-  /** Creates a new AmpScoreCommand. */
-  public AmpScoreCommand(Pivot pivot, Flipper flipper, Shooter shooter, DoubleSupplier pivotPos, DoubleSupplier flipperPos) {
-    addCommands(
-        shooter.stopCommand(),
-        pivot.setAngleInstantCommand(pivotPos),
-        Commands.waitSeconds(0.6),
-        flipper.ampCommand(flipperPos)
-    ); // Stow command runs on button false (See RobotContainer)
+import java.util.function.DoubleSupplier;
 
-    addRequirements(pivot, flipper, shooter);
-  }
+public class AmpScoreCommand extends SequentialCommandGroup {
+    /**
+     * Creates a new AmpScoreCommand.
+     */
+    public AmpScoreCommand(Pivot pivot, Flipper flipper, Shooter shooter, DoubleSupplier pivotPos, DoubleSupplier flipperPos) {
+        addCommands(
+                shooter.stopCommand(),
+                pivot.setAngleInstantCommand(pivotPos),
+                Commands.waitSeconds(0.6),
+                flipper.ampCommand(flipperPos)
+        ); // Stow command runs on button false (See RobotContainer)
+
+        addRequirements(pivot, flipper, shooter);
+    }
 }

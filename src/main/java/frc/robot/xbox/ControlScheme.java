@@ -23,7 +23,7 @@ public enum ControlScheme {
 
     public final Trigger button;
 
-    ControlScheme(Trigger button){
+    ControlScheme(Trigger button) {
         this.button = button;
     }
 }

@@ -4,42 +4,46 @@
 
 package lib.system;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import java.util.function.DoubleSupplier;
+
 public abstract class VelocityController extends SubsystemBase {
-  /** Creates a new VelocityController. */
+    /**
+     * Creates a new VelocityController.
+     */
 
-  protected final TargetVelocity[] targets;
+    protected final TargetVelocity[] targets;
 
-  protected VelocityController(TargetVelocity...targets) {
-    this.targets = targets;
-  }
-
-  public void applyInitialTargetVelocities() {
-    for(TargetVelocity target : targets)
-      target.motor.setControl(target.velVoltage.withVelocity(target.targetVelocity));
-  }
-
-  public void applyVelocity(int motorId, DoubleSupplier velocity){
-    for(TargetVelocity target : targets) {
-      if(target.motor.getDeviceID() == motorId){
-        target.motor.setControl(target.velVoltage.withVelocity(velocity.getAsDouble()));
-        return;
-      }
+    protected VelocityController(TargetVelocity... targets) {
+        this.targets = targets;
     }
-  }
 
-  protected void applyVelocities(DoubleSupplier velocity) {
-    for(TargetVelocity target : targets)
-      target.motor.setControl(target.velVoltage.withVelocity(velocity.getAsDouble()));
-  }
+    public void applyInitialTargetVelocities() {
+        for (TargetVelocity target : targets)
+            target.motor.setControl(target.velVoltage.withVelocity(target.targetVelocity));
+    }
 
-  public void stop() {
-      for (TargetVelocity target : targets)
-        target.motor.setControl(target.velVoltage.withVelocity(0));
-  }
-  @Override
-  public void periodic() {}
+    public void applyVelocity(int motorId, DoubleSupplier velocity) {
+        for (TargetVelocity target : targets) {
+            if (target.motor.getDeviceID() == motorId) {
+                target.motor.setControl(target.velVoltage.withVelocity(velocity.getAsDouble()));
+                return;
+            }
+        }
+    }
+
+    protected void applyVelocities(DoubleSupplier velocity) {
+        for (TargetVelocity target : targets)
+            target.motor.setControl(target.velVoltage.withVelocity(velocity.getAsDouble()));
+    }
+
+    public void stop() {
+        for (TargetVelocity target : targets)
+            target.motor.setControl(target.velVoltage.withVelocity(0));
+    }
+
+    @Override
+    public void periodic() {
+    }
 }

@@ -24,7 +24,7 @@ public interface Constants {
         public static final double kG = 0.3;
 
         public static final DoubleSupplier stowPosition = () -> -0.02;
-    //  public static final DoubleSupplier shuttlePosition = () -> Shuffleboard.getTab("Tab 5").add("Shuttle Position", 30).getEntry().getDouble(30);
+        //  public static final DoubleSupplier shuttlePosition = () -> Shuffleboard.getTab("Tab 5").add("Shuttle Position", 30).getEntry().getDouble(30);
     }
 
     final class Climber {
@@ -82,6 +82,6 @@ public interface Constants {
         public static final DoubleSupplier activeSpeed = () -> 75;
         public static final DoubleSupplier idleSpeed = () -> 3;
         public static final DoubleSupplier ampSpeed = () -> 18;
-     //   public static final DoubleSupplier shuttleSpeed = () -> Shuffleboard.getTab("Tab 5").add("Shuttle Speed", 75).getEntry().getDouble(75);
+        //   public static final DoubleSupplier shuttleSpeed = () -> Shuffleboard.getTab("Tab 5").add("Shuttle Speed", 75).getEntry().getDouble(75);
     }
 }

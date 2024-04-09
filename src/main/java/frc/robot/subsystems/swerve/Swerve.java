@@ -1,22 +1,14 @@
 package frc.robot.subsystems.swerve;
 
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.Utils;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.ctre.phoenix6.mechanisms.swerve.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
-
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -28,12 +20,15 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import lib.odometry.LimelightHelpers;
 import frc.robot.constants.TunerConstants;
+import lib.odometry.LimelightHelpers;
+import lib.odometry.NoteKinematics;
+
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class Swerve extends SwerveDrivetrain implements Subsystem {
 
@@ -72,7 +67,6 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
         // SmartDashboard.putNumber("Speaker distance",
         // this.getState().Pose.getTranslation().getDistance(blueSpeaker.getTranslation()));
-
     }
 
     public double getRotationalSpeed(DoubleSupplier xboxInput) {
@@ -80,16 +74,8 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
         rotationalRedPid.enableContinuousInput(-Math.PI, Math.PI);
 
         if (isLockedRotational) {
-            var activeSpeaker = DriverStation.getAlliance().get().equals(DriverStation.Alliance.Red) ? redSpeaker
-                    : blueSpeaker;
-            var currentPose = getState().Pose;
-
-            var xDistance = currentPose.getTranslation().getX() - activeSpeaker.getX();
-            var yDistance = currentPose.getTranslation().getY() - activeSpeaker.getY();
-
-            var targetAngle = Math.atan2(yDistance, xDistance);
-            var currentAngle = currentPose.getRotation().getRadians();
-            var angleDifference = currentAngle - targetAngle;
+            var activeSpeaker = DriverStation.getAlliance().equals(DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
+            var angleDifference = NoteKinematics.getHeadingDifference(activeSpeaker, getState().Pose);
 
             if (activeSpeaker == blueSpeaker) {
                 return rotationalBluePid.calculate(angleDifference) * 0.85;
@@ -98,14 +84,13 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
             }
 
             return xboxInput.getAsDouble();
-
         }
 
         return xboxInput.getAsDouble();
     }
 
     public Swerve(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency,
-            SwerveModuleConstants... modules) {
+                  SwerveModuleConstants... modules) {
         super(driveTrainConstants, OdometryUpdateFrequency, modules);
         configurePathPlanner();
 
@@ -122,14 +107,17 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
             startSimThread();
         }
     }
-    //Patrick will hate me for defining two seperate methods for this.... oh well :)
-    public void setDirectionForRedAlliance() {
-        this.m_fieldRelativeOffset = new Rotation2d(Math.PI);
-    }
 
-    public void setDirectionForBlueAlliance() {
-        this.m_fieldRelativeOffset = new Rotation2d(0);
+    public void setAllianceDirection(DriverStation.Alliance alliance) {
+        this.m_fieldRelativeOffset = new Rotation2d(alliance.equals(DriverStation.Alliance.Red) ? Math.PI : 0);
     }
+//    public void setDirectionForRedAlliance() {
+//        this.m_fieldRelativeOffset = new Rotation2d(Math.PI);
+//    }
+//
+//    public void setDirectionForBlueAlliance() {
+//        this.m_fieldRelativeOffset = new Rotation2d(0);
+//    }
 
     private void configurePathPlanner() {
 
@@ -146,7 +134,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
                 this::seedFieldRelative, // Consumer for seeding pose against auto
                 this::getCurrentRobotChassisSpeeds,
                 (speeds) -> this.setControl(autoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the
-                                                                             // robot
+                // robot
                 new HolonomicPathFollowerConfig(new PIDConstants(3.05, 0, 0),
                         new PIDConstants(2.5, 0, 0),
                         TunerConstants.kSpeedAt12VoltsMps,
@@ -192,11 +180,11 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
         if (visionResults.targets_Fiducials.length > 0) {
             double xyStds;
             double degStds;
-            
+
             // 2 targets detected
             if (visionResults.targets_Fiducials.length >= 2) {
                 xyStds = 0.4;
-                degStds = 6;  
+                degStds = 6;
                 System.out.println("Two Apriltags detected");
             }
 
@@ -223,10 +211,10 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
             if (visionResults.valid) {
 
                 addVisionMeasurement(
-                    visionResults.getBotPose2d_wpiBlue(),
-                    Timer.getFPGATimestamp() -
-                    (visionResults.latency_capture + visionResults.latency_jsonParse + visionResults.latency_pipeline) / 1000,
-                    VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(9999999))); // 9999999 to ignore angle
+                        visionResults.getBotPose2d_wpiBlue(),
+                        Timer.getFPGATimestamp() -
+                                (visionResults.latency_capture + visionResults.latency_jsonParse + visionResults.latency_pipeline) / 1000,
+                        VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(9999999))); // 9999999 to ignore angle
             }
 
         }

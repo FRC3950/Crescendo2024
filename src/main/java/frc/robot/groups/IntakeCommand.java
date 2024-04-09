@@ -9,11 +9,13 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Pivot;
 
 public class IntakeCommand extends ParallelCommandGroup {
-  /** Creates a new IntakeStowCommand. */
-  public IntakeCommand(Pivot pivot, Intake intake) {
-    addCommands(
-      intake.intakeCommand(),
-      pivot.stowCommand()
-    );
-  }
+    /**
+     * Creates a new IntakeStowCommand.
+     */
+    public IntakeCommand(Pivot pivot, Intake intake) {
+        addCommands(
+                intake.intakeCommand(),
+                pivot.stowCommand()
+        );
+    }
 }

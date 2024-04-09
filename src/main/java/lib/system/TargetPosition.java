@@ -1,11 +1,10 @@
 package lib.system;
 
-import java.util.function.DoubleSupplier;
-
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import java.util.function.DoubleSupplier;
 
 public class TargetPosition {
 
@@ -19,7 +18,7 @@ public class TargetPosition {
     public final MotionMagicVoltage mmVoltage;
     public final Slot0Configs slot0Configs;
 
-    public TargetPosition(TalonFX motor, DoubleSupplier initalPosition, double kP, double kV, double kG, boolean kA){
+    public TargetPosition(TalonFX motor, DoubleSupplier initalPosition, double kP, double kV, double kG, boolean kA) {
         this.motor = motor;
         this.initalPosition = initalPosition;
 
@@ -35,7 +34,7 @@ public class TargetPosition {
         slot0Configs.kV = kV;
         slot0Configs.kG = kG;
 
-        if(kA){
+        if (kA) {
             slot0Configs.kA = 1.0;
         }
 

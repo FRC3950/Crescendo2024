@@ -5,57 +5,60 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.networktables.*;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lib.odometry.LimelightHelpers;
 import lib.odometry.LimelightHelpers.Results;
 
 public class Limelight extends SubsystemBase {
-  /** Creates a new Limelight. */
+    /**
+     * Creates a new Limelight.
+     */
 
-  private final NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("");
+    private final NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("");
 
-  private static Limelight instance;
+    private static Limelight instance;
 
-  public static Results limelightResults;
-  public static Pose2d llPose;
+    public static Results limelightResults;
+    public static Pose2d llPose;
 
-  public static Limelight getInstance() {
-    if (instance == null) {
-      instance = new Limelight();
-    }
-    return instance;
-  }
-
-  private Limelight() {
-  }
-
-  public double getTx() {
-    // Only pull tx value for tag id #7
-    //limelightTable.getValue(getName())
-    var results = limelightResults;
-
-    for (LimelightHelpers.LimelightTarget_Fiducial result : results.targets_Fiducials) {
-      if(result.fiducialID == 7 || result.fiducialID == 4){
-        return result.tx;
-      }
+    public static Limelight getInstance() {
+        if (instance == null) {
+            instance = new Limelight();
+        }
+        return instance;
     }
 
-    return 0;
-  }
+    private Limelight() {
+    }
 
-  public double getTag() {
-    return limelightTable.getValue("tid").getDouble();
-  }
+    public double getTx() {
+        // Only pull tx value for tag id #7
+        //limelightTable.getValue(getName())
+        var results = limelightResults;
 
-  public void blink() {
-    limelightTable.getEntry("ledMode").setNumber(2);
-  }
+        for (LimelightHelpers.LimelightTarget_Fiducial result : results.targets_Fiducials) {
+            if (result.fiducialID == 7 || result.fiducialID == 4) {
+                return result.tx;
+            }
+        }
 
-  @Override
-  public void periodic() {
-    limelightResults = LimelightHelpers.getLatestResults("limelight").targetingResults;
-    llPose = limelightResults.getBotPose3d_wpiBlue().toPose2d();
-       // This method will be called once per scheduler run
-  }
+        return 0;
+    }
+
+    public double getTag() {
+        return limelightTable.getValue("tid").getDouble();
+    }
+
+    public void blink() {
+        limelightTable.getEntry("ledMode").setNumber(2);
+    }
+
+    @Override
+    public void periodic() {
+        limelightResults = LimelightHelpers.getLatestResults("limelight").targetingResults;
+        llPose = limelightResults.getBotPose3d_wpiBlue().toPose2d();
+        // This method will be called once per scheduler run
+    }
 }

@@ -14,7 +14,7 @@ public class TargetVelocity {
 
     public final VelocityVoltage velVoltage = new VelocityVoltage(0);
 
-    public TargetVelocity(TalonFX motor, double targetVelocity, double kP, double kV){
+    public TargetVelocity(TalonFX motor, double targetVelocity, double kP, double kV) {
         this.motor = motor;
         this.targetVelocity = targetVelocity;
 
@@ -33,13 +33,14 @@ public class TargetVelocity {
 
     /**
      * Target velocity for two-motor leader-follower systems.
-     * @param leader The leader motor.
-     * @param follower Follows leader motor.
+     *
+     * @param leader         The leader motor.
+     * @param follower       Follows leader motor.
      * @param targetVelocity The target velocity for both motors.
-     * @param kP The kP of the targetVelocity profile for both motors.
-     * @param kV The kV of the targetVelocity profile for both motors.
+     * @param kP             The kP of the targetVelocity profile for both motors.
+     * @param kV             The kV of the targetVelocity profile for both motors.
      */
-    public TargetVelocity(TalonFX leader, TalonFX follower, double targetVelocity, double kP, double kV, boolean isInverted){
+    public TargetVelocity(TalonFX leader, TalonFX follower, double targetVelocity, double kP, double kV, boolean isInverted) {
         this.motor = leader;
 
         this.kP = kP;

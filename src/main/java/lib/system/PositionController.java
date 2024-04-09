@@ -4,40 +4,42 @@
 
 package lib.system;
 
-import java.util.function.DoubleSupplier;
-
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.util.function.DoubleSupplier;
 
 
 public abstract class PositionController extends SubsystemBase {
-  /** Creates a new StateController. */
-  protected final TargetPosition targetPosition;
-  protected final MotionMagicVoltage mmVoltage;
+    /**
+     * Creates a new StateController.
+     */
+    protected final TargetPosition targetPosition;
+    protected final MotionMagicVoltage mmVoltage;
 
-  protected PositionController(TargetPosition targetPosition) {
+    protected PositionController(TargetPosition targetPosition) {
 
-    this.targetPosition = targetPosition;
-    mmVoltage = targetPosition.mmVoltage;
-  }
+        this.targetPosition = targetPosition;
+        mmVoltage = targetPosition.mmVoltage;
+    }
 
-  public void init() {
-    setPosition(targetPosition.initalPosition);
-  }
+    public void init() {
+        setPosition(targetPosition.initalPosition);
+    }
 
-  protected void setPosition(DoubleSupplier position) {
-    targetPosition.motor.setControl(mmVoltage.withPosition(position.getAsDouble()));
-  }
+    protected void setPosition(DoubleSupplier position) {
+        targetPosition.motor.setControl(mmVoltage.withPosition(position.getAsDouble()));
+    }
 
-  protected void stow() {
-    targetPosition.motor.setControl(mmVoltage.withPosition(0));
-  }
+    protected void stow() {
+        targetPosition.motor.setControl(mmVoltage.withPosition(0));
+    }
 
-  protected double getPosition() {
-    return targetPosition.motor.getPosition().getValueAsDouble();
-  }
+    protected double getPosition() {
+        return targetPosition.motor.getPosition().getValueAsDouble();
+    }
 
-  @Override
-  public void periodic() {}
+    @Override
+    public void periodic() {
+    }
 }
