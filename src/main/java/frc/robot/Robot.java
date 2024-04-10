@@ -4,13 +4,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.Limelight;
+import lib.odometry.Limelight;
 
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
@@ -20,9 +21,9 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         Timer.delay(4);
-        m_robotContainer = new RobotContainer();
-        Limelight.getInstance().blink();
+        Limelight.blink();
 
+        m_robotContainer = new RobotContainer();
         m_robotContainer.drivetrain.getDaqThread().setThreadPriority(99);
         // for (int port = 5800; port <= 5805; port++) {
         //    PortForwarder.add(port, "limelight.local", port);
@@ -33,20 +34,22 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
 
+        Limelight.updatePose(m_robotContainer.drivetrain);
+
         // Checks if robot is close to speaker prior to limelight correction (avoids limelight noise)
 
-        if (Limelight.limelightResults != null && Limelight.llPose != null && Limelight.limelightResults.valid) {
-            if (Limelight.limelightResults.targets_Fiducials.length > 1 && (
-
-                    m_robotContainer.drivetrain.getState().Pose.getX() < 4 || m_robotContainer.drivetrain.getState().Pose.getX() > 12.55
-            )) {
-                m_robotContainer.drivetrain.addVisionMeasurement(Limelight.llPose, Timer.getFPGATimestamp() - (
-                        Limelight.limelightResults.latency_capture
-                                + Limelight.limelightResults.latency_jsonParse
-                                + Limelight.limelightResults.latency_pipeline) / 1000
-                );
-            }
-        }
+        // if (Limelight.limelightResults != null && Limelight.llPose != null && Limelight.limelightResults.valid) {
+        //     if (Limelight.limelightResults.targets_Fiducials.length > 1 && (
+        //         m_robotContainer.drivetrain.getState().Pose.getX() < 4 || m_robotContainer.drivetrain.getState().Pose.getX() > 12.55
+        //     )) {
+        //         m_robotContainer.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.6, .6, 999999999));
+        //         m_robotContainer.drivetrain.addVisionMeasurement(Limelight.llPose, Timer.getFPGATimestamp() - (
+        //                 Limelight.limelightResults.latency_capture
+        //                         + Limelight.limelightResults.latency_jsonParse
+        //                         + Limelight.limelightResults.latency_pipeline) / 1000
+        //         );
+        //     }
+        // }
 
 
         //SmartDashboard.putNumber("AA_Angle off X axis", m_robotContainer.drivetrain.getState().Pose.getTranslation().getAngle().getDegrees());

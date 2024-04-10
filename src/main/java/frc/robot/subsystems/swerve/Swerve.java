@@ -11,6 +11,7 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -67,6 +68,10 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
         // SmartDashboard.putNumber("Speaker distance",
         // this.getState().Pose.getTranslation().getDistance(blueSpeaker.getTranslation()));
+    }
+
+    public SwerveDrivePoseEstimator getSwerveDrivePoseEstimator() {
+        return m_odometry;
     }
 
     public double getRotationalSpeed(DoubleSupplier xboxInput) {
