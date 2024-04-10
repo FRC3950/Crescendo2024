@@ -6,11 +6,9 @@ package lib.odometry;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.subsystems.swerve.Swerve;
-import lib.odometry.LimelightHelpers.LimelightResults;
 import lib.odometry.LimelightHelpers.Results;
 
 public class Limelight {
@@ -66,8 +64,8 @@ public class Limelight {
             limelightResults = getResults();
             llPose = limelightResults.getBotPose3d_wpiBlue().toPose2d();
 
-            var validResults = llPose != null && limelightResults != null && Limelight.getResults().valid;
-            var withinDistance = drive.getState().Pose.getX() < 4.5 || drive.getState().Pose.getX() > 12.55 ;
+            var validResults = llPose != null && limelightResults != null;
+            var withinDistance = drive.getState().Pose.getX() < 4.5 || drive.getState().Pose.getX() > 12.55;
 
             return validResults && withinDistance;
         }
@@ -77,6 +75,7 @@ public class Limelight {
 
     public static void updatePose(Swerve drive) {
         if(canUpdatePose(drive)){
+            System.out.println("Updating");
             var mt2Pose = getMt2Pose();
 
             // drive.getSwerveDrivePoseEstimator().update(drive.getState().Pose.getRotation(), );
