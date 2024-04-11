@@ -59,13 +59,16 @@ public class Limelight {
         return drive.getPigeon2().getRate() < 720;
     }
 
+    //Likely unnecessary if we are only use mega tag 2
     public static boolean canUpdatePose(Swerve drive) {
         if(validRotationRate(drive)){
             limelightResults = getResults();
             llPose = limelightResults.getBotPose3d_wpiBlue().toPose2d();
 
             var validResults = llPose != null && limelightResults != null;
-            var withinDistance = drive.getState().Pose.getX() < 4.5 || drive.getState().Pose.getX() > 12.55;
+            var withinDistance = true;
+            
+            //drive.getState().Pose.getX() < 4.5 || drive.getState().Pose.getX() > 12.55;
 
             return validResults && withinDistance;
         }
@@ -76,10 +79,26 @@ public class Limelight {
     public static void updatePose(Swerve drive) {
         if(canUpdatePose(drive)){
             System.out.println("Updating");
+            LimelightHelpers.SetRobotOrientation("limelight", drive.getState().Pose.getRotation().getDegrees()
+            , 0, 0, 0, 0, 0);
             var mt2Pose = getMt2Pose();
 
+            if(Math.abs(drive.getPigeon2().getRate()) > 720){
+                return;
+            };
+
+            if(mt2Pose.tagCount == 0){
+                return;
+            }
+
+
+
+            //These  are inhertly the same, but... 
+            // drive.getSwerveDrivePoseEstimator().getEstimatedPosition().getRotation().getDegrees()
+            // drive.getState().Pose.getRotation().getDegrees();
+
             // drive.getSwerveDrivePoseEstimator().update(drive.getState().Pose.getRotation(), );
-            drive.getSwerveDrivePoseEstimator().setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 99999999));
+            drive.setVisionMeasurementStdDevs(VecBuilder.fill(.6, .6, 99999999));
             drive.addVisionMeasurement(llPose, mt2Pose.timestampSeconds);
         }
     } 
