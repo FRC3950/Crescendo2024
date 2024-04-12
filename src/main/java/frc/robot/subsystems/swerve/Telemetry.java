@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import lib.odometry.Limelight;
+import lib.odometry.LimelightHelpers;
 
 public class Telemetry {
     private final double MaxSpeed;
@@ -47,7 +48,7 @@ public class Telemetry {
 
 
     private final NetworkTable vision = inst.getTable("Vision");
-    private final StructPublisher<Pose3d> visionPose = vision.getStructTopic("Vision Pose", Pose3d.struct).publish();
+    private final StructPublisher<Pose2d> visionPose = vision.getStructTopic("Vision Pose", Pose2d.struct).publish();
     //private final DoublePublisher visionDistance = vision.getDoubleTopic("Vision Distance").publish();
     private final DoublePublisher visionX = vision.getDoubleTopic("Vision X").publish();
     private final DoublePublisher visionY = vision.getDoubleTopic("Vision Y").publish();
@@ -99,11 +100,12 @@ public class Telemetry {
         //  fieldAngle.set(pose.getRotation().getDegrees());
 
         /* Telmeterize Vision Pose */
+        LimelightHelpers.SetRobotOrientation("limelight", pose.getRotation().getDegrees(), 0, 0, 0, 0, 0);
 
-        var lastResult = Limelight.limelightResults;
 
-        if (lastResult != null && lastResult.valid && lastResult.getBotPose2d().getX() != 0.0) {
-            visionPose.set(lastResult.getBotPose3d_wpiBlue());
+        var poseFromLimeLight = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight").pose;
+        if (poseFromLimeLight != null ) { // && lastResult.getBotPose2d().getX() != 0.0
+            visionPose.set(poseFromLimeLight);
         }
 
         /* Telemeterize the robot's general speeds */

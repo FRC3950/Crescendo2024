@@ -32,11 +32,11 @@
     },
     {
       "anchor": {
-        "x": 2.894982565999367,
+        "x": 3.187753479643905,
         "y": 5.550936522700434
       },
       "prevControl": {
-        "x": 2.644982565999367,
+        "x": 2.937753479643905,
         "y": 5.550936522700434
       },
       "nextControl": null,
@@ -62,7 +62,7 @@
   "goalEndState": {
     "velocity": 0,
     "rotation": 0,
-    "rotateFast": false
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "Comp north 4pc",

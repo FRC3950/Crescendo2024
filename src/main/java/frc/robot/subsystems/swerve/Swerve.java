@@ -49,11 +49,11 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
     public boolean isLockedRotational = false;
 
-    private final double rotationalKpBlue = 1.200;
+    private final double rotationalKpBlue = 1.25;
     private final double rotationalKiBlue = 0.00001;
     private final double rotationalKdBlue = 0.00001;
 
-    private final double rotationalKpRed = 1.2;
+    private final double rotationalKpRed = 1.25;
     private final double rotationalKiRed = 0.00001;
     private final double rotationalKdRed = 0.00001;
 
@@ -64,11 +64,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds(); // .withDriveRequestType(DriveRequestType.Velocity);
 
     @Override
-    public void periodic() {
-
-        // SmartDashboard.putNumber("Speaker distance",
-        // this.getState().Pose.getTranslation().getDistance(blueSpeaker.getTranslation()));
-    }
+    public void periodic() {}
 
     public SwerveDrivePoseEstimator getSwerveDrivePoseEstimator() {
         return m_odometry;
@@ -81,7 +77,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
 
         if (isLockedRotational) {
-            System.out.println(activeSpeaker.getX());
+           // System.out.println(activeSpeaker.getX());
             
             var botPose = this.getState().Pose;
             var xDistance = botPose.getTranslation().getX() - activeSpeaker.getX();

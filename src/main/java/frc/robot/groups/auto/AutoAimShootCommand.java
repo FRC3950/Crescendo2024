@@ -38,8 +38,8 @@ public class AutoAimShootCommand extends SequentialCommandGroup {
                         ),
                         shooter.applyVelocitiesCommand()
                 ),
-                Commands.waitSeconds(0.7),
-                shooter.shootCommand(intake, Constants.Shooter.activeSpeed, drivetrain).withTimeout(1),
+                Commands.waitSeconds(0.5),
+                shooter.shootCommand(intake, Constants.Shooter.activeSpeed, drivetrain).withTimeout(.6),
                 pivot.stowCommand()
         );
     }

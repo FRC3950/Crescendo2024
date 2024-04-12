@@ -3,6 +3,7 @@ package lib.odometry;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.swerve.Swerve;
 
@@ -54,11 +55,16 @@ public final class NoteKinematics {
 
         return currentAngle - targetAngle;
     }
-
+//increase height to increase height of shot
     public static double getTargetPivot(DoubleSupplier distance) {
-        var gravityComp = 0.015 * distance.getAsDouble();
+        var gravityComp = distance.getAsDouble() < 3.99 ?
+            0.01 * Math.pow(distance.getAsDouble(), 2):
+            0.019 * Math.pow(distance.getAsDouble(), 2);
+
+     
         //90 -arcTan2 (SpeakerHeight - pivotAngleHeight / RobotDistance)
-        return 0.25 - ((Math.atan2(1.63 + gravityComp, distance.getAsDouble()) * (180 / Math.PI)) / 360);
+        SmartDashboard.putNumber("BridgwoodDistance", distance.getAsDouble());
+        return 0.25 - ((Math.atan2(1.75 + gravityComp, distance.getAsDouble()) * (180 / Math.PI)) / 360);
         // return -((Math.atan2(1.7, distance.getAsDouble()) * (180/Math.PI)) / 360);
     }
 }

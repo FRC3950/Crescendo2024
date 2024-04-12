@@ -6,8 +6,10 @@ package lib.odometry;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.swerve.Swerve;
 import lib.odometry.LimelightHelpers.Results;
 
@@ -21,6 +23,10 @@ public class Limelight {
     static {
         limelightResults = LimelightHelpers.getLatestResults("limelight").targetingResults;
         llPose = limelightResults.getBotPose2d_wpiBlue();
+
+        // int[] validIds = {7, 8};
+
+        // LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIds);
     }
 
     private Limelight() {}
@@ -51,6 +57,10 @@ public class Limelight {
         return LimelightHelpers.getLatestResults("limelight").targetingResults;
     }
 
+    public static double[] getMegaPose2(){
+        return limelightTable.getValue("botpose_orb_wpiblue").getDoubleArray();
+    }
+
     public static void updateRotation(Swerve drive) {
         LimelightHelpers.SetRobotOrientation("limelight", drive.getSwerveDrivePoseEstimator().getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
     }
@@ -77,20 +87,16 @@ public class Limelight {
     }
 
     public static void updatePose(Swerve drive) {
-        if(canUpdatePose(drive)){
-            System.out.println("Updating");
-            LimelightHelpers.SetRobotOrientation("limelight", drive.getState().Pose.getRotation().getDegrees()
-            , 0, 0, 0, 0, 0);
-            var mt2Pose = getMt2Pose();
+        if(true){//canUpdatePose(drive)
+            var mt2Pose = getMt2Pose(drive);
 
             if(Math.abs(drive.getPigeon2().getRate()) > 720){
                 return;
             };
 
-            if(mt2Pose.tagCount == 0){
+            if(mt2Pose.tagCount < 1){
                 return;
             }
-
 
 
             //These  are inhertly the same, but... 
@@ -98,12 +104,24 @@ public class Limelight {
             // drive.getState().Pose.getRotation().getDegrees();
 
             // drive.getSwerveDrivePoseEstimator().update(drive.getState().Pose.getRotation(), );
+            
             drive.setVisionMeasurementStdDevs(VecBuilder.fill(.6, .6, 99999999));
-            drive.addVisionMeasurement(llPose, mt2Pose.timestampSeconds);
+
+            if(drive.getState().Pose.getTranslation().getDistance(mt2Pose.pose.getTranslation())<2.0){
+
+                drive.addVisionMeasurement(mt2Pose.pose, mt2Pose.timestampSeconds);
+            }
         }
     } 
 
-    public static LimelightHelpers.PoseEstimate getMt2Pose() {
+    public static LimelightHelpers.PoseEstimate getMt2Pose(Swerve drive) {
+                    Limelight.updateRotation(drive);
+
         return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
     }
+
+    public static void updateHeadingMt1(Swerve drive) {
+        var mt1Pose = LimelightHelpers.getBotPose2d_wpiBlue("limelight");
+        drive.addVisionMeasurement(mt1Pose, Timer.getFPGATimestamp());
+    }   
 }
