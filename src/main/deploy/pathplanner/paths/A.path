@@ -3,50 +3,66 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.9066934025451485,
-        "y": 6.991369417831561
+        "x": 2.895982088260473,
+        "y": 5.53
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.9066934025451485,
-        "y": 6.991369417831561
-      },
-      "isLocked": false,
-      "linkedName": "comp pickup note 1"
-    },
-    {
-      "anchor": {
-        "x": 6.6541610971952325,
-        "y": 7.237296985292972
-      },
-      "prevControl": {
-        "x": 5.905568368297131,
-        "y": 7.237296985292972
-      },
-      "nextControl": {
-        "x": 7.402753826093334,
-        "y": 7.237296985292972
+        "x": 3.8091505705089848,
+        "y": 6.05721806904166
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.609870800340744,
-        "y": 7.237296985292972
+        "x": 4.251153193664412,
+        "y": 6.98
       },
       "prevControl": {
-        "x": 7.609870800340744,
-        "y": 7.237296985292972
+        "x": 4.2422599998669615,
+        "y": 6.880396229468555
+      },
+      "nextControl": {
+        "x": 4.260046387461863,
+        "y": 7.079603770531446
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.895982088260473,
+        "y": 6.982066309811631
+      },
+      "prevControl": {
+        "x": 3.4901022072604455,
+        "y": 6.982066309811631
+      },
+      "nextControl": {
+        "x": 2.301861969260501,
+        "y": 6.982066309811631
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.097730615214317,
+        "y": 6.98
+      },
+      "prevControl": {
+        "x": 2.6937528547598912,
+        "y": 6.98
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "comp pickup note 4"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1,
+      "waypointRelativePos": 1.85,
       "rotationDegrees": 0,
       "rotateFast": false
     }
@@ -61,13 +77,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 45.0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Bridgwood Center 4pc",
   "previewStartingState": {
-    "rotation": 30.0,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": true

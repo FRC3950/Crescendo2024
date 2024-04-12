@@ -38,7 +38,7 @@ public class Pivot extends PositionController {
         slot1Pid.kP = 0.05;
     }
 
-    private boolean isAtAngle(DoubleSupplier targetAngle) {
+    public boolean isAtAngle(DoubleSupplier targetAngle) {
         return Math.abs(targetAngle.getAsDouble() - getPosition()) < 0.003;
     }
 

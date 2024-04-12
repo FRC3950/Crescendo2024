@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3491521419562087,
-        "y": 5.550936522700434
+        "x": 1.35,
+        "y": 5.55
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3491521419562087,
-        "y": 5.550936522700434
+        "x": 1.35,
+        "y": 4.55
       },
       "isLocked": false,
-      "linkedName": "mid"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.187753479643905,
-        "y": 5.550936522700434
+        "x": 2.6,
+        "y": 4.1
       },
       "prevControl": {
-        "x": 2.187753479643905,
-        "y": 5.550936522700434
+        "x": 1.6,
+        "y": 4.1
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "comp pickup note 2"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Bridgwood Center 4pc",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

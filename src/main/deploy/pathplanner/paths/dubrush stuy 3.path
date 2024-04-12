@@ -45,7 +45,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.5,
-    "maxAcceleration": 4.25,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
@@ -55,7 +55,7 @@
     "rotateFast": true
   },
   "reversed": false,
-  "folder": "dubrush stuy",
+  "folder": null,
   "previewStartingState": {
     "rotation": -58.40999999999997,
     "velocity": 0

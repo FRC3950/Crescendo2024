@@ -3,56 +3,68 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.9066934025451485,
-        "y": 6.991369417831561
+        "x": 2.6,
+        "y": 4.1
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.9066934025451485,
-        "y": 6.991369417831561
-      },
-      "isLocked": false,
-      "linkedName": "comp pickup note 1"
-    },
-    {
-      "anchor": {
-        "x": 6.6541610971952325,
-        "y": 7.237296985292972
-      },
-      "prevControl": {
-        "x": 5.905568368297131,
-        "y": 7.237296985292972
-      },
-      "nextControl": {
-        "x": 7.402753826093334,
-        "y": 7.237296985292972
+        "x": 1.9956286826153902,
+        "y": 4.754387780380498
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.609870800340744,
-        "y": 7.237296985292972
+        "x": 1.4,
+        "y": 5.55
       },
       "prevControl": {
-        "x": 7.609870800340744,
-        "y": 7.237296985292972
+        "x": 1.4,
+        "y": 5.45
+      },
+      "nextControl": {
+        "x": 1.4,
+        "y": 5.6499999999999995
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.9,
+        "y": 5.55
+      },
+      "prevControl": {
+        "x": 2.2356073923750337,
+        "y": 5.55
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "comp pickup note 4"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 0,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "shoot",
+      "waypointRelativePos": 1.15,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "forceShoot"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.5,
     "maxAcceleration": 3.5,
@@ -65,9 +77,9 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Bridgwood Center 4pc",
   "previewStartingState": {
-    "rotation": 30.0,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": true

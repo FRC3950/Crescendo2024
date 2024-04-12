@@ -12,12 +12,13 @@
     "Comp south dub rush 3pc",
     "Comp south dubrush 3pc",
     "Comp south rush 3pc",
+    "Bridgwood Center 4pc",
     "dubrush stuy"
   ],
   "autoFolders": [],
   "defaultMaxVel": 4.5,
-  "defaultMaxAccel": 4.25,
+  "defaultMaxAccel": 3.5,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
-  "maxModuleSpeed": 4.73
+  "maxModuleSpeed": 4.7
 }
