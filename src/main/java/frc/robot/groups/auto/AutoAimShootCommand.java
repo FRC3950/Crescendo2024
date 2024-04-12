@@ -36,10 +36,12 @@ public class AutoAimShootCommand extends SequentialCommandGroup {
                         pivot.setAngleCommand(
                                 () -> NoteKinematics.getTargetPivot(() -> drivetrain.getState().Pose.getTranslation().getDistance(activeSpeaker))
                         ),
+                        
                         shooter.applyVelocitiesCommand()
                 ),
-                Commands.waitSeconds(0.5),
-                shooter.shootCommand(intake, Constants.Shooter.activeSpeed, drivetrain).withTimeout(.6),
+                //Commands.waitSeconds(0.25),
+                shooter.shootCommand(intake, Constants.Shooter.activeSpeed, drivetrain).until(()->!intake.noteIsIndexed()).withTimeout(1)
+                .andThen(Commands.waitSeconds(0.25)),
                 pivot.stowCommand()
         );
     }

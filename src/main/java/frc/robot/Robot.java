@@ -20,9 +20,11 @@ public class Robot extends TimedRobot {
 
     private RobotContainer m_robotContainer;
 
+    private static boolean isVisionTrackingEnabled = true;
+
     @Override
     public void robotInit() {
-        Timer.delay(4);
+        Timer.delay(3.5);
         Limelight.blink();
 
         m_robotContainer = new RobotContainer();
@@ -73,7 +75,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
-                Limelight.updatePose(m_robotContainer.drivetrain);
+        if(isVisionTrackingEnabled){
+                Limelight.updatePose(m_robotContainer.drivetrain);  
+
+        }
+    }
+
+    public static void setVisionTrackingEnabled(boolean enabled){
+        isVisionTrackingEnabled = enabled;
 
     }
 

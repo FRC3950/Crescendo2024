@@ -40,7 +40,7 @@ public class Intake extends VelocityController {
         SmartDashboard.putBoolean("INTAKE", false);
     }
 
-    private boolean noteIsIndexed() {
+    public boolean noteIsIndexed() {
         return !targets[1].motor.getReverseLimit().getValue().equals(ReverseLimitValue.Open);
     }
 

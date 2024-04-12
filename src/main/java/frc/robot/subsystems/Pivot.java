@@ -39,7 +39,7 @@ public class Pivot extends PositionController {
     }
 
     private boolean isAtAngle(DoubleSupplier targetAngle) {
-        return Math.abs(targetAngle.getAsDouble() - getPosition()) < 1.0;
+        return Math.abs(targetAngle.getAsDouble() - getPosition()) < 0.003;
     }
 
     private boolean isAtLimit() {
