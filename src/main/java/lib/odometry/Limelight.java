@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.swerve.Swerve;
 import lib.odometry.LimelightHelpers.Results;
 
-public class Limelight {
+public final class Limelight {
 
     private static final NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("");
 
@@ -28,8 +28,6 @@ public class Limelight {
 
         // LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIds);
     }
-
-    private Limelight() {}
 
     public static void blink() {
         limelightTable.getEntry("ledMode").setNumber(2);
