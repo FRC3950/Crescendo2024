@@ -33,11 +33,6 @@
       "/SmartDashboard/turnToShoot": "Command"
     },
     "windows": {
-      "/FMSInfo": {
-        "window": {
-          "visible": true
-        }
-      },
       "/Pose": {
         "bottom": 1476,
         "height": 8.210550308227539,
@@ -55,11 +50,6 @@
         }
       },
       "/SmartDashboard/AutoAim": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Better Rotate To Shoot": {
         "window": {
           "visible": true
         }
@@ -85,11 +75,6 @@
         }
       },
       "/SmartDashboard/toggleAutoAngle": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/turnToShoot": {
         "window": {
           "visible": true
         }

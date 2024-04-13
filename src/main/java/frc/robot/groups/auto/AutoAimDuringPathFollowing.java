@@ -14,35 +14,37 @@ import lib.odometry.NoteKinematics;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-public class AutoAimShootCommand extends SequentialCommandGroup {
-    public AutoAimShootCommand(Pivot pivot, Intake intake, Shooter shooter, Swerve drive, DoubleSupplier angle) {
-        addCommands(
-                Commands.parallel(
-                        pivot.setAngleCommand(angle),
-                        shooter.applyVelocitiesCommand() // Finishes when at velocity
-                ).withTimeout(1).andThen(Commands.waitSeconds(0.25)),
+public class AutoAimDuringPathFollowing extends SequentialCommandGroup {
+  DoubleSupplier zero = () -> -0.0;
 
-                shooter.shootCommand(intake, Constants.Shooter.activeSpeed, drive).withTimeout(1.25),
-                pivot.stowCommand()
-        );
-        addRequirements(pivot, intake, shooter);
-    }
-
-    public AutoAimShootCommand(Pivot pivot, Intake intake, Shooter shooter, Swerve drivetrain,
+    public AutoAimDuringPathFollowing(Pivot pivot, Intake intake, Shooter shooter, Swerve drivetrain,
                                Supplier<DriverStation.Alliance> alliance, Supplier<Translation2d> redSpeaker, Supplier<Translation2d> blueSpeaker) {
         var activeSpeaker = alliance.get() == DriverStation.Alliance.Red ? redSpeaker.get() : blueSpeaker.get();
         addCommands(
+          Commands.either(
+            
+          
                 Commands.parallel(
                         pivot.setAngleCommand(
-                                () -> NoteKinematics.getTargetPivot(() -> drivetrain.getState().Pose.getTranslation().getDistance(activeSpeaker))
-                        ),
-                        
-                        shooter.applyVelocitiesCommand()
-                ).withTimeout(2), //added for sim
-                //Commands.waitSeconds(0.25),
-                shooter.shootCommand(intake, Constants.Shooter.activeSpeed, drivetrain).until(()->!intake.noteIsIndexed()).withTimeout(1)
-                .andThen(Commands.waitSeconds(0.25)),
-                pivot.stowCommand()
+                                () -> NoteKinematics.getTargetPivot(() -> drivetrain.getState()
+                                .Pose.getTranslation()
+                                .getDistance(activeSpeaker))
+                        ).andThen(Commands.print("Pivot Angle Set: ")),
+                        shooter.applyVelocitiesCommand().andThen(Commands.print("Shooter Velocities Set: "))
+                                  ).repeatedly().andThen(Commands.print("Command Repeats: "))
+          
+          , 
+          
+          Commands.parallel(
+            pivot.stowCommand(),
+            shooter.idleCommand()
+          ).until(()->pivot.isAtAngle(zero)).andThen(Commands.waitSeconds(0.25))
+          .andThen( intake.intakeCommand()).andThen(Commands.print("stow/idle"))
+          
+          
+          , ()-> intake.noteIsIndexed())
+                                
+
         );
     }
 }

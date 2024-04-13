@@ -30,6 +30,7 @@ import frc.robot.groups.AmpScoreCommand;
 import frc.robot.groups.IntakeCommand;
 import frc.robot.groups.LobShootCommand;
 import frc.robot.groups.VisionShootCommand;
+import frc.robot.groups.auto.AutoAimDuringPathFollowing;
 import frc.robot.groups.auto.AutoAimShootCommand;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.Swerve;
@@ -201,14 +202,19 @@ public class RobotContainer {
 
     public RobotContainer() {
 
-
+        NamedCommands.registerCommand("autoAim", new AutoAimDuringPathFollowing(pivot, intake, shooter, drivetrain, this::getAlliance, redSpeaker::getTranslation, blueSpeaker::getTranslation));
         NamedCommands.registerCommand("simpleAimAndShoot", new AutoAimShootCommand(pivot, intake, shooter, drivetrain, this::getAlliance, redSpeaker::getTranslation, blueSpeaker::getTranslation));
 
         NamedCommands.registerCommand("intakeOn", intake.intakeCommand());
         NamedCommands.registerCommand("intakeOff", intake.stopCommand());
 
+        NamedCommands.registerCommand("shootHub", new AutoAimShootCommand(pivot, intake, shooter, drivetrain,()->0.1));
+
         NamedCommands.registerCommand("visionOn", new InstantCommand(()->Robot.setVisionTrackingEnabled(true)));
 
+        NamedCommands.registerCommand("forceShoot", intake.indexCommand());
+
+        NamedCommands.registerCommand("stow", pivot.stowCommand());
         
         // Constructs AutoBuilder (SendableChooser<Command>):
         autoChooser = AutoBuilder.buildAutoChooser("1pc");
