@@ -25,20 +25,19 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
 
+        Timer.delay(3);
+
         Limelight.blink();
 
         m_robotContainer = new RobotContainer();
         m_robotContainer.drivetrain.getDaqThread().setThreadPriority(99);
-        // for (int port = 5800; port <= 5805; port++) {
-        //    PortForwarder.add(port, "limelight.local", port);
-        // }
     }
 
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
 
-        SmartDashboard.putNumber("BridgwoodGoesWEEEEEE", m_robotContainer.drivetrain.getState().Pose.getTranslation().getDistance(new Translation2d(0,5.55)));
+//      SmartDashboard.putNumber("BridgwoodGoesWEEEEEE", m_robotContainer.drivetrain.getState().Pose.getTranslation().getDistance(new Translation2d(0,5.55)));
     }
 
     @Override
@@ -50,7 +49,6 @@ public class Robot extends TimedRobot {
         m_robotContainer.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.6, .6, 6));
 
         Limelight.updateHeadingMt1(m_robotContainer.drivetrain);
-
     }
 
     @Override
@@ -59,7 +57,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-                m_robotContainer.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.6, .6, 6));
+        m_robotContainer.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.6, .6, 6));
 
         Limelight.updateHeadingMt1(m_robotContainer.drivetrain);
 
@@ -76,8 +74,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         if(isVisionTrackingEnabled){
-                Limelight.updatePose(m_robotContainer.drivetrain);
-
+            Limelight.updatePose(m_robotContainer.drivetrain);
         }
     }
 
@@ -112,9 +109,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-                Limelight.updatePose(m_robotContainer.drivetrain);
-
-
+            Limelight.updatePose(m_robotContainer.drivetrain);
     }
 
     //(lastResult.latency_capture + lastResult.latency_jsonParse + lastResult.latency_pipeline)/1000);

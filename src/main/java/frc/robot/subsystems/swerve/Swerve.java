@@ -85,15 +85,15 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
         if (isLockedRotational) {
            // System.out.println(activeSpeaker.getX());
-            
+
             var botPose = this.getState().Pose;
             var xDistance = botPose.getTranslation().getX() - activeSpeaker.getX();
             var yDistance = botPose.getTranslation().getY() - activeSpeaker.getY();
-    
+
             var targetAngle = Math.atan2(yDistance, xDistance);
             var currentAngle = botPose.getRotation().getRadians();
-    
-            var angleDifference= currentAngle - targetAngle;
+
+            var angleDifference = currentAngle - targetAngle;
            // var angleDifference = NoteKinematics.getHeadingDifference(activeSpeaker, getState().Pose);
 
             if (activeSpeaker == blueSpeaker) {
@@ -167,10 +167,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
                     // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
                     var alliance = DriverStation.getAlliance();
-                    if (alliance.isPresent()) {
-                        return alliance.get() == DriverStation.Alliance.Red;
-                    }
-                    return false;
+                    return alliance.filter(value -> value == DriverStation.Alliance.Red).isPresent();
                 },
                 this); // Subsystem for requirements
     }
@@ -181,63 +178,6 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
     public Command getAutoPath(String pathName) {
         return new PathPlannerAuto(pathName);
-    }
-
-    public void applyVisionToPose() {
-        // ToDo: Test STD Values
-
-        var visionResults = LimelightHelpers.getLatestResults("limelight").targetingResults;
-
-        // if (visionResults.getBotPose2d_wpiBlue().getX() == 0.0) {
-        //     System.out.println("No vision applied - (0,0)");
-        //     return;
-        // }
-
-        double poseDifference = this.getState().Pose.getTranslation()
-                .getDistance(visionResults.getBotPose2d_wpiBlue().getTranslation());
-
-        if (visionResults.targets_Fiducials.length > 0) {
-            double xyStds;
-            double degStds;
-
-            // 2 targets detected
-            if (visionResults.targets_Fiducials.length >= 2) {
-                xyStds = 0.4;
-                degStds = 6;
-                System.out.println("Two Apriltags detected");
-            }
-
-            // 1 target with large area and close to estimated pose
-            else if (visionResults.targets_Fiducials[0].ta > 0.8 && poseDifference < 0.5) {
-                xyStds = 1.0;
-                degStds = 12;
-                System.out.println("One Apriltag detected with large area and close to estimated pose");
-            }
-
-            // 1 target farther away and estimated pose is close
-            else if (visionResults.targets_Fiducials[0].ta > 0.1 && poseDifference < 0.3) {
-                xyStds = 2.0;
-                degStds = 30;
-                System.out.println("One Apriltag detected farther away");
-            }
-
-            // conditions don't match to add a vision measurement
-            else {
-                System.out.println("no conditions matched - no vision applied");
-                return;
-            }
-
-            if (visionResults.valid) {
-
-                addVisionMeasurement(
-                        visionResults.getBotPose2d_wpiBlue(),
-                        Timer.getFPGATimestamp() -
-                                (visionResults.latency_capture + visionResults.latency_jsonParse + visionResults.latency_pipeline) / 1000,
-                        VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(9999999))); // 9999999 to ignore angle
-            }
-
-        }
-
     }
 
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {
@@ -256,6 +196,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
             /* use the measured time delta, get battery voltage from WPILib */
             updateSimState(deltaTime, RobotController.getBatteryVoltage());
         });
+
         m_simNotifier.startPeriodic(SIM_LOOP_PERIOD);
     }
 

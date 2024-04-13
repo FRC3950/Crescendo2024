@@ -6,7 +6,7 @@ public interface Constants {
     final class Physics {
         public static final double noteExitVelocity = 10; // Immediately after leaving shooter
 
-        public static final double targetSpeakerHeight = 3.211;
+        public static final double targetSpeakerHeight = 1.75;
         public static final double shooterHeight = 1.5; //FIXME
 
         public static final int gyroId = 40;

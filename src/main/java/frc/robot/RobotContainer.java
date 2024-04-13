@@ -163,9 +163,9 @@ public class RobotContainer {
                                 intake.stopCommand()
                         )
                 ));
-        SmartDashboard.putData("AutoAim", autoShootCommand);
-        SmartDashboard.putData("RotationOff", Commands.runOnce(() -> drivetrain.isLockedRotational = false));
 
+        // SmartDashboard.putData("AutoAim", autoShootCommand);
+        // SmartDashboard.putData("RotationOff", Commands.runOnce(() -> drivetrain.isLockedRotational = false));
 
         ControlScheme.INTAKE.button.whileTrue(new IntakeCommand(pivot, intake))
                 .onFalse(pivot.stowCommand());
@@ -207,8 +207,6 @@ public class RobotContainer {
         // Constructs AutoBuilder (SendableChooser<Command>):
         autoChooser = AutoBuilder.buildAutoChooser("1pc");
         SmartDashboard.putData("Auto Chooser", autoChooser);
-
-        SmartDashboard.putData("Test Conditional Command", new ConditionalCommand(Commands.print("aaaa"), Commands.print("bbbb"), ()-> Math.random() > 0.5));
 
         // PathPlannerPath upperStage = PathPlannerPath.fromPathFile("UpperStage");
         // PathPlannerPath lowerStage = PathPlannerPath.fromPathFile("LowerStage");

@@ -128,8 +128,6 @@ public class Telemetry {
             m_moduleSpeeds[i].setAngle(state.ModuleStates[i].angle);
             m_moduleDirections[i].setAngle(state.ModuleStates[i].angle);
             m_moduleSpeeds[i].setLength(state.ModuleStates[i].speedMetersPerSecond / (2 * MaxSpeed));
-
-            SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
         }
 
         SignalLogger.writeDoubleArray("odometry", new double[]{pose.getX(), pose.getY(), pose.getRotation().getDegrees()});

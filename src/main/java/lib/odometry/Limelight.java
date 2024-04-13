@@ -75,44 +75,35 @@ public class Limelight {
             limelightResults = getResults();
             llPose = limelightResults.getBotPose3d_wpiBlue().toPose2d();
 
-            var validResults = llPose != null && limelightResults != null;
-            var withinDistance = true;
-            
-            //drive.getState().Pose.getX() < 4.5 || drive.getState().Pose.getX() > 12.55;
+            // var withinDistance = drive.getState().Pose.getX() < 4.5 || drive.getState().Pose.getX() > 12.55;
 
-            return validResults && withinDistance;
+            return llPose != null && limelightResults != null;
         }
 
         return false;
     }
 
     public static void updatePose(Swerve drive) {
-        if(true){//canUpdatePose(drive)
+        if(canUpdatePose(drive)) {
             var mt2Pose = getMt2Pose(drive);
 
-            if(Math.abs(drive.getPigeon2().getRate()) > 720){
-                return;
-            };
-
-            if(mt2Pose.tagCount < 1){
+            if(Math.abs(drive.getPigeon2().getRate()) > 720 || mt2Pose.tagCount < 1){
                 return;
             }
 
-
-            //These  are inhertly the same, but... 
+            //These  are inhertly the same, but...
             // drive.getSwerveDrivePoseEstimator().getEstimatedPosition().getRotation().getDegrees()
             // drive.getState().Pose.getRotation().getDegrees();
 
             // drive.getSwerveDrivePoseEstimator().update(drive.getState().Pose.getRotation(), );
-            
+
             drive.setVisionMeasurementStdDevs(VecBuilder.fill(.6, .6, 99999999));
 
-            if(drive.getState().Pose.getTranslation().getDistance(mt2Pose.pose.getTranslation())<2.0){
-
+            if(drive.getState().Pose.getTranslation().getDistance(mt2Pose.pose.getTranslation()) < 2.0){
                 drive.addVisionMeasurement(mt2Pose.pose, mt2Pose.timestampSeconds);
             }
         }
-    } 
+    }
 
     public static LimelightHelpers.PoseEstimate getMt2Pose(Swerve drive) {
                     Limelight.updateRotation(drive);
@@ -123,5 +114,5 @@ public class Limelight {
     public static void updateHeadingMt1(Swerve drive) {
         var mt1Pose = LimelightHelpers.getBotPose2d_wpiBlue("limelight");
         drive.addVisionMeasurement(mt1Pose, Timer.getFPGATimestamp());
-    }   
+    }
 }

@@ -68,8 +68,8 @@ public final class NoteKinematics {
 
 
         //90 -arcTan2 (SpeakerHeight - pivotAngleHeight / RobotDistance)
-        SmartDashboard.putNumber("BridgwoodDistance", distance.getAsDouble());
-        return 0.25 - ((Math.atan2(1.75 + gravityComp, distance.getAsDouble()) * (180 / Math.PI)) / 360);
+        // SmartDashboard.putNumber("BridgwoodDistance", distance.getAsDouble());
+        return 0.25 - ((Math.atan2(Constants.Physics.targetSpeakerHeight + gravityComp, distance.getAsDouble()) * (180 / Math.PI)) / 360);
         // return -((Math.atan2(1.7, distance.getAsDouble()) * (180/Math.PI)) / 360);
     }
 }
