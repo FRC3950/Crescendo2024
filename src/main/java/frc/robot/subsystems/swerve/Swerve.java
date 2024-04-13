@@ -73,7 +73,14 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     public double getRotationalSpeed(DoubleSupplier xboxInput) {
         // rotationalRedPid.setTolerance(0.02);
         rotationalRedPid.enableContinuousInput(-Math.PI, Math.PI);
-        var activeSpeaker = DriverStation.getAlliance().get() == (DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
+
+        var activeSpeaker = blueSpeaker;
+
+       // var activeSpeaker = DriverStation.getAlliance().get() == (DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
+
+         if (!Utils.isSimulation()) {
+            activeSpeaker = DriverStation.getAlliance().get() == (DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
+        }
 
 
         if (isLockedRotational) {

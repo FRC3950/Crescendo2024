@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.constants.Constants;
 import frc.robot.constants.TunerConstants;
@@ -212,6 +213,8 @@ public class RobotContainer {
         // Constructs AutoBuilder (SendableChooser<Command>):
         autoChooser = AutoBuilder.buildAutoChooser("1pc");
         SmartDashboard.putData("Auto Chooser", autoChooser);
+
+        SmartDashboard.putData("Test Conditional Command", new ConditionalCommand(Commands.print("aaaa"), Commands.print("bbbb"), ()-> Math.random() > 0.5));
 
         // PathPlannerPath upperStage = PathPlannerPath.fromPathFile("UpperStage");
         // PathPlannerPath lowerStage = PathPlannerPath.fromPathFile("LowerStage");

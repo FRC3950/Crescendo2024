@@ -23,6 +23,7 @@
       "/SmartDashboard/Module 3": "Mechanism2d",
       "/SmartDashboard/PrintAngle": "Command",
       "/SmartDashboard/RotationOff": "Command",
+      "/SmartDashboard/Test Conditional Command": "Command",
       "/SmartDashboard/addVisionMeasurment": "Command",
       "/SmartDashboard/amp": "Command",
       "/SmartDashboard/goStage": "Command",
