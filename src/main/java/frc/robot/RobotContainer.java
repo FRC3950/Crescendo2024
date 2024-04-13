@@ -6,8 +6,6 @@ package frc.robot;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 
-import java.util.Optional;
-
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -28,10 +26,10 @@ import frc.robot.constants.TunerConstants;
 import frc.robot.groups.AimCommand;
 import frc.robot.groups.AmpScoreCommand;
 import frc.robot.groups.IntakeCommand;
-import frc.robot.groups.LobShootCommand;
-import frc.robot.groups.VisionShootCommand;
-import frc.robot.groups.auto.AutoAimDuringPathFollowing;
-import frc.robot.groups.auto.AutoAimShootCommand;
+import frc.robot.groups.shoot.LobShootCommand;
+import frc.robot.groups.shoot.VisionShootCommand;
+import frc.robot.groups.shoot.AutoAimPathCommand;
+import frc.robot.groups.shoot.AutoAimShootCommand;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.Telemetry;
@@ -73,12 +71,12 @@ public class RobotContainer {
     );
 
     private final Command lobShootCommand = new LobShootCommand(
-        shooter, 
+        shooter,
         drivetrain,
-        pivot, 
+        pivot,
         intake,
-        this::getAlliance, 
-        blueSpeaker::getTranslation, 
+        this::getAlliance,
+        blueSpeaker::getTranslation,
         redSpeaker::getTranslation
     );
 
@@ -155,16 +153,6 @@ public class RobotContainer {
                         intake.stopCommand()
                 ));
 
-    /*ControlScheme.SCORE_TRAP.button.toggleOnTrue(Commands.runEnd(
-      new AmpScoreCommand(pivot, flipper, ()-> 0.45, Constants.Flipper.trapPosition),
-      Commands.parallel(
-        pivot.stowCommand(),
-        flipper.stowCommand(),
-        shooter.idleCommand(),
-        intake.stopCommand())
-
-    ));*/
-
         ControlScheme.AIM_AUTO.button.whileTrue(autoShootCommand)
                 .onFalse(Commands.parallel(
                         Commands.runOnce(() -> drivetrain.isLockedRotational = false),
@@ -202,8 +190,8 @@ public class RobotContainer {
 
     public RobotContainer() {
 
-        NamedCommands.registerCommand("autoAim", new AutoAimDuringPathFollowing(pivot, intake, shooter, drivetrain, this::getAlliance, redSpeaker::getTranslation, blueSpeaker::getTranslation));
-        NamedCommands.registerCommand("simpleAimAndShoot", new AutoAimShootCommand(pivot, intake, shooter, drivetrain, this::getAlliance, redSpeaker::getTranslation, blueSpeaker::getTranslation));
+        NamedCommands.registerCommand("autoAim", new AutoAimPathCommand(pivot, intake, shooter, drivetrain));
+        NamedCommands.registerCommand("simpleAimAndShoot", new AutoAimShootCommand(pivot, intake, shooter, drivetrain));
 
         NamedCommands.registerCommand("intakeOn", intake.intakeCommand());
         NamedCommands.registerCommand("intakeOff", intake.stopCommand());
@@ -215,7 +203,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("forceShoot", intake.indexCommand());
 
         NamedCommands.registerCommand("stow", pivot.stowCommand());
-        
+
         // Constructs AutoBuilder (SendableChooser<Command>):
         autoChooser = AutoBuilder.buildAutoChooser("1pc");
         SmartDashboard.putData("Auto Chooser", autoChooser);

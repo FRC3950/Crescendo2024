@@ -15,8 +15,7 @@ public class Climber extends SubsystemBase {
     private final TalonFX motor1 = new TalonFX(Constants.Climber.motor1Id);
     private final TalonFX motor2 = new TalonFX(Constants.Climber.motor2Id);
 
-    public Climber() {
-    }
+    public Climber() {}
 
     @CommandBehavior(behavior = CommandType.DEFAULT)
     public Command climbCommand(DoubleSupplier yAxisPercentage) {
@@ -44,6 +43,5 @@ public class Climber extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {
-    }
+    public void periodic() {}
 }

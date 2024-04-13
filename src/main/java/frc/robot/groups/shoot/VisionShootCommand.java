@@ -1,4 +1,4 @@
-package frc.robot.groups;
+package frc.robot.groups.shoot;
 
 
 import edu.wpi.first.math.geometry.Translation2d;

@@ -28,7 +28,7 @@ public class TargetVelocity {
 
         velVoltage.Slot = 0;
 
-        //motor.getConfigurator().apply(slot0Configs);
+        motor.getConfigurator().apply(slot0Configs);
     }
 
     /**

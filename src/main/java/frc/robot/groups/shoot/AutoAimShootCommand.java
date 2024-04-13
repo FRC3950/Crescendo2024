@@ -1,4 +1,4 @@
-package frc.robot.groups.auto;
+package frc.robot.groups.shoot;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -28,15 +28,13 @@ public class AutoAimShootCommand extends SequentialCommandGroup {
         addRequirements(pivot, intake, shooter);
     }
 
-    public AutoAimShootCommand(Pivot pivot, Intake intake, Shooter shooter, Swerve drivetrain,
-                               Supplier<DriverStation.Alliance> alliance, Supplier<Translation2d> redSpeaker, Supplier<Translation2d> blueSpeaker) {
-        var activeSpeaker = alliance.get() == DriverStation.Alliance.Red ? redSpeaker.get() : blueSpeaker.get();
+    public AutoAimShootCommand(Pivot pivot, Intake intake, Shooter shooter, Swerve drivetrain) {
         addCommands(
                 Commands.parallel(
                         pivot.setAngleCommand(
-                                () -> NoteKinematics.getTargetPivot(() -> drivetrain.getState().Pose.getTranslation().getDistance(activeSpeaker))
+                                () -> NoteKinematics.getTargetPivot(() -> NoteKinematics.getAllianceSpeakerDistance(drivetrain))
                         ),
-                        
+
                         shooter.applyVelocitiesCommand()
                 ).withTimeout(2), //added for sim
                 //Commands.waitSeconds(0.25),
@@ -46,18 +44,3 @@ public class AutoAimShootCommand extends SequentialCommandGroup {
         );
     }
 }
-
-// public AutoAimShootCommand(Pivot pivot, Intake intake, Shooter shooter, DoubleSupplier angle) {
-//         addCommands(
-//                 Commands.parallel(
-//                         pivot.setAngleCommand(angle),
-//                         shooter.applyVelocitiesCommand() // Finishes when at velocity
-//                 ),
-
-//                 shooter.shootForAutoCommand(intake).withTimeout(1.25),
-//                 shooter.idleCommand(),
-//                 intake.stopCommand(),
-//                 pivot.stowCommand());
-
-//         addRequirements(pivot, intake, shooter);
-//     }

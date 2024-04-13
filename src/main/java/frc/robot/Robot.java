@@ -24,7 +24,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
-        Timer.delay(3.5);
+
         Limelight.blink();
 
         m_robotContainer = new RobotContainer();
@@ -50,7 +50,7 @@ public class Robot extends TimedRobot {
         m_robotContainer.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.6, .6, 6));
 
         Limelight.updateHeadingMt1(m_robotContainer.drivetrain);
-    
+
     }
 
     @Override
@@ -76,7 +76,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         if(isVisionTrackingEnabled){
-                Limelight.updatePose(m_robotContainer.drivetrain);  
+                Limelight.updatePose(m_robotContainer.drivetrain);
 
         }
     }

@@ -47,29 +47,13 @@ public class Pivot extends PositionController {
     }
 
     @CommandBehavior(behavior = CommandType.INSTANT)
-    public Command setAngleInstantCommand(DoubleSupplier angle) {
-        return Commands.runOnce(() -> setPosition(angle));
-    }
-
-    @CommandBehavior(behavior = CommandType.INITIALIZE)
-    @EndsOn(endsOn = EndType.FINISH)
-    public Command setAngleCommand(DoubleSupplier angle) {
-        return new Command() {
-            @Override
-            public void initialize() {
-                setPosition(angle);
-            }
-
-            @Override
-            public boolean isFinished() {
-                return isAtAngle(angle);
-            }
-        };
+    public Command stowCommand() {
+        return Commands.runOnce(() -> setPosition(Constants.Pivot.stowPosition));
     }
 
     @CommandBehavior(behavior = CommandType.INSTANT)
-    public Command stowCommand() {
-        return Commands.runOnce(() -> setPosition(Constants.Pivot.stowPosition));
+    public Command setAngleInstantCommand(DoubleSupplier angle) {
+        return Commands.runOnce(() -> setPosition(angle));
     }
 
     @CommandBehavior(behavior = CommandType.INITIALIZE)
@@ -84,6 +68,22 @@ public class Pivot extends PositionController {
             @Override
             public void end(boolean interrupted) {
                 targetPosition.motor.setVoltage(0);
+            }
+        };
+    }
+
+    @CommandBehavior(behavior = CommandType.INITIALIZE)
+    @EndsOn(endsOn = EndType.FINISH)
+    public Command setAngleCommand(DoubleSupplier angle) {
+        return new Command() {
+            @Override
+            public void initialize() {
+                setPosition(angle);
+            }
+
+            @Override
+            public boolean isFinished() {
+                return isAtAngle(angle);
             }
         };
     }
@@ -112,8 +112,24 @@ public class Pivot extends PositionController {
                     System.out.println(NoteKinematics.getLobPivot(distance));
                     return;
                 }
-                
+
                 setPosition(() -> NoteKinematics.getLobPivot(distance));
+            }
+        };
+    }
+
+    @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
+    @EndsOn(endsOn = EndType.INTERRUPT_OR_FINISH)
+    public Command autoStowCommand(){
+        return new Command() {
+            @Override
+            public void initialize() {
+                stow();
+            }
+
+            @Override
+            public boolean isFinished(){
+                return isAtLimit();
             }
         };
     }

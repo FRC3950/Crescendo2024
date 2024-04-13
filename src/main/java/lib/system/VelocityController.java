@@ -9,9 +9,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 
 public abstract class VelocityController extends SubsystemBase {
-    /**
-     * Creates a new VelocityController.
-     */
 
     protected final TargetVelocity[] targets;
 
@@ -33,17 +30,17 @@ public abstract class VelocityController extends SubsystemBase {
         }
     }
 
-    protected void applyVelocities(DoubleSupplier velocity) {
-        for (TargetVelocity target : targets)
-            target.motor.setControl(target.velVoltage.withVelocity(velocity.getAsDouble()));
-    }
-
     public void stop() {
         for (TargetVelocity target : targets)
             target.motor.setControl(target.velVoltage.withVelocity(0));
     }
 
-    @Override
-    public void periodic() {
+
+    protected void applyVelocities(DoubleSupplier velocity) {
+        for (TargetVelocity target : targets)
+            target.motor.setControl(target.velVoltage.withVelocity(velocity.getAsDouble()));
     }
+
+    @Override
+    public void periodic() {}
 }

@@ -3,7 +3,6 @@ package frc.robot.constants;
 import java.util.function.DoubleSupplier;
 
 public interface Constants {
-
     final class Physics {
         public static final double noteExitVelocity = 10; // Immediately after leaving shooter
 

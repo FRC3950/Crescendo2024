@@ -18,7 +18,6 @@ public abstract class PositionController extends SubsystemBase {
     protected final MotionMagicVoltage mmVoltage;
 
     protected PositionController(TargetPosition targetPosition) {
-
         this.targetPosition = targetPosition;
         mmVoltage = targetPosition.mmVoltage;
     }
