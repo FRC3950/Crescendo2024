@@ -20,7 +20,7 @@ public class AutoAimShootCommand extends SequentialCommandGroup {
                 Commands.parallel(
                         pivot.setAngleCommand(angle),
                         shooter.applyVelocitiesCommand() // Finishes when at velocity
-                ).andThen(Commands.waitSeconds(0.25)),
+                ).withTimeout(1).andThen(Commands.waitSeconds(0.25)),
 
                 shooter.shootCommand(intake, Constants.Shooter.activeSpeed, drive).withTimeout(1.25),
                 pivot.stowCommand()
@@ -38,7 +38,7 @@ public class AutoAimShootCommand extends SequentialCommandGroup {
                         ),
                         
                         shooter.applyVelocitiesCommand()
-                ),
+                ).withTimeout(2), //added for sim
                 //Commands.waitSeconds(0.25),
                 shooter.shootCommand(intake, Constants.Shooter.activeSpeed, drivetrain).until(()->!intake.noteIsIndexed()).withTimeout(1)
                 .andThen(Commands.waitSeconds(0.25)),

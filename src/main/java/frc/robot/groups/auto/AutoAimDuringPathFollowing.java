@@ -29,9 +29,9 @@ public class AutoAimDuringPathFollowing extends SequentialCommandGroup {
                                 () -> NoteKinematics.getTargetPivot(() -> drivetrain.getState()
                                 .Pose.getTranslation()
                                 .getDistance(activeSpeaker))
-                        ),
-                        shooter.applyVelocitiesCommand()
-                                  ).repeatedly()
+                        ).andThen(Commands.print("Pivot Angle Set: ")),
+                        shooter.applyVelocitiesCommand().andThen(Commands.print("Shooter Velocities Set: "))
+                                  ).repeatedly().andThen(Commands.print("Command Repeats: "))
           
           , 
           
@@ -39,7 +39,7 @@ public class AutoAimDuringPathFollowing extends SequentialCommandGroup {
             pivot.stowCommand(),
             shooter.idleCommand()
           ).until(()->pivot.isAtAngle(zero)).andThen(Commands.waitSeconds(0.25))
-          .andThen( intake.intakeCommand())
+          .andThen( intake.intakeCommand()).andThen(Commands.print("stow/idle"))
           
           
           , ()-> intake.noteIsIndexed())

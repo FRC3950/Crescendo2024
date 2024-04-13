@@ -212,6 +212,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("visionOn", new InstantCommand(()->Robot.setVisionTrackingEnabled(true)));
 
         NamedCommands.registerCommand("forceShoot", intake.indexCommand());
+
+        NamedCommands.registerCommand("stow", pivot.stowCommand());
         
         // Constructs AutoBuilder (SendableChooser<Command>):
         autoChooser = AutoBuilder.buildAutoChooser("1pc");
