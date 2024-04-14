@@ -3,38 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.35,
-        "y": 5.550603828480384
+        "x": 2.6,
+        "y": 4.05
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.795099485716975,
-        "y": 5.995703314197359
+        "x": 2.029325513196481,
+        "y": 4.085990717435981
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.9,
-        "y": 7.0
+        "x": 1.9453667998245088,
+        "y": 5.550603828480384
       },
       "prevControl": {
-        "x": 2.540570791829468,
-        "y": 6.640570791829468
+        "x": 1.9360380538942894,
+        "y": 5.494631352899069
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 45.0,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -45,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 45.0,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "Bridgwood Center 4pc",
   "previewStartingState": {
-    "rotation": 0.0,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": true

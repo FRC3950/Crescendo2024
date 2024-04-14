@@ -1,0 +1,116 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.7,
+        "y": 6.66985328236012
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.1524233957558825,
+        "y": 7.229778095919829
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.8512397633024253,
+        "y": 7.0050704681015805
+      },
+      "prevControl": {
+        "x": 1.0137166222146683,
+        "y": 7.084324061728215
+      },
+      "nextControl": {
+        "x": 3.913732191100746,
+        "y": 6.959244463943474
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.821868398656297,
+        "y": 5.507130871149041
+      },
+      "prevControl": {
+        "x": 3.4193086567991315,
+        "y": 5.429330131387536
+      },
+      "nextControl": {
+        "x": 1.0179442015884166,
+        "y": 5.742044128320282
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.528154752195015,
+        "y": 4.067934003488759
+      },
+      "prevControl": {
+        "x": 2.542840434518079,
+        "y": 4.361647649950041
+      },
+      "nextControl": {
+        "x": 2.5112236376597674,
+        "y": 3.7293117127838
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.131641329472284,
+        "y": 4.523190155503746
+      },
+      "prevControl": {
+        "x": 2.2931838350259888,
+        "y": 4.479133108534554
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 40.0,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 0.0,
+      "rotateFast": true
+    },
+    {
+      "waypointRelativePos": 3,
+      "rotationDegrees": -1.4688007143858908,
+      "rotateFast": true
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 1.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -34.82448915695681,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Bridgwood Center 4pc",
+  "previewStartingState": {
+    "rotation": 60.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

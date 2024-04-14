@@ -6,9 +6,13 @@ package frc.robot;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 
+import java.nio.file.Path;
+
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -121,6 +125,25 @@ public class RobotContainer {
         // );
 
         ControlScheme.RESET_HEADING.button.onTrue(Commands.runOnce(drivetrain::seedFieldRelative));
+        PathPlannerPath amp_PathPlanner = PathPlannerPath.fromPathFile("Amp");
+        PathPlannerPath speaker_PathPlanner = PathPlannerPath.fromPathFile("Speaker");
+        PathPlannerPath topStage_PathPlannerPath = PathPlannerPath.fromPathFile("TopStage");
+        PathPlannerPath bottomStage_PathPlannerPath = PathPlannerPath.fromPathFile("BottomStage");
+
+        ControlScheme.PATH_AMP.button.onTrue(AutoBuilder.followPath(amp_PathPlanner)
+        .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5));
+
+        ControlScheme.PATH_SPEAKER.button.onTrue(AutoBuilder.followPath(speaker_PathPlanner)
+        .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5));
+
+        ControlScheme.PATH_STAGE.button.onTrue(
+                Commands.either(
+                        AutoBuilder.followPath(bottomStage_PathPlannerPath)
+                        .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5),
+                        AutoBuilder.followPath(topStage_PathPlannerPath)
+                         .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5),
+                        () -> drivetrain.getState().Pose.getY() < 4.44));
+                
 
         // Manipulator controls
         ControlScheme.SHOOT_SPEAKER.button.whileTrue(
@@ -190,6 +213,12 @@ public class RobotContainer {
 
     public RobotContainer() {
 
+        //For Sim testing fluid Auto
+        //  SmartDashboard.putBoolean("noteIndexed", true);
+        //  SmartDashboard.putData(new AutoAimPathCommand(pivot, intake, shooter, drivetrain));
+        //  SmartDashboard.putData("forceShoot", intake.indexCommand().withTimeout(1));
+
+
         NamedCommands.registerCommand("autoAim", new AutoAimPathCommand(pivot, intake, shooter, drivetrain));
         NamedCommands.registerCommand("simpleAimAndShoot", new AutoAimShootCommand(pivot, intake, shooter, drivetrain));
 
@@ -203,6 +232,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("forceShoot", intake.indexCommand());
 
         NamedCommands.registerCommand("stow", pivot.stowCommand());
+
 
         // Constructs AutoBuilder (SendableChooser<Command>):
         autoChooser = AutoBuilder.buildAutoChooser("1pc");

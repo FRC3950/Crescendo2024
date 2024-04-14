@@ -41,6 +41,8 @@ public abstract class VelocityController extends SubsystemBase {
             target.motor.setControl(target.velVoltage.withVelocity(velocity.getAsDouble()));
     }
 
+    
+
     @Override
     public void periodic() {}
 }

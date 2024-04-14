@@ -46,9 +46,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-        m_robotContainer.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.6, .6, 6));
+       // m_robotContainer.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.6, .6, 6));
 
-        Limelight.updateHeadingMt1(m_robotContainer.drivetrain);
+       // Limelight.updateHeadingMt1(m_robotContainer.drivetrain);
     }
 
     @Override
@@ -57,9 +57,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        m_robotContainer.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.6, .6, 6));
+      //  m_robotContainer.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.6, .6, 6));
 
-        Limelight.updateHeadingMt1(m_robotContainer.drivetrain);
+       // Limelight.updateHeadingMt1(m_robotContainer.drivetrain);
 
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 

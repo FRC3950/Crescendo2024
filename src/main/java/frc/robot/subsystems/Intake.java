@@ -42,6 +42,7 @@ public class Intake extends VelocityController {
 
     public boolean noteIsIndexed() {
         return !targets[1].motor.getReverseLimit().getValue().equals(ReverseLimitValue.Open);
+        //return SmartDashboard.getBoolean("noteIndexed", true);
     }
 
 
@@ -65,6 +66,9 @@ public class Intake extends VelocityController {
             }
         };
     }
+
+    
+
 
     @CommandBehavior(behavior = CommandType.INITIALIZE)
     @EndsOn(endsOn = EndType.INTERRUPT)
@@ -117,6 +121,21 @@ public class Intake extends VelocityController {
     @CommandBehavior(behavior = CommandType.INSTANT)
     public Command stopCommand() {
         return Commands.runOnce(super::stop);
+    }
+
+    @CommandBehavior(behavior = CommandType.INITIALIZE)
+    public Command intakeOnceCommand(){
+        return Commands.runOnce(()->{
+            super.applyVelocity(Constants.Intake.leftId, Constants.Intake.intakeActiveVelocity);
+            super.applyVelocity(Constants.Intake.rightId, Constants.Intake.intakeActiveVelocity);
+
+            if(!noteIsIndexed()){
+                super.applyVelocity(Constants.Intake.indexerId, Constants.Intake.indexerActiveVelocity);
+            }
+            else{
+                super.applyVelocity(Constants.Intake.indexerId, ()->0.0);
+            }
+        });
     }
 
     @Override
