@@ -14,6 +14,7 @@
       "/Pose": "Field2d",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/AutoAim": "Command",
+      "/SmartDashboard/AutoAimPathCommand": "Command",
       "/SmartDashboard/Better Rotate To Shoot": "Command",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/InstantCommand": "Command",
@@ -26,6 +27,7 @@
       "/SmartDashboard/Test Conditional Command": "Command",
       "/SmartDashboard/addVisionMeasurment": "Command",
       "/SmartDashboard/amp": "Command",
+      "/SmartDashboard/forceShoot": "Command",
       "/SmartDashboard/goStage": "Command",
       "/SmartDashboard/goToBlueStage": "Command",
       "/SmartDashboard/stage": "Command",
@@ -33,6 +35,11 @@
       "/SmartDashboard/turnToShoot": "Command"
     },
     "windows": {
+      "/FMSInfo": {
+        "window": {
+          "visible": true
+        }
+      },
       "/Pose": {
         "bottom": 1476,
         "height": 8.210550308227539,
@@ -54,6 +61,11 @@
           "visible": true
         }
       },
+      "/SmartDashboard/AutoAimPathCommand": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/PrintAngle": {
         "window": {
           "visible": true
@@ -65,6 +77,11 @@
         }
       },
       "/SmartDashboard/amp": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/forceShoot": {
         "window": {
           "visible": true
         }
@@ -91,6 +108,12 @@
       }
     },
     "transitory": {
+      "Pose": {
+        "double[]##v_/Pose/robotPose": {
+          "open": true
+        },
+        "open": true
+      },
       "SmartDashboard": {
         "PrintAngle": {
           "open": true
@@ -121,8 +144,5 @@
       "open": true
     },
     "visible": true
-  },
-  "NetworkTables View": {
-    "visible": false
   }
 }

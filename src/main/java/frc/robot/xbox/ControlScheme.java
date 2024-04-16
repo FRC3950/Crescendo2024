@@ -20,7 +20,9 @@ public enum ControlScheme {
 
     // Driver
     RESET_HEADING(Controller.DRIVER.controller.y()),
-    PATH_SPEAKER(Controller.DRIVER.controller.leftBumper());
+    PATH_AMP(Controller.DRIVER.controller.leftBumper()),
+    PATH_SPEAKER(Controller.DRIVER.controller.rightBumper()),
+    PATH_STAGE(Controller.DRIVER.controller.back());
 
     public final Trigger button;
 

@@ -85,7 +85,7 @@ public final class Limelight {
         if(canUpdatePose(drive)) {
             var mt2Pose = getMt2Pose(drive);
 
-            if(Math.abs(drive.getPigeon2().getRate()) > 720 || mt2Pose.tagCount < 1){
+            if(Math.abs(drive.getPigeon2().getRate()) > 360 || mt2Pose.tagCount < 1){
                 return;
             }
 
