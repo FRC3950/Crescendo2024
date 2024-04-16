@@ -1,4 +1,4 @@
-package lib.system;
+package lib.system.control;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;

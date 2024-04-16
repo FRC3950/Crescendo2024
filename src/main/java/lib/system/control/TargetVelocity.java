@@ -1,4 +1,4 @@
-package lib.system;
+package lib.system.control;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.Follower;
@@ -41,12 +41,15 @@ public class TargetVelocity {
      * @param kV             The kV of the targetVelocity profile for both motors.
      */
     public TargetVelocity(TalonFX leader, TalonFX follower, double targetVelocity, double kP, double kV, boolean isInverted) {
-        this.motor = leader;
 
-        this.kP = kP;
-        this.kV = kV;
+        this(leader, targetVelocity, kP, kV);
 
-        this.targetVelocity = targetVelocity;
+//        this.motor = leader;
+//
+//        this.kP = kP;
+//        this.kV = kV;
+//
+//        this.targetVelocity = targetVelocity;
 
         var slot0Configs = new Slot0Configs();
 

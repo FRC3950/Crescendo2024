@@ -15,8 +15,8 @@ import lib.meta.CommandType;
 import lib.meta.EndType;
 import lib.meta.EndsOn;
 import lib.odometry.LimelightHelpers;
-import lib.system.TargetVelocity;
-import lib.system.VelocityController;
+import lib.system.control.TargetVelocity;
+import lib.system.control.VelocityController;
 
 public class Intake extends VelocityController {
 
@@ -107,7 +107,7 @@ public class Intake extends VelocityController {
                 applyVelocity(Constants.Intake.indexerId, Constants.Intake.indexerActiveVelocity);
             }
 
-            @Override 
+            @Override
             public void end(boolean interrupted){
                 stop();
             }

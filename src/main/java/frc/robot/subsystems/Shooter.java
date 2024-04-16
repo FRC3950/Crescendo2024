@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -17,8 +16,8 @@ import lib.meta.CommandType;
 import lib.meta.EndType;
 import lib.meta.EndsOn;
 import lib.odometry.NoteKinematics;
-import lib.system.TargetVelocity;
-import lib.system.VelocityController;
+import lib.system.control.TargetVelocity;
+import lib.system.control.VelocityController;
 
 public class Shooter extends VelocityController {
 
@@ -60,7 +59,7 @@ public class Shooter extends VelocityController {
                 applyVelocity(targets[0].motor.getDeviceID(), () -> NoteKinematics.getLobVelocityRps(distance));
             }
 
-            @Override 
+            @Override
             public boolean isFinished() {
                 return Math.abs(getVelocity() - NoteKinematics.getLobPivot(distance)) <= 1;
             }
@@ -90,7 +89,7 @@ public class Shooter extends VelocityController {
                         applyVelocities(velocity);
                     }
                 }
-                
+
                 if (getVelocity() >= velocity.getAsDouble() - 1) {
                     intake.applyVelocity(Constants.Intake.indexerId, Constants.Intake.indexerActiveVelocity);
                 }

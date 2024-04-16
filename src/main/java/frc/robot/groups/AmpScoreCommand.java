@@ -13,14 +13,12 @@ import frc.robot.subsystems.Shooter;
 import java.util.function.DoubleSupplier;
 
 public class AmpScoreCommand extends SequentialCommandGroup {
-    /**
-     * Creates a new AmpScoreCommand.
-     */
+
     public AmpScoreCommand(Pivot pivot, Flipper flipper, Shooter shooter, DoubleSupplier pivotPos, DoubleSupplier flipperPos) {
         addCommands(
                 shooter.stopCommand(),
                 pivot.setAngleInstantCommand(pivotPos),
-                Commands.waitSeconds(0.6),
+                Commands.waitSeconds(0.5),
                 flipper.ampCommand(flipperPos)
         ); // Stow command runs on button false (See RobotContainer)
 

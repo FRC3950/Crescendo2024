@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.Constants;
 import lib.meta.CommandBehavior;
 import lib.meta.CommandType;
-import lib.system.PositionController;
-import lib.system.TargetPosition;
+import lib.system.control.PositionController;
+import lib.system.control.TargetPosition;
 
 import java.util.function.DoubleSupplier;
 

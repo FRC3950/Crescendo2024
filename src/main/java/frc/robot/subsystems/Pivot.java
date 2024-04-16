@@ -16,8 +16,8 @@ import lib.meta.CommandType;
 import lib.meta.EndType;
 import lib.meta.EndsOn;
 import lib.odometry.NoteKinematics;
-import lib.system.PositionController;
-import lib.system.TargetPosition;
+import lib.system.control.PositionController;
+import lib.system.control.TargetPosition;
 
 import java.util.function.DoubleSupplier;
 
