@@ -22,15 +22,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.constants.Constants;
+import frc.robot.commands.ManipulateCommands;
+import frc.robot.commands.ScoreCommands;
 import frc.robot.constants.TunerConstants;
-import frc.robot.groups.AimCommand;
-import frc.robot.groups.AmpScoreCommand;
-import frc.robot.groups.IntakeCommand;
-import frc.robot.groups.shoot.LobShootCommand;
-import frc.robot.groups.shoot.VisionShootCommand;
-import frc.robot.groups.shoot.AutoAimPathCommand;
-import frc.robot.groups.shoot.AutoAimShootCommand;
+import frc.robot.commands.auto.AutoAimPathCommand;
+import frc.robot.commands.auto.AutoAimShootCommand;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.Telemetry;
@@ -63,26 +59,8 @@ public class RobotContainer {
     private final Intake intake = new Intake();
     private final Climber climber = new Climber();
 
-
-    private final Command autoShootCommand = new VisionShootCommand(
-            pivot, drivetrain, shooter,
-            this::getAlliance,
-            blueSpeaker::getTranslation,
-            redSpeaker::getTranslation
-    );
-
-    private final Command lobShootCommand = new LobShootCommand(
-        shooter,
-        drivetrain,
-        pivot,
-        intake,
-        this::getAlliance,
-        blueSpeaker::getTranslation,
-        redSpeaker::getTranslation
-    );
-
-    // private final StowCommand stowCommand = new StowCommand(pivot, intake, shooter, flipper);
-    // This causes WPILib to crash for some reason whenever it is ran
+    private final ManipulateCommands manipulateCommands = new ManipulateCommands(intake, pivot, flipper);
+    private final ScoreCommands scoreCommands = new ScoreCommands(intake, shooter, flipper, pivot, drivetrain);
 
     //Field Centric Request - field-centric in open loop
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -105,101 +83,71 @@ public class RobotContainer {
     private void configureBindings() {
 
         drivetrain.setDefaultCommand(
-                drivetrain.applyRequest(() -> drive.withVelocityX(-Controller.DRIVER.controller.getLeftY() * MaxSpeed)
-                        .withVelocityY(-Controller.DRIVER.controller.getLeftX() * MaxSpeed)
-                        .withRotationalRate(drivetrain.getRotationalSpeed(() -> -Controller.DRIVER.controller.getRightX()) * MaxAngularRate)                                                                                // X (left)
+                drivetrain.applyRequest(() -> drive.withVelocityX(-Controller.DRIVER.getLeftY() * MaxSpeed)
+                        .withVelocityY(-Controller.DRIVER.getLeftX() * MaxSpeed)
+                        .withRotationalRate(drivetrain.getRotationalSpeed(() -> -Controller.DRIVER.getRightX()) * MaxAngularRate)                                                                                // X (left)
                 ).ignoringDisable(true)
         );
 
-        climber.setDefaultCommand(climber.climbCommand(Controller.MANIPULATOR.controller::getRightY));
+        climber.setDefaultCommand(climber.climbCommand(Controller.MANIPULATOR::getRightY));
 
-        // PathPlannerPath midNoteShootPos = PathPlannerPath.fromPathFile("driveToNoteShot");
-
-        // Controller.DRIVER.controller.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.isLockedRotational = !drivetrain.isLockedRotational));
-        // Controller.DRIVER.controller.rightBumper().onTrue(
-        //   AutoBuilder.followPath(midNoteShootPos)
-        //               .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5) // Cancels on driver input
-        // );
 
         ControlScheme.RESET_HEADING.button.onTrue(Commands.runOnce(drivetrain::seedFieldRelative));
         PathPlannerPath amp_PathPlanner = PathPlannerPath.fromPathFile("Amp");
         PathPlannerPath speaker_PathPlanner = PathPlannerPath.fromPathFile("Speaker");
+
         PathPlannerPath topStage_PathPlannerPath = PathPlannerPath.fromPathFile("TopStage");
         PathPlannerPath bottomStage_PathPlannerPath = PathPlannerPath.fromPathFile("BottomStage");
 
         ControlScheme.PATH_AMP.button.onTrue(AutoBuilder.followPath(amp_PathPlanner)
-        .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5));
+        .onlyWhile(() -> Math.abs(Controller.DRIVER.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.getLeftX()) < 0.5));
 
         ControlScheme.PATH_SPEAKER.button.onTrue(AutoBuilder.followPath(speaker_PathPlanner)
-        .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5));
+        .onlyWhile(() -> Math.abs(Controller.DRIVER.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.getLeftX()) < 0.5));
 
-        ControlScheme.PATH_STAGE.button.onTrue(
-                Commands.either(
-                        AutoBuilder.followPath(bottomStage_PathPlannerPath)
-                        .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5),
-                        AutoBuilder.followPath(topStage_PathPlannerPath)
-                         .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5),
-                        () -> drivetrain.getState().Pose.getY() < 4.44));
+//        ControlScheme.PATH_STAGE.button.onTrue(
+//                Commands.either(
+//                        AutoBuilder.followPath(bottomStage_PathPlannerPath)
+//                        .onlyWhile(() -> Math.abs(Controller.DRIVER.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.getLeftX()) < 0.5),
+//                        AutoBuilder.followPath(topStage_PathPlannerPath)
+//                         .onlyWhile(() -> Math.abs(Controller.DRIVER.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.getLeftX()) < 0.5),
+//                        () -> drivetrain.getState().Pose.getY() < 4.44));
 
 
         // Manipulator controls
-        ControlScheme.SHOOT_SPEAKER.button.whileTrue(
-                new AimCommand(pivot, shooter, () -> 0.1)
-        ).onFalse(Commands.parallel(
-                pivot.stowInstantCommand(),
-                flipper.stowCommand(),
-                shooter.idleCommand(),
-                intake.stopCommand()
-        ));
+        ControlScheme.SHOOT_SPEAKER.button.whileTrue(scoreCommands.speakerPivotCommand()).onFalse(manipulateCommands.stowCommand());
 
-        // ControlScheme.SHOOT.button.whileTrue(shooter.shootCommand(intake, Constants.Shooter.activeSpeed, drivetrain));
+        ControlScheme.SHOOT.button.whileTrue(shooter.applyShootStateCommand()).onFalse(shooter.idleCommand());
 
-        ControlScheme.SHOOT_LOB.button.whileTrue(
-                lobShootCommand
-        ).onFalse(Commands.parallel(
-                // Commands.runOnce(() -> shooter.isLobbing = false),
-                Commands.runOnce(() -> drivetrain.isLockedRotational = false),
-                pivot.stowInstantCommand(),
-                flipper.stowCommand(),
-                shooter.idleCommand(),
-                intake.stopCommand()
-        ));
-
-        ControlScheme.SCORE_AMP.button.whileTrue(new AmpScoreCommand(pivot, flipper, shooter, () -> 0.3, Constants.Pivot.ampPosition))
-                .onFalse(Commands.parallel(
-                        pivot.stowInstantCommand(),
-                        flipper.stowCommand(),
-                        shooter.idleCommand(),
-                        intake.stopCommand()
-                ));
-
-        ControlScheme.AIM_AUTO.button.whileTrue(autoShootCommand)
-                .onFalse(Commands.parallel(
+        ControlScheme.SHOOT_LOB.button.whileTrue(scoreCommands.lobPivotCommand()).onFalse(
+                Commands.parallel(
                         Commands.runOnce(() -> drivetrain.isLockedRotational = false),
-                        Commands.parallel(
-                                pivot.stowInstantCommand(),
-                                flipper.stowCommand(),
-                                shooter.idleCommand(),
-                                intake.stopCommand()
-                        )
+                        manipulateCommands.stowCommand()
+                )
+        );
+
+        ControlScheme.SCORE_AMP.button.whileTrue(scoreCommands.ampScoreCommand()).onFalse(manipulateCommands.stowCommand());
+
+        ControlScheme.AIM_AUTO.button.whileTrue(scoreCommands.aimCommand()).onFalse(
+                Commands.parallel(
+                        Commands.runOnce(() -> drivetrain.isLockedRotational = false),
+                        manipulateCommands.stowCommand()
                 ));
 
         // SmartDashboard.putData("AutoAim", autoShootCommand);
         // SmartDashboard.putData("RotationOff", Commands.runOnce(() -> drivetrain.isLockedRotational = false));
 
-        ControlScheme.INTAKE.button.whileTrue(new IntakeCommand(pivot, intake))
-                .onFalse(pivot.stowInstantCommand());
+        ControlScheme.INTAKE.button.whileTrue(manipulateCommands.intakeCommand()).onFalse(manipulateCommands.stowCommand());
 
         ControlScheme.FORCE_STOW.button.whileTrue(pivot.forceStowCommand());
 
-        ControlScheme.OUTTAKE.button.whileTrue(intake.outtakeCommand());
-        ControlScheme.AMP_OUTTAKE.button.whileTrue(intake.ampOuttakeCommand());
+        ControlScheme.OUTTAKE.button.whileTrue(intake.outtakeCommand(pivot));
 
-        Controller.DRIVER.controller.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
-        Controller.DRIVER.controller.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
+        Controller.DRIVER.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
+        Controller.DRIVER.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
 
-        Controller.DRIVER.controller.pov(90).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0).withVelocityY(-0.5)));
-        Controller.DRIVER.controller.pov(270).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0).withVelocityY(0.5)));
+        Controller.DRIVER.pov(90).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0).withVelocityY(-0.5)));
+        Controller.DRIVER.pov(270).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0).withVelocityY(0.5)));
 
         // Controller.DRIVER.controller.x().whileTrue(new PathPlannerAuto(("test")));
         // Controller.DRIVER.controller.a().whileTrue(drivetrain.applyRequest(() -> brake));

@@ -23,6 +23,10 @@ public abstract class PositionStateMachine extends SubsystemBase implements ISta
         acquireGoalState(initialState);
     }
 
+    public PositionState getGoalState() {
+        return goalState;
+    }
+
     protected void applyPosition(PositionState goalState){
         var motor = currentState.talonConfig.motor;
         motor.setControl(goalState.talonConfig.mmVoltage.withPosition(goalState.getTargetPosition().getAsDouble()));

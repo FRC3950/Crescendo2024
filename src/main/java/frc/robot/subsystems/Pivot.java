@@ -47,6 +47,10 @@ public class Pivot extends PositionStateMachine implements Loggable {
         return motor.getPosition().getValueAsDouble();
     }
 
+    public boolean goalStateIsAmp() {
+        return getGoalState().equals(amped);
+    }
+
     @CommandBehavior(behavior = CommandType.INSTANT)
     public Command stowInstantCommand() {
         return Commands.runOnce(() -> acquireGoalState(stowed));

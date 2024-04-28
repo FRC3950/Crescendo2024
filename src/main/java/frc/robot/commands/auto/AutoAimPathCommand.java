@@ -1,4 +1,4 @@
-package frc.robot.groups.shoot;
+package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -17,7 +17,7 @@ public class AutoAimPathCommand extends SequentialCommandGroup {
     BooleanSupplier canShoot = () -> false;
 
     public AutoAimPathCommand(Pivot pivot, Intake intake, Shooter shooter, Swerve drivetrain) {
-canShoot = () ->Math.abs(drivetrain.getState().Pose.getY() - 5.55) < 0.5;
+        canShoot = () -> Math.abs(drivetrain.getState().Pose.getY() - 5.55) < 0.5;
         addCommands(
             Commands.either(
                 //1st Condition - note is indexed so hold angle and apply velocities
@@ -26,7 +26,7 @@ canShoot = () ->Math.abs(drivetrain.getState().Pose.getY() - 5.55) < 0.5;
                         pivot.setAngleCommand(
                                 () -> ScoringKinematics.getTargetPivot(() -> ScoringKinematics.getAllianceSpeakerDistance(drivetrain)))
                         .andThen(Commands.print("Pivot Angle Set: ")),
-                        shooter.applyShootState()
+                        shooter.applyShootStateCommand()
                                 ).withTimeout(1.25) //get rid when not in sim
                                 .andThen((intake.indexCommand().alongWith(Commands.print("we got a shooter"))).onlyIf(canShoot).withTimeout(0.4))
                                 .andThen(Commands.print("End of 1st Condition ")),
