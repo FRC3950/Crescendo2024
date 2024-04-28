@@ -1,4 +1,4 @@
-package lib.system.pid;
+package lib.pid;
 
 public record MotionMagicConfig (double kA, double cruiseVel, double accel, double jerk) {
 

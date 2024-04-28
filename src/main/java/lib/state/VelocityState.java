@@ -1,33 +1,54 @@
 package lib.state;
 
-import lib.system.pid.TalonConfig;
+import lib.pid.TalonConfig;
+import lib.state.machines.VelocityStateMachine;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.HashSet;
 import java.util.function.DoubleSupplier;
 
 public class VelocityState {
 
-    public Map<TalonConfig, DoubleSupplier> velocities = new HashMap<>();
+    public final TalonConfig talonConfig;
 
-    private TalonConfig talonSetup;
+    private DoubleSupplier targetVelocity;
 
-    public VelocityState(TalonConfig talonSetup, DoubleSupplier targetVelocity){
-        this.talonSetup = talonSetup;
+    public final double epsilon;
 
-        velocities.put(talonSetup, targetVelocity);
+    public VelocityState(TalonConfig talonConfig, DoubleSupplier targetVelocity, double epsilon) {
+        this.talonConfig = talonConfig;
+        this.targetVelocity = targetVelocity;
+        this.epsilon = epsilon;
     }
 
-    public VelocityState(Map<TalonConfig, DoubleSupplier> velocities){
-        this.velocities = velocities;
+    public DoubleSupplier getTargetVelocity() {
+        return targetVelocity;
     }
 
     public VelocityState withChangedVelocity(DoubleSupplier newVelocity){
-        return new VelocityState(talonSetup, newVelocity);
+        return new VelocityState(talonConfig, newVelocity, epsilon);
     }
 
-    public TalonConfig getTalonSetup() {
-        return talonSetup;
+    public void updateGoal(DoubleSupplier targetVelocity) {
+        this.targetVelocity = targetVelocity;
+    }
+
+    public HashSet<VelocityState> asHashSet(){
+         return new HashSet<>() {{
+            add(VelocityState.this);
+        }};
+    }
+
+    public VelocityState stopped() {
+        return withChangedVelocity(() -> 0);
+    }
+
+    public VelocityState negative() {
+        return new VelocityState(talonConfig, () -> -targetVelocity.getAsDouble(), epsilon);
+    }
+
+    public boolean isReached() {
+        var feedback = talonConfig.motor.getVelocity().getValueAsDouble();
+
+        return Math.abs(feedback - targetVelocity.getAsDouble()) <= Math.abs(epsilon);
     }
 }

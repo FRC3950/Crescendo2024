@@ -4,122 +4,84 @@
 
 package frc.robot.subsystems;
 
+import java.util.HashSet;
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.Constants;
-import frc.robot.subsystems.swerve.Swerve;
+import lib.log.Loggable;
 import lib.meta.CommandBehavior;
 import lib.meta.CommandType;
 import lib.meta.EndType;
 import lib.meta.EndsOn;
-import lib.odometry.NoteKinematics;
-import lib.system.control.TargetVelocity;
-import lib.system.control.VelocityController;
+import lib.odometry.ScoringKinematics;
+import lib.state.VelocityState;
+import lib.state.machines.VelocityStateMachine;
 
-public class Shooter extends VelocityController {
+public class Shooter extends VelocityStateMachine implements Loggable {
+
+    public static final VelocityState activeState = new VelocityState(Constants.Shooter.config, Constants.Shooter.activeSpeed, 0.5);
+    public static final VelocityState lobState = activeState.withChangedVelocity(() -> 20);
+
+    public static final HashSet<VelocityState> idle = activeState.withChangedVelocity(Constants.Shooter.idleSpeed).asHashSet();
+    public static final HashSet<VelocityState> stopped = activeState.stopped().asHashSet();
+
+    private static final HashSet<VelocityState> active = activeState.asHashSet();
+    private static final HashSet<VelocityState> lob = lobState.asHashSet();
+
 
     public Shooter() {
-        super(
-                new TargetVelocity(
-                        new TalonFX(Constants.Shooter.topId, "CANivore"),
-                        new TalonFX(Constants.Shooter.bottomId, "CANivore"), Constants.Shooter.activeSpeed.getAsDouble(),
-                        Constants.Shooter.kP, Constants.Shooter.kV, true
-                )
-        );
+        super(stopped);
     }
 
-    public boolean isLobbing = false;
-
-    private double getVelocity() {
-        if (targets.length < 1)
-            return 0;
-
-        return targets[0].motor.getVelocity().getValueAsDouble();
-    }
+    @Override
+    public void log() {}
 
     @CommandBehavior(behavior = CommandType.INSTANT)
     public Command stopCommand() {
-        return Commands.runOnce(super::stop);
+        return Commands.runOnce(() -> acquireGoalState(stopped));
     }
 
     @CommandBehavior(behavior = CommandType.INSTANT)
     public Command idleCommand() {
-        return Commands.runOnce(() -> applyVelocities(Constants.Shooter.idleSpeed));
+        return Commands.runOnce(() -> acquireGoalState(idle));
     }
 
     @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
     @EndsOn(endsOn = EndType.INTERRUPT)
-    public Command applyLobVelocity(DoubleSupplier distance) {
+    public Command applyLobState(DoubleSupplier distance) {
         return new Command() {
             @Override
+            public void initialize() {
+                acquireGoalState(lob);
+            }
+
+            @Override
             public void execute() {
-                applyVelocity(targets[0].motor.getDeviceID(), () -> NoteKinematics.getLobVelocityRps(distance));
+                updateGoalState(() -> 1.75 * ScoringKinematics.getLobVelocityRps(distance));
             }
 
             @Override
             public boolean isFinished() {
-                return Math.abs(getVelocity() - NoteKinematics.getLobPivot(distance)) <= 1;
-            }
-        };
-    }
-
-    @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
-    @EndsOn(endsOn = EndType.INTERRUPT)
-    public Command shootCommand(Intake intake, DoubleSupplier velocity, Swerve drive) {
-        return new Command() {
-            @Override
-            public void initialize() {
-                if(!isLobbing){
-                    applyInitialTargetVelocities();
-                }
-            }
-
-            @Override
-            public void execute() {
-
-                DoubleSupplier velocity = Constants.Shooter.activeSpeed;
-
-                if(isLobbing){
-                    velocity = () -> 1.75 * NoteKinematics.getLobVelocityRps(() -> NoteKinematics.getAllianceSpeakerDistance(drive));
-
-                    if(velocity.getAsDouble() != 0){
-                        applyVelocities(velocity);
-                    }
-                }
-
-                if (getVelocity() >= velocity.getAsDouble() - 1) {
-                    intake.applyVelocity(Constants.Intake.indexerId, Constants.Intake.indexerActiveVelocity);
-                }
-            }
-
-            @Override
-            public void end(boolean interrupted) {
-                applyVelocities(Constants.Shooter.idleSpeed);
-                intake.stop();
+                return isAtState(goalState);
             }
         };
     }
 
     @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
     @EndsOn(endsOn = EndType.FINISH)
-    public Command applyVelocitiesCommand() {
+    public Command applyShootState() {
         return new Command() {
             @Override
             public void initialize() {
-                applyInitialTargetVelocities();
+                acquireGoalState(active);
             }
 
             @Override
             public boolean isFinished() {
-                return Math.abs(getVelocity() - targets[0].targetVelocity) <= 1;
+                return isAtState(active);
             }
         };
-    }
-
-    @Override
-    public void periodic() {
     }
 }

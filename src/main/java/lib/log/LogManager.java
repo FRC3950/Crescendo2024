@@ -5,11 +5,11 @@ import java.util.List;
 
 public class LogManager {
 
-    private LogManager instance;
+    private static LogManager instance;
 
     private final List<Loggable> subsystems = new ArrayList<>();
 
-    public LogManager getInstance() {
+    public static LogManager getInstance() {
         if(instance == null)
             instance = new LogManager();
 
@@ -26,5 +26,9 @@ public class LogManager {
         for(Loggable subsystem : subsystems){
             subsystem.log();
         }
+    }
+
+    public void disableLogs() {
+        subsystems.clear();
     }
 }

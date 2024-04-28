@@ -13,9 +13,11 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import lib.log.LogManager;
 import lib.odometry.Limelight;
 
 public class Robot extends TimedRobot {
+
     private Command m_autonomousCommand;
 
     private RobotContainer m_robotContainer;
@@ -31,13 +33,16 @@ public class Robot extends TimedRobot {
 
         m_robotContainer = new RobotContainer();
         m_robotContainer.drivetrain.getDaqThread().setThreadPriority(99);
+
+        LogManager.getInstance().addSubsystem(m_robotContainer.pivot);
+        LogManager.getInstance().addSubsystem(m_robotContainer.flipper);
     }
 
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
 
-//      SmartDashboard.putNumber("BridgwoodGoesWEEEEEE", m_robotContainer.drivetrain.getState().Pose.getTranslation().getDistance(new Translation2d(0,5.55)));
+        LogManager.getInstance().displayLogs();
     }
 
     @Override

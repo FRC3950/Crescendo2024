@@ -3,14 +3,12 @@ package lib.odometry;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.swerve.Swerve;
 
-import java.sql.Driver;
 import java.util.function.DoubleSupplier;
 
-public final class NoteKinematics {
+public final class ScoringKinematics {
 
     public static final Pose2d redSpeaker = new Pose2d(16.55, 5.55, Rotation2d.fromDegrees(0));
     public static final Pose2d blueSpeaker = new Pose2d(0, 5.55, Rotation2d.fromDegrees(0));
@@ -33,7 +31,7 @@ public final class NoteKinematics {
     }
 
     public static double getAllianceSpeakerDistance(Swerve drive){
-        return drive.getState().Pose.getTranslation().getDistance(NoteKinematics.activeSpeaker.getTranslation());
+        return drive.getState().Pose.getTranslation().getDistance(ScoringKinematics.activeSpeaker.getTranslation());
     }
 
     public static double getVelocityVector(DoubleSupplier distance) {
@@ -66,10 +64,6 @@ public final class NoteKinematics {
             0.01 * Math.pow(distance.getAsDouble(), 2):
             0.019 * Math.pow(distance.getAsDouble(), 2);
 
-
-        //90 -arcTan2 (SpeakerHeight - pivotAngleHeight / RobotDistance)
-        // SmartDashboard.putNumber("BridgwoodDistance", distance.getAsDouble());
         return 0.25 - ((Math.atan2(Constants.Physics.targetSpeakerHeight + gravityComp, distance.getAsDouble()) * (180 / Math.PI)) / 360);
-        // return -((Math.atan2(1.7, distance.getAsDouble()) * (180/Math.PI)) / 360);
     }
 }

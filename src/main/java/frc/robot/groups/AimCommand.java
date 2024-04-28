@@ -20,7 +20,7 @@ public class AimCommand extends ParallelCommandGroup {
     public AimCommand(Pivot pivot, Shooter shooter, DoubleSupplier angle) {
         addCommands(
                 pivot.setAngleCommand(angle),
-                shooter.applyVelocitiesCommand()
+                shooter.applyShootState()
         );
     }
 }

@@ -16,9 +16,9 @@ public class AimShootCommand extends SequentialCommandGroup {
         addCommands(
                 Commands.parallel(
                         pivot.setAngleCommand(angle),
-                        shooter.applyVelocitiesCommand() // Finishes when at velocity
-                ).andThen(Commands.waitSeconds(0.25)),
-                shooter.shootCommand(intake, Constants.Shooter.activeSpeed, drive)
+                        shooter.applyShootState() // Finishes when at velocity
+                ).andThen(Commands.waitSeconds(0.25))
+                // shooter.shootCommand(intake, Constants.Shooter.activeSpeed, drive)
         );
         addRequirements(pivot, intake, shooter);
     }

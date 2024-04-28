@@ -24,10 +24,10 @@ public class LobShootCommand extends SequentialCommandGroup {
 
     addCommands(
         Commands.parallel(
-          shooter.applyLobVelocity(distance),
-          pivot.lobAngleCommand(distance),
-          Commands.runOnce(() -> drivetrain.isLockedRotational = true),
-          Commands.runOnce(() -> shooter.isLobbing = true)
+          shooter.applyLobState(distance),
+          //pivot.lobAngleCommand(distance),
+          Commands.runOnce(() -> drivetrain.isLockedRotational = true)
+          //Commands.runOnce(() -> shooter.isLobbing = true)
         )
     );
   }

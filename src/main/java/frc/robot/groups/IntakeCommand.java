@@ -12,7 +12,7 @@ public class IntakeCommand extends ParallelCommandGroup {
     public IntakeCommand(Pivot pivot, Intake intake) {
         addCommands(
                 intake.intakeCommand(),
-                pivot.stowCommand()
+                pivot.stowInstantCommand()
         );
     }
 }

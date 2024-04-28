@@ -9,24 +9,20 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.TunerConstants;
-import lib.odometry.LimelightHelpers;
-import lib.odometry.NoteKinematics;
+import lib.odometry.ScoringKinematics;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -49,17 +45,13 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
     public boolean isLockedRotational = false;
 
-    private final double rotationalKpBlue = 1.25;
-    private final double rotationalKiBlue = 0.00001;
-    private final double rotationalKdBlue = 0.00001;
+    private final double rotationalKp = 1.25;
+    private final double rotationalKi = 0.00001;
+    private final double rotationalKd = 0.00001;
 
-    private final double rotationalKpRed = 1.25;
-    private final double rotationalKiRed = 0.00001;
-    private final double rotationalKdRed = 0.00001;
 
-    private final PIDController rotationalBluePid = new PIDController(rotationalKpBlue, rotationalKiBlue,
-            rotationalKdBlue);
-    private final PIDController rotationalRedPid = new PIDController(rotationalKpRed, rotationalKiRed, rotationalKdRed);
+    private final PIDController rotationalPid = new PIDController(rotationalKp, rotationalKi,
+            rotationalKd);
 
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds(); // .withDriveRequestType(DriveRequestType.Velocity);
 
@@ -71,38 +63,21 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     }
 
     public double getRotationalSpeed(DoubleSupplier xboxInput) {
-        // rotationalRedPid.setTolerance(0.02);
-        rotationalRedPid.enableContinuousInput(-Math.PI, Math.PI);
+
+        rotationalPid.enableContinuousInput(-Math.PI, Math.PI);
 
         var activeSpeaker = blueSpeaker;
 
-       // var activeSpeaker = DriverStation.getAlliance().get() == (DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
 
          if (!Utils.isSimulation()) {
             activeSpeaker = DriverStation.getAlliance().get() == (DriverStation.Alliance.Red) ? redSpeaker : blueSpeaker;
         }
 
 
-        if (isLockedRotational) {
-           // System.out.println(activeSpeaker.getX());
+        if (isLockedRotational && Math.abs(xboxInput.getAsDouble()) < 0.4) {
+            var angleDifference = ScoringKinematics.getHeadingDifference(activeSpeaker, getState().Pose);
 
-            var botPose = this.getState().Pose;
-            var xDistance = botPose.getTranslation().getX() - activeSpeaker.getX();
-            var yDistance = botPose.getTranslation().getY() - activeSpeaker.getY();
-
-            var targetAngle = Math.atan2(yDistance, xDistance);
-            var currentAngle = botPose.getRotation().getRadians();
-
-            var angleDifference = currentAngle - targetAngle;
-           // var angleDifference = NoteKinematics.getHeadingDifference(activeSpeaker, getState().Pose);
-
-            if (activeSpeaker == blueSpeaker) {
-                return rotationalBluePid.calculate(angleDifference) * 0.85;
-            } else if (activeSpeaker == redSpeaker) {
-                return rotationalRedPid.calculate(angleDifference) * 0.85;
-            }
-
-            return xboxInput.getAsDouble();
+            return rotationalPid.calculate(angleDifference);
         }
 
         return xboxInput.getAsDouble();

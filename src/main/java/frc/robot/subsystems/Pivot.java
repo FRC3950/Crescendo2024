@@ -4,56 +4,66 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.ReverseLimitValue;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.Constants;
+import lib.log.Loggable;
 import lib.meta.CommandBehavior;
 import lib.meta.CommandType;
 import lib.meta.EndType;
 import lib.meta.EndsOn;
-import lib.odometry.NoteKinematics;
-import lib.system.control.PositionController;
-import lib.system.control.TargetPosition;
+import lib.state.PositionState;
+import lib.state.machines.PositionStateMachine;
 
 import java.util.function.DoubleSupplier;
 
-public class Pivot extends PositionController {
+public class Pivot extends PositionStateMachine implements Loggable {
 
     private final CANcoder cancoder = new CANcoder(Constants.Pivot.cancoderId, "CANivore");
 
-    private final Slot1Configs slot1Pid = new Slot1Configs();
+    private static final PositionState amped = new PositionState(
+            Constants.Pivot.config, Constants.Pivot.ampPosition, 0.05
+    );
+
+    private static final PositionState stowed = amped.withChangedPosition(Constants.Pivot.stowPosition);
+    private static final PositionState active = amped.withChangedPosition(Constants.Pivot.speakerPosition);
+
+    private final TalonFX motor = amped.talonConfig.motor;
 
     public Pivot() {
-        super(
-                new TargetPosition(
-                        new TalonFX(Constants.Pivot.id, "CANivore"), Constants.Pivot.stowPosition,
-                        Constants.Pivot.kP, Constants.Pivot.kV, Constants.Pivot.kG, true
-                )
-        );
-
-        slot1Pid.kP = 0.05;
+        super(stowed);
     }
 
-    public boolean isAtAngle(DoubleSupplier targetAngle) {
-        return Math.abs(targetAngle.getAsDouble() - getPosition()) < 0.003;
-    }
+    @Override
+    public void log() {}
 
     private boolean isAtLimit() {
-        return targetPosition.motor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround;
+        return currentState.talonConfig.isAtReverseLimit();
+    }
+
+    public double getPosition() {
+        return motor.getPosition().getValueAsDouble();
     }
 
     @CommandBehavior(behavior = CommandType.INSTANT)
-    public Command stowCommand() {
-        return Commands.runOnce(() -> setPosition(Constants.Pivot.stowPosition));
+    public Command stowInstantCommand() {
+        return Commands.runOnce(() -> acquireGoalState(stowed));
     }
 
     @CommandBehavior(behavior = CommandType.INSTANT)
     public Command setAngleInstantCommand(DoubleSupplier angle) {
-        return Commands.runOnce(() -> setPosition(angle));
+        return Commands.runOnce(() -> {
+            active.updateGoal(angle);
+            acquireGoalState(active);
+        });
+    }
+
+    @CommandBehavior(behavior = CommandType.INSTANT)
+    @EndsOn(endsOn = EndType.INTERRUPT)
+    public Command ampCommand() {
+        return Commands.runOnce(() -> acquireGoalState(amped));
     }
 
     @CommandBehavior(behavior = CommandType.INITIALIZE)
@@ -62,12 +72,12 @@ public class Pivot extends PositionController {
         return new Command() {
             @Override
             public void initialize() {
-                targetPosition.motor.setVoltage(-3.5);
+                motor.setVoltage(-6);
             }
 
             @Override
             public void end(boolean interrupted) {
-                targetPosition.motor.setVoltage(0);
+                motor.setVoltage(0);
             }
         };
     }
@@ -78,53 +88,39 @@ public class Pivot extends PositionController {
         return new Command() {
             @Override
             public void initialize() {
-                setPosition(angle);
+                active.updateGoal(angle);
+                acquireGoalState(active);
             }
 
             @Override
             public boolean isFinished() {
-                return isAtAngle(angle);
+                return isAtState(active);
             }
         };
     }
 
     @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
     @EndsOn(endsOn = EndType.INTERRUPT)
-    public Command autoAngleCommand(DoubleSupplier distance) {
+    public Command continuousAngleCommand(DoubleSupplier angle) {
         return new Command() {
             @Override
             public void execute() {
-                if (distance.getAsDouble() < 1.0 || distance.getAsDouble() > 25 || NoteKinematics.getTargetPivot(distance) > 0.25)
+                if (angle.getAsDouble() < -0.01 || angle.getAsDouble() > 0.35)
                     return;
 
-                setPosition(() -> NoteKinematics.getTargetPivot(distance));
-            }
-        };
-    }
-
-    @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
-    @EndsOn(endsOn = EndType.INTERRUPT)
-    public Command lobAngleCommand(DoubleSupplier distance){
-        return new Command() {
-            @Override
-            public void execute() {
-                if(distance.getAsDouble() < 1.0 || distance.getAsDouble() > 25 || NoteKinematics.getLobPivot(distance) > 0.25 || NoteKinematics.getLobPivot(distance) < 0) {
-                    System.out.println(NoteKinematics.getLobPivot(distance));
-                    return;
-                }
-
-                setPosition(() -> NoteKinematics.getLobPivot(distance));
+                active.updateGoal(angle);
+                acquireGoalState(active);
             }
         };
     }
 
     @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
     @EndsOn(endsOn = EndType.INTERRUPT_OR_FINISH)
-    public Command autoStowCommand(){
+    public Command stowCommand(){
         return new Command() {
             @Override
             public void initialize() {
-                stow();
+                acquireGoalState(stowed);
             }
 
             @Override
@@ -138,6 +134,7 @@ public class Pivot extends PositionController {
     public void periodic() {
         if (isAtLimit()) {
             cancoder.setPosition(0);
+            currentState = stowed;
         }
     }
 }

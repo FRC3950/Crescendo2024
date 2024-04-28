@@ -6,8 +6,6 @@ package frc.robot;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 
-import java.nio.file.Path;
-
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -23,7 +21,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.constants.Constants;
 import frc.robot.constants.TunerConstants;
@@ -143,34 +140,34 @@ public class RobotContainer {
                         AutoBuilder.followPath(topStage_PathPlannerPath)
                          .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5),
                         () -> drivetrain.getState().Pose.getY() < 4.44));
-                
+
 
         // Manipulator controls
         ControlScheme.SHOOT_SPEAKER.button.whileTrue(
                 new AimCommand(pivot, shooter, () -> 0.1)
         ).onFalse(Commands.parallel(
-                pivot.stowCommand(),
+                pivot.stowInstantCommand(),
                 flipper.stowCommand(),
                 shooter.idleCommand(),
                 intake.stopCommand()
         ));
 
-        ControlScheme.SHOOT.button.whileTrue(shooter.shootCommand(intake, Constants.Shooter.activeSpeed, drivetrain));
+        // ControlScheme.SHOOT.button.whileTrue(shooter.shootCommand(intake, Constants.Shooter.activeSpeed, drivetrain));
 
         ControlScheme.SHOOT_LOB.button.whileTrue(
                 lobShootCommand
         ).onFalse(Commands.parallel(
-                Commands.runOnce(() -> shooter.isLobbing = false),
+                // Commands.runOnce(() -> shooter.isLobbing = false),
                 Commands.runOnce(() -> drivetrain.isLockedRotational = false),
-                pivot.stowCommand(),
+                pivot.stowInstantCommand(),
                 flipper.stowCommand(),
                 shooter.idleCommand(),
                 intake.stopCommand()
         ));
 
-        ControlScheme.SCORE_AMP.button.whileTrue(new AmpScoreCommand(pivot, flipper, shooter, () -> 0.3, Constants.Flipper.ampPosition))
+        ControlScheme.SCORE_AMP.button.whileTrue(new AmpScoreCommand(pivot, flipper, shooter, () -> 0.3, Constants.Pivot.ampPosition))
                 .onFalse(Commands.parallel(
-                        pivot.stowCommand(),
+                        pivot.stowInstantCommand(),
                         flipper.stowCommand(),
                         shooter.idleCommand(),
                         intake.stopCommand()
@@ -180,7 +177,7 @@ public class RobotContainer {
                 .onFalse(Commands.parallel(
                         Commands.runOnce(() -> drivetrain.isLockedRotational = false),
                         Commands.parallel(
-                                pivot.stowCommand(),
+                                pivot.stowInstantCommand(),
                                 flipper.stowCommand(),
                                 shooter.idleCommand(),
                                 intake.stopCommand()
@@ -191,7 +188,7 @@ public class RobotContainer {
         // SmartDashboard.putData("RotationOff", Commands.runOnce(() -> drivetrain.isLockedRotational = false));
 
         ControlScheme.INTAKE.button.whileTrue(new IntakeCommand(pivot, intake))
-                .onFalse(pivot.stowCommand());
+                .onFalse(pivot.stowInstantCommand());
 
         ControlScheme.FORCE_STOW.button.whileTrue(pivot.forceStowCommand());
 
@@ -225,13 +222,13 @@ public class RobotContainer {
         NamedCommands.registerCommand("intakeOn", intake.intakeCommand());
         NamedCommands.registerCommand("intakeOff", intake.stopCommand());
 
-        NamedCommands.registerCommand("shootHub", new AutoAimShootCommand(pivot, intake, shooter, drivetrain,()->0.1));
+        NamedCommands.registerCommand("shootHub", new AutoAimShootCommand(pivot, intake, shooter, drivetrain, ()-> 0.1));
 
         NamedCommands.registerCommand("visionOn", new InstantCommand(()->Robot.setVisionTrackingEnabled(true)));
 
         NamedCommands.registerCommand("forceShoot", intake.indexCommand());
 
-        NamedCommands.registerCommand("stow", pivot.stowCommand());
+        NamedCommands.registerCommand("stow", pivot.stowInstantCommand());
 
 
         // Constructs AutoBuilder (SendableChooser<Command>):

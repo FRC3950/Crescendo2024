@@ -4,47 +4,56 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.Constants;
+import lib.log.Loggable;
 import lib.meta.CommandBehavior;
 import lib.meta.CommandType;
 import lib.meta.EndType;
 import lib.meta.EndsOn;
 import lib.odometry.LimelightHelpers;
-import lib.system.control.TargetVelocity;
-import lib.system.control.VelocityController;
+import lib.state.VelocityState;
+import lib.state.machines.VelocityStateMachine;
 
-public class Intake extends VelocityController {
+import java.util.HashSet;
+
+public class Intake extends VelocityStateMachine implements Loggable {
+
+    private static final VelocityState intakeActiveState = new VelocityState(
+            Constants.Intake.intakeConfig, Constants.Intake.intakeActiveVelocity, 1
+    );
+
+    private static final VelocityState indexerActiveState = new VelocityState(
+            Constants.Intake.indexerConfig, Constants.Intake.indexerActiveVelocity, 1
+    );
+
+    private static final HashSet<VelocityState> stopped = new HashSet<>() {{
+        add(intakeActiveState.stopped());
+        add(indexerActiveState.stopped());
+    }};
+
+    private static final HashSet<VelocityState> active = new HashSet<>() {{
+        add(intakeActiveState);
+        add(indexerActiveState);
+    }};
 
     public Intake() {
-        super(
-                new TargetVelocity( // Intake
-                        new TalonFX(Constants.Intake.leftId),
-                        new TalonFX(Constants.Intake.rightId),
-                        65,
-                        Constants.Intake.intakeKp,
-                        Constants.Intake.intakeKv, false
-                ),
-                new TargetVelocity( // Indexer
-                        new TalonFX(Constants.Intake.indexerId, "CANivore"),
-                        40,
-                        Constants.Intake.indexerKp,
-                        Constants.Intake.indexerKv
-                )
-        );
-
-        SmartDashboard.putBoolean("INTAKE", false);
+        super(stopped);
     }
 
     public boolean noteIsIndexed() {
-        return !targets[1].motor.getReverseLimit().getValue().equals(ReverseLimitValue.Open);
-        //return SmartDashboard.getBoolean("noteIndexed", true);
+        var motor = indexerActiveState.talonConfig.motor;
+
+        return motor.getReverseLimit().getValue().equals(ReverseLimitValue.Open);
     }
 
+    @Override
+    public void log() {
+        SmartDashboard.putBoolean("INDEXED", noteIsIndexed());
+    }
 
     @CommandBehavior(behavior = CommandType.INITIALIZE)
     @EndsOn(endsOn = EndType.INTERRUPT_OR_FINISH)
@@ -52,12 +61,12 @@ public class Intake extends VelocityController {
         return new Command() {
             @Override
             public void initialize() {
-                applyInitialTargetVelocities();
+                acquireGoalState(active);
             }
 
             @Override
             public void end(boolean interrupted) {
-                stop();
+                acquireGoalState(stopped);
             }
 
             @Override
@@ -67,8 +76,6 @@ public class Intake extends VelocityController {
         };
     }
 
-    
-
 
     @CommandBehavior(behavior = CommandType.INITIALIZE)
     @EndsOn(endsOn = EndType.INTERRUPT)
@@ -76,12 +83,12 @@ public class Intake extends VelocityController {
         return new Command() {
             @Override
             public void initialize() {
-                applyVelocities(() -> (-Constants.Intake.indexerActiveVelocity.getAsDouble()));
+                acquireNegativeGoalState(active);
             }
 
             @Override
             public void end(boolean interrupted) {
-                stop();
+                acquireGoalState(stopped);
             }
         };
     }
@@ -92,57 +99,54 @@ public class Intake extends VelocityController {
         return new Command() {
             @Override
             public void initialize() {
-                applyVelocity(Constants.Intake.indexerId, () -> -Constants.Intake.indexerActiveVelocity.getAsDouble());
+                acquireNegativeGoalState(indexerActiveState.asHashSet());
             }
 
             @Override
             public void end(boolean interrupted) {
-                stop();
+                acquireGoalState(stopped);
             }
         };
     }
 
     @CommandBehavior(behavior = CommandType.INITIALIZE)
-    @EndsOn(endsOn = EndType.INTERRUPT_OR_FINISH)
+    @EndsOn(endsOn = EndType.INTERRUPT)
     public Command indexCommand() {
         return new Command() {
             @Override
             public void initialize() {
-                applyVelocity(Constants.Intake.indexerId, Constants.Intake.indexerActiveVelocity);
+                acquireGoalState(indexerActiveState.asHashSet());
             }
 
             @Override
             public void end(boolean interrupted){
-                stop();
+                acquireGoalState(stopped);
             }
         };
     }
 
     @CommandBehavior(behavior = CommandType.INSTANT)
     public Command stopCommand() {
-        return Commands.runOnce(super::stop);
+        return Commands.runOnce(() -> acquireGoalState(stopped));
     }
 
-    @CommandBehavior(behavior = CommandType.INITIALIZE)
+    @CommandBehavior(behavior = CommandType.INSTANT)
     public Command intakeOnceCommand(){
-        return Commands.runOnce(()->{
-            super.applyVelocity(Constants.Intake.leftId, Constants.Intake.intakeActiveVelocity);
-            super.applyVelocity(Constants.Intake.rightId, Constants.Intake.intakeActiveVelocity);
+        return Commands.runOnce(() -> {
+            acquireGoalState(intakeActiveState.asHashSet());
 
             if(!noteIsIndexed()){
-                super.applyVelocity(Constants.Intake.indexerId, Constants.Intake.indexerActiveVelocity);
+                acquireGoalState(active);
             }
+
             else{
-                super.applyVelocity(Constants.Intake.indexerId, ()->0.0);
+                acquireGoalState(indexerActiveState.withChangedVelocity(() -> 0).asHashSet());
             }
         });
     }
 
     @Override
     public void periodic() {
-
-        SmartDashboard.putBoolean("INTAKE", noteIsIndexed());
-
         if (noteIsIndexed()) {
             LimelightHelpers.setLEDMode_ForceOn("limelight");
         } else {

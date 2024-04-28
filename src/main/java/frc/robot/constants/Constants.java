@@ -1,5 +1,12 @@
 package frc.robot.constants;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import lib.pid.MotionMagicConfig;
+import lib.pid.PidConfig;
+import lib.pid.TalonConfig;
+import lib.state.PositionState;
+
 import java.util.function.DoubleSupplier;
 
 public interface Constants {
@@ -7,9 +14,6 @@ public interface Constants {
         public static final double noteExitVelocity = 10; // Immediately after leaving shooter
 
         public static final double targetSpeakerHeight = 1.75;
-        public static final double shooterHeight = 1.5; //FIXME
-
-        public static final int gyroId = 40;
 
         public static final double lobVertexHeight = 3;
         public static final double yVelocity = Math.sqrt(9.81 * 2 * lobVertexHeight);
@@ -27,18 +31,19 @@ public interface Constants {
         public static final double kG = 0.3;
 
         public static final DoubleSupplier stowPosition = () -> -0.02;
-        //  public static final DoubleSupplier shuttlePosition = () -> Shuffleboard.getTab("Tab 5").add("Shuttle Position", 30).getEntry().getDouble(30);
+        public static final DoubleSupplier ampPosition = () -> 0.3;
+        public static final DoubleSupplier speakerPosition = () -> 0.1;
+
+        public static final MotionMagicConfig mmConfig = new MotionMagicConfig(0, 0, 0, 0); //FIXME
+
+        public static final TalonConfig config = new TalonConfig(
+          id, "CANivore", new PidConfig(kP, 0, kD, kV, 0, kG, false), mmConfig
+        );
     }
 
     final class Climber {
         public static final int motor1Id = 19;
         public static final int motor2Id = 49;
-
-        public static final double kP = 0.0005;
-        public static final double kV = 0.05;
-        public static final double kG = 0.05;
-
-        public static final DoubleSupplier highPosition = () -> 48.5;
     }
 
     final class Flipper {
@@ -48,14 +53,12 @@ public interface Constants {
         public static final double kV = 0.12;
         public static final double kG = 0.2;
 
-        public static final DoubleSupplier stowPosition = () -> 0.5;
-        public static final DoubleSupplier ampPosition = () -> -1.25;
-        public static final DoubleSupplier trapPosition = () -> -0.75;
-    }
+        public static final MotionMagicConfig mmConfig = new MotionMagicConfig(0, 0, 0, 0); //FIXME
 
-    final class Elevator {
-        public static final int leftId = 49;
-        public static final int rightId = 19;
+        public static final TalonConfig config = new TalonConfig(
+            id, "CANivore", new PidConfig(kP, 0, 0, kV, 0, kG, false), mmConfig
+        );
+
     }
 
     final class Intake {
@@ -67,12 +70,19 @@ public interface Constants {
         public static final double indexerKv = 0.12;
 
         public static final double intakeKp = 0.1;
-        //public static final double intakeKs = 7.1;
         public static final double intakeKv = 0.115;
 
         public static final DoubleSupplier indexerActiveVelocity = () -> 38;
-        public static final DoubleSupplier intakeActiveVelocity = () -> 65;
+        public static final DoubleSupplier intakeActiveVelocity = () -> 60;
         public static final DoubleSupplier ampActiveVelocity = () -> -40;
+
+        public static final TalonConfig intakeConfig = new TalonConfig(
+                42, "rio", new PidConfig(intakeKp, 0, 0, intakeKv, 0, 0, false)
+        ).withFollower(41, "rio", false);
+
+        public static final TalonConfig indexerConfig = new TalonConfig(
+                14, "CANivore", new PidConfig(indexerKp, 0, 0, indexerKv, 0, 0, false)
+        );
     }
 
     final class Shooter {
@@ -83,8 +93,10 @@ public interface Constants {
         public static final double kV = 0.112;
 
         public static final DoubleSupplier activeSpeed = () -> 75;
-        public static final DoubleSupplier idleSpeed = () -> 3;
-        public static final DoubleSupplier ampSpeed = () -> 18;
-        //   public static final DoubleSupplier shuttleSpeed = () -> Shuffleboard.getTab("Tab 5").add("Shuttle Speed", 75).getEntry().getDouble(75);
+        public static final DoubleSupplier idleSpeed = () -> 5;
+
+        public static final TalonConfig config = new TalonConfig(
+                topId, "CANivore", new PidConfig(kP, 0, 0, kV, 0, 0, false)
+        ).withFollower(bottomId, "CANivore", true);
     }
 }

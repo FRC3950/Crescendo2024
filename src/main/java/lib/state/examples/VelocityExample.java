@@ -1,46 +1,52 @@
 package lib.state.examples;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import lib.log.Loggable;
+import lib.meta.CommandBehavior;
+import lib.meta.CommandType;
+import lib.meta.EndType;
+import lib.meta.EndsOn;
 import lib.state.VelocityState;
-import lib.state.machines.VelocityStateController;
+import lib.state.machines.VelocityStateMachine;
+
+import java.util.HashSet;
 
 
-public class VelocityExample extends VelocityStateController implements Loggable {
+public class VelocityExample extends VelocityStateMachine implements Loggable {
 
-    private final VelocityState shoot =  DummyConstants.VelocityExample.shoot;
-    private final VelocityState shootRamp = DummyConstants.VelocityExample.shootRamp;
-    private final VelocityState idle = DummyConstants.VelocityExample.idle;
+    private final HashSet<VelocityState> shoot = DummyConstants.VelocityExample.shoot;
+    private final HashSet<VelocityState> idle = DummyConstants.VelocityExample.idle;
+    private final HashSet<VelocityState> shootRamp = DummyConstants.VelocityExample.shootRamp;
+
 
     public VelocityExample(){
         super(DummyConstants.VelocityExample.idle);
     }
+
     @Override
     public void log() {
-        SmartDashboard.putNumber("foo", shoot.getTalonSetup().motor.getVelocity().getValueAsDouble());
+        System.out.println("Hello!");
     }
 
-    @Override
-    public void periodic() {}
-
+    @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
+    @EndsOn(endsOn = EndType.INTERRUPT)
     public Command shootCommand() {
         return new Command() {
             @Override
             public void initialize() {
-                setState(shootRamp);
+                acquireGoalState(shootRamp);
             }
 
             @Override
             public void execute() {
                 if(isAtState(shootRamp)){
-                    setState(shoot);
+                    acquireGoalState(shoot);
                 }
             }
 
             @Override
             public void end(boolean interrupted) {
-                setState(idle);
+                acquireGoalState(idle);
             }
         };
     }
