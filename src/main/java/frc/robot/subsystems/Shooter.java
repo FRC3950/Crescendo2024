@@ -71,7 +71,7 @@ public class Shooter extends VelocityStateMachine implements Loggable {
 
     @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
     @EndsOn(endsOn = EndType.FINISH)
-    public Command applyShootState() {
+    public Command applyShootStateCommand() {
         return new Command() {
             @Override
             public void initialize() {

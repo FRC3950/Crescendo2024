@@ -79,11 +79,16 @@ public class Intake extends VelocityStateMachine implements Loggable {
 
     @CommandBehavior(behavior = CommandType.INITIALIZE)
     @EndsOn(endsOn = EndType.INTERRUPT)
-    public Command outtakeCommand() {
+    public Command outtakeCommand(Pivot pivot) {
         return new Command() {
             @Override
             public void initialize() {
-                acquireNegativeGoalState(active);
+                if(pivot.goalStateIsAmp()){
+                    acquireNegativeGoalState(indexerActiveState.asHashSet());
+                }
+                else {
+                    acquireNegativeGoalState(active);
+                }
             }
 
             @Override

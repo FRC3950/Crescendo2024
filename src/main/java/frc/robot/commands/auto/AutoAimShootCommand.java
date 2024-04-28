@@ -1,8 +1,7 @@
-package frc.robot.groups.shoot;
+package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.constants.Constants;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
@@ -16,7 +15,7 @@ public class AutoAimShootCommand extends SequentialCommandGroup {
         addCommands(
                 Commands.parallel(
                         pivot.setAngleCommand(angle),
-                        shooter.applyShootState() // Finishes when at velocity
+                        shooter.applyShootStateCommand() // Finishes when at velocity
                 ).withTimeout(1.25).andThen(Commands.waitSeconds(0.25)),
 
                 // shooter.shootCommand(intake, Constants.Shooter.activeSpeed, drive).withTimeout(1.25),
@@ -32,7 +31,7 @@ public class AutoAimShootCommand extends SequentialCommandGroup {
                                 () -> ScoringKinematics.getTargetPivot(() -> ScoringKinematics.getAllianceSpeakerDistance(drivetrain))
                         ),
 
-                        shooter.applyShootState()
+                        shooter.applyShootStateCommand()
                 ).withTimeout(2) //added for sim
                 //Commands.waitSeconds(0.25),
 //                shooter.shootCommand(intake, Constants.Shooter.activeSpeed, drivetrain).until(()->!intake.noteIsIndexed()).withTimeout(1)
