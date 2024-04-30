@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.293678213604645,
-        "y": 0.7612043754757987
+        "x": 8.288614490658505,
+        "y": 0.726785382538578
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.79798850601262,
-        "y": 0.7612043754757991
+        "x": 4.79292478306648,
+        "y": 0.7267853825385785
       },
       "isLocked": false,
       "linkedName": "comp pickup note 8"
     },
     {
       "anchor": {
-        "x": 1.735609747966998,
-        "y": 2.869154953716469
+        "x": 2.157199863615132,
+        "y": 3.4429859444597626
       },
       "prevControl": {
-        "x": 2.8821981728314183,
-        "y": 1.2958818370466927
+        "x": 3.316572681647502,
+        "y": 1.8386013376876962
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,14 +32,14 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 4.5,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -58.40999999999997,
+    "rotation": -47.15999999999997,
     "rotateFast": false
   },
   "reversed": false,

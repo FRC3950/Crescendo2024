@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.609870800340744,
-        "y": 7.237296985292972
+        "x": 8.518088867476292,
+        "y": 7.344826409963586
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.5996752594169195,
-        "y": 7.136328259493146
+        "x": 6.507893326552468,
+        "y": 7.24385768416376
       },
       "isLocked": false,
       "linkedName": "comp pickup note 4"
@@ -32,8 +32,8 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 4.5,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },

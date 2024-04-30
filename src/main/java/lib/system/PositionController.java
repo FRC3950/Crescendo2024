@@ -31,7 +31,7 @@ public abstract class PositionController extends SubsystemBase {
     }
 
     protected void stow() {
-        targetPosition.motor.setControl(mmVoltage.withPosition(0));
+        targetPosition.motor.setControl(mmVoltage.withPosition(-0.03));
     }
 
     protected double getPosition() {

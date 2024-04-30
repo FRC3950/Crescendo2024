@@ -25,7 +25,7 @@ public class Intake extends VelocityController {
                 new TargetVelocity( // Intake
                         new TalonFX(Constants.Intake.leftId),
                         new TalonFX(Constants.Intake.rightId),
-                        65,
+                        60,
                         Constants.Intake.intakeKp,
                         Constants.Intake.intakeKv, false
                 ),
@@ -130,7 +130,7 @@ public class Intake extends VelocityController {
             super.applyVelocity(Constants.Intake.rightId, Constants.Intake.intakeActiveVelocity);
 
             if(!noteIsIndexed()){
-                super.applyVelocity(Constants.Intake.indexerId, Constants.Intake.indexerActiveVelocity);
+                super.applyVelocity(Constants.Intake.indexerId, ()->25);
             }
             else{
                 super.applyVelocity(Constants.Intake.indexerId, ()->0.0);

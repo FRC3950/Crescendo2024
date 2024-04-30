@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.735609747966998,
-        "y": 2.869154953716469
+        "x": 2.157199863615132,
+        "y": 3.4429859444597626
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.634874128794595,
-        "y": 1.2316290115411466
+        "x": 4.323704624584711,
+        "y": 0.9251560871167382
       },
       "isLocked": false,
       "linkedName": "dubrush shoot"
     },
     {
       "anchor": {
-        "x": 8.398762191531043,
-        "y": 2.489148596499191
+        "x": 8.38040424138562,
+        "y": 2.3698219205539415
       },
       "prevControl": {
-        "x": 6.305990928331145,
-        "y": 1.1306062861176858
+        "x": 5.780912079207758,
+        "y": 1.3211062191858762
       },
       "nextControl": null,
       "isLocked": false,
@@ -44,8 +44,8 @@
   ],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 4.5,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
@@ -57,7 +57,7 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -60.0,
+    "rotation": -47.15999999999997,
     "velocity": 0
   },
   "useDefaultConstraints": true

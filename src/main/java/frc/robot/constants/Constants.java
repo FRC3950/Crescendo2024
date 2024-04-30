@@ -26,7 +26,7 @@ public interface Constants {
 
         public static final double kG = 0.3;
 
-        public static final DoubleSupplier stowPosition = () -> -0.02;
+        public static final DoubleSupplier stowPosition = () -> -0.03;
         //  public static final DoubleSupplier shuttlePosition = () -> Shuffleboard.getTab("Tab 5").add("Shuttle Position", 30).getEntry().getDouble(30);
     }
 

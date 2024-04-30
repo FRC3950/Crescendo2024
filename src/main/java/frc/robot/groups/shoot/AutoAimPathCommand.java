@@ -36,10 +36,10 @@ canShoot = () ->Math.abs(drivetrain.getState().Pose.getY() - 5.55) < 0.5;
 
                 //2nd Condition - note is not indexed so stow and idle
                 Commands.parallel(
-                    pivot.autoStowCommand().withTimeout(1), //remove timeout after sim
+                    pivot.autoStowCommand(), //remove timeout after sim
                     shooter.idleCommand()
                 )               
-                    .andThen(intake.intakeOnceCommand())  //need a intteript
+                    .andThen(intake.intakeCommand()).withTimeout(3)  //need a intteript
                     .andThen(Commands.print("stow/idle/intake on")),
             intake::noteIsIndexed).repeatedly()
         );

@@ -29,7 +29,7 @@ public final class NoteKinematics {
     }
 
     public static double getLobPivot(DoubleSupplier distance) {
-        return (Math.PI/2 - Math.asin(Constants.Physics.yVelocity/getVelocityVector(distance))) * (0.25/(Math.PI/2));
+        return (Math.PI/2 - Math.asin(Constants.Physics.yVelocity/getVelocityVector(distance))) * (0.28/(Math.PI/2));
     }
 
     public static double getAllianceSpeakerDistance(Swerve drive){
@@ -47,7 +47,7 @@ public final class NoteKinematics {
 
         var rpsMsConversion = (187.978/60);
 
-        return rpsMsConversion * getVelocityVector(distance);
+        return rpsMsConversion * getVelocityVector(distance) * 0.95;
     }
 
     public static double getHeadingDifference(Pose2d activeSpeaker, Pose2d botPose) {
@@ -63,8 +63,8 @@ public final class NoteKinematics {
 
     public static double getTargetPivot(DoubleSupplier distance) {
         var gravityComp = distance.getAsDouble() < 3.99 ?
-            0.01 * Math.pow(distance.getAsDouble(), 2):
-            0.019 * Math.pow(distance.getAsDouble(), 2);
+            /* 0.01 */ 0.015 * Math.pow(distance.getAsDouble(), 2):
+            /* 0.019 */ 0.022 * Math.pow(distance.getAsDouble(), 2);
 
 
         //90 -arcTan2 (SpeakerHeight - pivotAngleHeight / RobotDistance)

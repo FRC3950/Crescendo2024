@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.Constants;
 import lib.meta.CommandBehavior;
 import lib.meta.CommandType;
+import lib.meta.EndType;
+import lib.meta.EndsOn;
 import lib.system.PositionController;
 import lib.system.TargetPosition;
 
@@ -34,6 +36,14 @@ public class Flipper extends PositionController {
     @CommandBehavior(behavior = CommandType.INSTANT)
     public Command ampCommand(DoubleSupplier pos) {
         return Commands.runOnce(() -> setPosition(pos));
+    }
+
+    @CommandBehavior(behavior = CommandType.SUSTAINED_EXECUTE)
+    @EndsOn(endsOn = EndType.INTERRUPT_OR_FINISH)
+    public Command ampExperimentCommand(){
+        return new Command() {
+            public void initialize() {}
+        };
     }
 
     @Override
