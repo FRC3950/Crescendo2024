@@ -22,7 +22,15 @@ public enum ControlScheme {
     RESET_HEADING(Controller.DRIVER.controller.y()),
     PATH_AMP(Controller.DRIVER.controller.leftBumper()),
     PATH_SPEAKER(Controller.DRIVER.controller.rightBumper()),
-    PATH_STAGE(Controller.DRIVER.controller.back());
+    PATH_STAGE(Controller.DRIVER.controller.back()),
+
+
+    Aim_Driver(Controller.DRIVER.controller.leftTrigger(0.5)),
+    SHOOT_DRIVER(Controller.DRIVER.controller.rightTrigger(0.5)),
+
+
+    Intake_Driver(Controller.DRIVER.controller.a());
+
 
     public final Trigger button;
 

@@ -45,10 +45,6 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
     public static Alliance my_alliance;
 
-    public final NetworkTableEntry velocityX = NetworkTableInstance.getDefault().getEntry("Drive").getTopic().getInstance().getEntry("Velocity X");
-    public final NetworkTableEntry velocity = NetworkTableInstance.getDefault().getEntry("Drive").getTopic().getInstance().getEntry("Velocity Y");
-
-
     private final double MaxSpeed = 4.3; // 6 meters per second desired top speed *t3x*  //was 5 before
     private final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
@@ -125,25 +121,8 @@ public class RobotContainer {
         // );
 
         ControlScheme.RESET_HEADING.button.onTrue(Commands.runOnce(drivetrain::seedFieldRelative));
-        PathPlannerPath amp_PathPlanner = PathPlannerPath.fromPathFile("Amp");
-        PathPlannerPath speaker_PathPlanner = PathPlannerPath.fromPathFile("Speaker");
-        PathPlannerPath topStage_PathPlannerPath = PathPlannerPath.fromPathFile("TopStage");
-        PathPlannerPath bottomStage_PathPlannerPath = PathPlannerPath.fromPathFile("BottomStage");
-
-        ControlScheme.PATH_AMP.button.onTrue(AutoBuilder.followPath(amp_PathPlanner)
-        .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5));
-
-        ControlScheme.PATH_SPEAKER.button.onTrue(AutoBuilder.followPath(speaker_PathPlanner)
-        .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5));
-
-        ControlScheme.PATH_STAGE.button.onTrue(
-                Commands.either(
-                        AutoBuilder.followPath(bottomStage_PathPlannerPath)
-                        .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5),
-                        AutoBuilder.followPath(topStage_PathPlannerPath)
-                         .onlyWhile(() -> Math.abs(Controller.DRIVER.controller.getLeftY()) < 0.5 && Math.abs(Controller.DRIVER.controller.getLeftX()) < 0.5),
-                        () -> drivetrain.getState().Pose.getY() < 4.44));
-                
+   
+      
 
         // Manipulator controls
         ControlScheme.SHOOT_SPEAKER.button.whileTrue(
@@ -177,7 +156,10 @@ public class RobotContainer {
                 ));
 
         ControlScheme.AIM_AUTO.button.whileTrue(autoShootCommand)
-                .onFalse(Commands.parallel(
+                .onFalse(
+                        
+                
+                Commands.parallel(
                         Commands.runOnce(() -> drivetrain.isLockedRotational = false),
                         Commands.parallel(
                                 pivot.stowCommand(),
@@ -185,7 +167,9 @@ public class RobotContainer {
                                 shooter.idleCommand(),
                                 intake.stopCommand()
                         )
-                ));
+                )
+                
+                );
 
         // SmartDashboard.putData("AutoAim", autoShootCommand);
         // SmartDashboard.putData("RotationOff", Commands.runOnce(() -> drivetrain.isLockedRotational = false));
@@ -197,6 +181,11 @@ public class RobotContainer {
 
         ControlScheme.OUTTAKE.button.whileTrue(intake.outtakeCommand());
         ControlScheme.AMP_OUTTAKE.button.whileTrue(intake.ampOuttakeCommand());
+
+        ControlScheme.Intake_Driver.button.whileTrue(intake.intakeCommand())
+                .onFalse(pivot.stowCommand());
+
+        
 
         Controller.DRIVER.controller.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
         Controller.DRIVER.controller.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
